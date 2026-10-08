@@ -20,8 +20,23 @@ export function TitleCard() {
   };
 
   return (
-    <section className="bg-[color:var(--stage-2)] pt-24 pb-10 md:pt-36 md:pb-14">
-      <div className="mx-auto max-w-[1600px] px-6 md:px-14">
+    <section className="relative overflow-hidden bg-[color:var(--stage-2)] pt-24 pb-10 md:pt-36 md:pb-14">
+      {/* Background cinematic video layer */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+        <video
+          src="https://videos.pexels.com/video-files/5752729/5752729-uhd_2560_1440_30fps.mp4"
+          muted
+          loop
+          playsInline
+          autoPlay={!reduced}
+          preload="metadata"
+          className="h-full w-full object-cover opacity-25"
+          aria-hidden="true"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-[color:var(--stage-2)] via-[rgba(20,20,22,0.88)] to-[color:var(--stage-2)]" />
+      </div>
+
+      <div className="relative z-10 mx-auto max-w-[1600px] px-6 md:px-14">
         <motion.p {...rise} className="mono">
           02 &mdash; The studio
         </motion.p>

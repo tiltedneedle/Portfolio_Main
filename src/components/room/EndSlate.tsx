@@ -52,8 +52,23 @@ export function EndSlate() {
   };
 
   return (
-    <section id="contact" className="relative scroll-mt-16 bg-black py-24 text-[color:var(--ink)] md:py-36">
-      <div className="mx-auto max-w-[1600px] px-6 md:px-14">
+    <section id="contact" className="relative overflow-hidden scroll-mt-16 bg-black py-24 text-[color:var(--ink)] md:py-36">
+      {/* Background cinematic video layer */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+        <video
+          src="https://assets.mixkit.co/videos/preview/mixkit-taking-photos-with-a-camera-1868-large.mp4"
+          muted
+          loop
+          playsInline
+          autoPlay={!reduced}
+          preload="metadata"
+          className="h-full w-full object-cover opacity-20"
+          aria-hidden="true"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black via-[rgba(0,0,0,0.86)] to-black" />
+      </div>
+
+      <div className="relative z-10 mx-auto max-w-[1600px] px-6 md:px-14">
         <motion.p {...rise} className="mono">
           05 &mdash; End slate
         </motion.p>
