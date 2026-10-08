@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
 };
 
-// The reel, in running order: slate (once), cold open, the sequence of six
+// The reel, in running order: slate (once), cold open, the sequence of eight
 // films, the studio as a title card, the clients as credits, the results as
 // slate lines, and contact as the end slate. The footer is the tail leader.
 export default function Home() {
