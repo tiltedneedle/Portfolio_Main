@@ -661,6 +661,44 @@ a:focus-visible > .wm {
   }
 }
 
+/* ========================================================= hero film backdrop */
+
+.hero-band {
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 7%, #000 64%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 7%, #000 64%, transparent 100%);
+}
+
+.film-frame {
+  position: relative;
+  display: block;
+  flex: none;
+  padding: max(0.16em, 12px) max(0.045em, 4px);
+  background-color: #2a2724;
+}
+
+.film-frame::before,
+.film-frame::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: max(0.068em, 5px);
+  background: linear-gradient(90deg, transparent 0 22%, rgba(242, 239, 233, 0.55) 22% 78%, transparent 78%) 0 0 / 25% 100% repeat-x;
+  border-radius: 1px;
+}
+
+.film-frame::before {
+  top: max(0.046em, 3.5px);
+}
+
+.film-frame::after {
+  bottom: max(0.046em, 3.5px);
+}
+
+.hero-vignette {
+  background: linear-gradient(to right, var(--stage) 0%, transparent 18%, transparent 82%, var(--stage) 100%);
+}
+
 /* ================================================================ odometer */
 
 .odo {
