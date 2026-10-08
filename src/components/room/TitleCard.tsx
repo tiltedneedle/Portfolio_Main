@@ -37,30 +37,36 @@ export function TitleCard() {
           second watch.
         </motion.p>
 
-        <motion.div {...rise} className="mt-20 grid grid-cols-1 border-t border-[color:var(--rule)] sm:grid-cols-3 md:mt-28">
-          <div className="flex items-baseline justify-between gap-4 border-b border-[color:var(--rule)] py-7 sm:block sm:border-b-0 sm:py-9 sm:pr-6 md:pr-8">
-            <span className="display tabular flex items-start text-[clamp(40px,4.8vw,80px)] xl:text-[clamp(44px,5.2vw,96px)] leading-none tracking-tight">
+        <motion.div {...rise} className="mt-20 grid grid-cols-1 divide-y divide-[color:var(--rule)] border-y border-[color:var(--rule)] lg:grid-cols-3 lg:divide-x lg:divide-y-0 md:mt-28">
+          <div className="py-8 sm:py-10 lg:pr-8">
+            <span className="display tabular flex items-baseline text-[clamp(38px,3.8vw,68px)] leading-none">
               <Odometer value={5000000000} />
               <span className="odo-sep text-[color:var(--ink-mid)]">+</span>
             </span>
-            <span className="mono mt-3 block">Organic views</span>
+            <span className="mono mt-4 block text-[13px] tracking-widest text-[color:var(--ink-soft)]">
+              Organic views
+            </span>
           </div>
 
-          <div className="flex items-baseline justify-between gap-4 border-b border-[color:var(--rule)] py-7 sm:block sm:border-b-0 sm:py-9 sm:pr-6 md:pr-8">
-            <span className="display tabular flex items-start text-[clamp(40px,4.8vw,80px)] xl:text-[clamp(44px,5.2vw,96px)] leading-none tracking-tight">
+          <div className="py-8 sm:py-10 lg:px-8">
+            <span className="display tabular flex items-baseline text-[clamp(38px,3.8vw,68px)] leading-none">
               <span className="odo-sep text-[color:var(--ink-mid)]">$</span>
               <Odometer value={250000000} />
               <span className="odo-sep text-[color:var(--ink-mid)]">+</span>
             </span>
-            <span className="mono mt-3 block">Revenue generated</span>
+            <span className="mono mt-4 block text-[13px] tracking-widest text-[color:var(--ink-soft)]">
+              Revenue generated
+            </span>
           </div>
 
-          <div className="flex items-baseline justify-between gap-4 border-b border-[color:var(--rule)] py-7 sm:block sm:border-b-0 sm:py-9 sm:pr-6 md:pr-8">
-            <span className="display tabular flex items-start text-[clamp(40px,4.8vw,80px)] xl:text-[clamp(44px,5.2vw,96px)] leading-none tracking-tight">
+          <div className="py-8 sm:py-10 lg:pl-8">
+            <span className="display tabular flex items-baseline text-[clamp(38px,3.8vw,68px)] leading-none">
               <Odometer value={11} />
               <span className="odo-sep text-[color:var(--ink-mid)]">+</span>
             </span>
-            <span className="mono mt-3 block">Flagship clients</span>
+            <span className="mono mt-4 block text-[13px] tracking-widest text-[color:var(--ink-soft)]">
+              Flagship clients
+            </span>
           </div>
         </motion.div>
 
