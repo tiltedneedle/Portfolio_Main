@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { submitForm } from "@/lib/submit-form";
 import { EASE_OUT_EXPO } from "@/lib/design-tokens";
+import { cn } from "@/lib/utils";
 
 const CAREERS_REEL =
   "https://videos.pexels.com/video-files/3045163/3045163-hd_1920_1080_25fps.mp4";
@@ -154,13 +155,30 @@ function ApplicationForm({ role, onRoleChange }: { role: string; onRoleChange: (
             <label htmlFor="app-role" className="mono mb-3 block">
               Role
             </label>
-            <select id="app-role" name="role" value={role} onChange={(e) => onRoleChange(e.target.value)} className={inputClass}>
-              {roleOptions.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
+            <div className="relative">
+              <select
+                id="app-role"
+                name="role"
+                value={role}
+                onChange={(e) => onRoleChange(e.target.value)}
+                className={cn(
+                  inputClass,
+                  "cursor-pointer appearance-none pr-8 bg-transparent [&>option]:bg-[#141416] [&>option]:text-[#f2efe9] [&>option]:py-2"
+                )}
+              >
+                {roleOptions.map((option) => (
+                  <option key={option} value={option} className="bg-[#141416] text-[#f2efe9] py-2">
+                    {option}
+                  </option>
+                ))}
+              </select>
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 text-[12px] text-[color:var(--ink-mid)]"
+              >
+                &#9662;
+              </span>
+            </div>
           </div>
           <div>
             <label htmlFor="app-exp" className="mono mb-3 block">

@@ -104,6 +104,15 @@ body {
   color: var(--stage);
 }
 
+select {
+  color-scheme: dark;
+}
+
+select option {
+  background-color: var(--stage-2, #141416);
+  color: var(--ink, #f2efe9);
+}
+
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
