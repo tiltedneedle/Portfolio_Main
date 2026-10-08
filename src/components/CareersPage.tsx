@@ -288,34 +288,36 @@ export function CareersPage() {
 
   return (
     <div className="bg-[color:var(--stage)]">
-      <section className="pb-16 pt-32 md:pb-20 md:pt-40">
-        <div className="mx-auto max-w-[1600px] px-6 md:px-14">
-          <motion.p {...rise(0)} className="mono mb-8">
+      <section className="relative min-h-[85vh] flex flex-col justify-end overflow-hidden pb-16 pt-32 md:min-h-[90vh] md:pb-24 md:pt-40">
+        {/* Background video layer covering entire hero */}
+        <div aria-hidden="true" className="absolute inset-0 pointer-events-none">
+          <video
+            src={CAREERS_REEL}
+            muted
+            loop
+            playsInline
+            autoPlay={!reduced}
+            preload="metadata"
+            className="h-full w-full object-cover"
+            aria-label="Behind the scenes of a Tilted Needle shoot"
+          />
+          {/* Gradients ensuring strong text contrast and cinematic stage grounding */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[color:var(--stage)] via-[rgba(11,11,12,0.72)] to-[rgba(11,11,12,0.78)]" />
+        </div>
+
+        {/* Content overlaid on top of the background */}
+        <div className="relative z-10 mx-auto w-full max-w-[1600px] px-6 md:px-14">
+          <motion.p {...rise(0)} className="mono mb-6 md:mb-8 text-[color:var(--ink-soft)]">
             Crew call <span className="text-[color:var(--ink-faint)]">/</span>{" "}London &middot; Dubai
           </motion.p>
-          <motion.h1 {...rise(0.08)} className="display max-w-[12ch] text-[clamp(56px,9.5vw,150px)]">
+          <motion.h1 {...rise(0.08)} className="display max-w-[12ch] text-[clamp(56px,9.5vw,150px)] text-[color:var(--ink)]">
             The team behind the <span className="em-serif">views.</span>
           </motion.h1>
-          <motion.p {...rise(0.16)} className="mt-10 max-w-[52ch] text-[19px] leading-relaxed text-[color:var(--ink-soft)] md:text-[21px]">
+          <motion.p {...rise(0.16)} className="mt-8 max-w-[52ch] text-[19px] leading-relaxed text-[color:var(--ink-soft)] md:mt-10 md:text-[21px]">
             A social-media production company working with world-class brands and creators.
             If your bar is as high as ours, we should talk.
           </motion.p>
         </div>
-
-        <motion.div {...rise(0.24)} className="mx-auto mt-14 max-w-[1600px] px-6 md:px-14">
-          <div className="plate aspect-[21/9] w-full">
-            <video
-              src={CAREERS_REEL}
-              muted
-              loop
-              playsInline
-              autoPlay={!reduced}
-              preload="metadata"
-              className="h-full w-full object-cover"
-              aria-label="Behind the scenes of a Tilted Needle shoot"
-            />
-          </div>
-        </motion.div>
       </section>
 
       <section className="py-16 md:py-24">
