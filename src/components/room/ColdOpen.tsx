@@ -8,6 +8,7 @@ import { attachThrottledVideo } from "@/lib/video-slots";
 import { films } from "@/lib/films";
 import picksData from "@/lib/published-picks.json";
 import type { Published } from "@/lib/published";
+import { HeroDust } from "@/components/room/HeroDust";
 import { EASE_OUT_EXPO } from "@/lib/design-tokens";
 
 /**
@@ -88,6 +89,7 @@ export function ColdOpen() {
           />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-[rgba(11,11,12,0.94)] via-[rgba(11,11,12,0.45)] to-[rgba(11,11,12,0.6)]" />
+        <HeroDust />
       </div>
 
       {/* HUD: the room's instruments */}

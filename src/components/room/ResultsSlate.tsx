@@ -32,15 +32,22 @@ export function ResultsSlate() {
             >
               <CutLink
                 href={"/film/" + f.slug}
-                className="group grid grid-cols-[auto_1fr] items-baseline gap-x-6 gap-y-1 py-6 sm:grid-cols-[auto_1fr_auto_auto] sm:gap-x-10 md:py-7"
+                className="group relative grid grid-cols-[auto_1fr] items-baseline gap-x-6 gap-y-1 py-6 transition-colors duration-300 hover:text-[color:var(--ink)] sm:grid-cols-[auto_1fr_auto_auto] sm:gap-x-10 md:py-7"
                 data-cursor="Open"
               >
-                <span className="mono">{pad2(f.index)}</span>
-                <span className="text-[21px] text-[color:var(--ink)] md:text-[25px]">{f.client}</span>
+                <span className="mono transition-colors duration-300 group-hover:text-[color:var(--tally)]">{pad2(f.index)}</span>
+                <span className="flex items-center gap-3 text-[21px] text-[color:var(--ink)] transition-transform duration-300 group-hover:translate-x-1.5 md:text-[25px]">
+                  {f.poster && (
+                    <span className="relative hidden h-9 w-6 shrink-0 overflow-hidden rounded-[1px] border border-[color:var(--rule-strong)] opacity-0 shadow-lg transition-all duration-300 group-hover:opacity-100 sm:inline-block">
+                      <img src={f.poster} alt="" className="h-full w-full object-cover" />
+                    </span>
+                  )}
+                  {f.client}
+                </span>
                 <span className="em-serif col-start-2 text-[19px] text-[color:var(--ink-soft)] sm:col-start-3 md:text-[23px]">
                   {f.highlight.toLowerCase()}
                 </span>
-                <span className="mono max-sm:hidden">{f.year}</span>
+                <span className="mono max-sm:hidden transition-colors duration-300 group-hover:text-[color:var(--ink)]">{f.year} &#8599;</span>
               </CutLink>
             </motion.li>
           ))}

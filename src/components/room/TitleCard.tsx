@@ -1,19 +1,14 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
+import { Odometer } from "@/components/room/Odometer";
 import { CutLink } from "@/components/room/CutLink";
 import { EASE_OUT_EXPO } from "@/lib/design-tokens";
 
-const readouts = [
-  { value: "2B+", label: "Organic views" },
-  { value: "$250M+", label: "Revenue generated" },
-  { value: "11+", label: "Flagship clients" },
-];
-
 /**
  * The title card. The studio, said once, in the condensed face, followed by
- * the three numbers set as readouts: the proof is measurable, so it is shown
- * the way a meter shows it.
+ * the three numbers set as readouts with precision mechanical odometers:
+ * the proof is measurable, so it is shown the way an instrument displays it.
  */
 export function TitleCard() {
   const reduced = useReducedMotion();
@@ -43,15 +38,30 @@ export function TitleCard() {
         </motion.p>
 
         <motion.div {...rise} className="mt-20 grid grid-cols-1 border-t border-[color:var(--rule)] sm:grid-cols-3 md:mt-28">
-          {readouts.map((r) => (
-            <div
-              key={r.label}
-              className="flex items-baseline justify-between gap-4 border-b border-[color:var(--rule)] py-7 sm:block sm:border-b-0 sm:py-9 sm:pr-8"
-            >
-              <span className="display tabular block text-[clamp(56px,7vw,120px)] leading-none">{r.value}</span>
-              <span className="mono mt-3 block">{r.label}</span>
-            </div>
-          ))}
+          <div className="flex items-baseline justify-between gap-4 border-b border-[color:var(--rule)] py-7 sm:block sm:border-b-0 sm:py-9 sm:pr-8">
+            <span className="display tabular flex items-start text-[clamp(56px,7vw,120px)] leading-none">
+              <Odometer value={2000000000} />
+              <span className="odo-sep text-[color:var(--ink-mid)]">+</span>
+            </span>
+            <span className="mono mt-3 block">Organic views</span>
+          </div>
+
+          <div className="flex items-baseline justify-between gap-4 border-b border-[color:var(--rule)] py-7 sm:block sm:border-b-0 sm:py-9 sm:pr-8">
+            <span className="display tabular flex items-start text-[clamp(56px,7vw,120px)] leading-none">
+              <span className="odo-sep text-[color:var(--ink-mid)]">$</span>
+              <Odometer value={250000000} />
+              <span className="odo-sep text-[color:var(--ink-mid)]">+</span>
+            </span>
+            <span className="mono mt-3 block">Revenue generated</span>
+          </div>
+
+          <div className="flex items-baseline justify-between gap-4 border-b border-[color:var(--rule)] py-7 sm:block sm:border-b-0 sm:py-9 sm:pr-8">
+            <span className="display tabular flex items-start text-[clamp(56px,7vw,120px)] leading-none">
+              <Odometer value={11} />
+              <span className="odo-sep text-[color:var(--ink-mid)]">+</span>
+            </span>
+            <span className="mono mt-3 block">Flagship clients</span>
+          </div>
         </motion.div>
 
         <motion.div {...rise} className="mt-14 border-t border-[color:var(--rule)] pt-6">

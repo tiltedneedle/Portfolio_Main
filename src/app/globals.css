@@ -637,6 +637,75 @@ a:focus-visible > .wm {
   }
 }
 
+/* ========================================================== hero beam & dust */
+
+.hero-beam {
+  background: linear-gradient(
+    144deg,
+    transparent 37%,
+    rgba(242, 239, 233, 0.025) 44%,
+    rgba(242, 239, 233, 0.065) 52%,
+    rgba(242, 239, 233, 0.025) 60%,
+    transparent 67%
+  );
+  animation: beam-breathe 7s ease-in-out infinite;
+}
+
+@keyframes beam-breathe {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+/* ================================================================ odometer */
+
+.odo {
+  display: inline-flex;
+  align-items: flex-start;
+  font-variant-numeric: tabular-nums;
+}
+
+.odo-col,
+.odo-sep {
+  display: inline-block;
+  height: 1em;
+  line-height: 1em;
+}
+
+.odo-col {
+  overflow: hidden;
+}
+
+.odo-reel {
+  display: block;
+  white-space: pre;
+  line-height: 1em;
+  text-align: center;
+  transform: translateY(calc(var(--odo-land) * -1em));
+  transition: transform calc(1.8s + var(--odo-i) * 110ms) cubic-bezier(0.16, 1, 0.3, 1) calc(var(--odo-i) * 60ms);
+}
+
+.odo-wait .odo-reel {
+  transform: translateY(calc(var(--odo-d) * -1em));
+  transition: none;
+}
+
+.odo-now .odo-reel {
+  transition: none;
+  animation: odo-spin calc(1.8s + var(--odo-i) * 110ms) cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--at, 0.9s) + var(--odo-i) * 60ms);
+}
+
+@keyframes odo-spin {
+  from {
+    transform: translateY(calc(var(--odo-d) * -1em));
+  }
+}
+
 /* ============================================================ reduced motion */
 
 @media (prefers-reduced-motion: reduce) {
@@ -655,6 +724,8 @@ a:focus-visible > .wm {
   .grain,
   .skeleton,
   .lamp,
+  .hero-beam,
+  .odo-now .odo-reel,
   .wm-l,
   .wm-a,
   .wm-b,
