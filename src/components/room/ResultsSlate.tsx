@@ -32,22 +32,22 @@ export function ResultsSlate() {
             >
               <CutLink
                 href={"/film/" + f.slug}
-                className="group relative grid grid-cols-[auto_1fr] items-baseline gap-x-6 gap-y-1 py-6 transition-colors duration-300 hover:text-[color:var(--ink)] sm:grid-cols-[auto_1fr_auto_auto] sm:gap-x-10 md:py-7"
+                className="group relative grid grid-cols-[auto_1fr] items-center gap-x-6 gap-y-2 py-6 transition-colors duration-300 hover:text-[color:var(--ink)] sm:grid-cols-[auto_1fr_auto_auto] sm:gap-x-10 md:py-8"
                 data-cursor="Open"
               >
-                <span className="mono transition-colors duration-300 group-hover:text-[color:var(--tally)]">{pad2(f.index)}</span>
-                <span className="flex items-center gap-4 text-[21px] text-[color:var(--ink)] transition-transform duration-300 group-hover:translate-x-1.5 md:text-[25px]">
+                <span className="mono self-center transition-colors duration-300 group-hover:text-[color:var(--tally)]">{pad2(f.index)}</span>
+                <span className="flex items-center gap-6 text-[22px] font-medium text-[color:var(--ink)] transition-transform duration-300 group-hover:translate-x-2 md:text-[28px]">
                   {f.poster && (
-                    <span className="relative inline-block h-14 w-10 shrink-0 overflow-hidden rounded-[2px] border border-[color:var(--rule-strong)] shadow-md transition-transform duration-300 group-hover:scale-105 sm:h-16 sm:w-11">
-                      <img src={f.poster} alt={f.client} className="h-full w-full object-cover" />
+                    <span className="relative inline-block h-24 w-16 shrink-0 overflow-hidden rounded-[3px] border border-[color:var(--rule-strong)] shadow-xl transition-all duration-300 group-hover:scale-105 group-hover:border-[color:var(--ink)] sm:h-28 sm:w-20 md:h-32 md:w-[86px]">
+                      <img src={f.poster} alt={f.client} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
                     </span>
                   )}
-                  {f.client}
+                  <span>{f.client}</span>
                 </span>
-                <span className="em-serif col-start-2 text-[19px] text-[color:var(--ink-soft)] sm:col-start-3 md:text-[23px]">
+                <span className="em-serif col-start-2 self-center text-[20px] text-[color:var(--ink-soft)] sm:col-start-3 md:text-[24px]">
                   {f.highlight.toLowerCase()}
                 </span>
-                <span className="mono max-sm:hidden transition-colors duration-300 group-hover:text-[color:var(--ink)]">{f.year} &#8599;</span>
+                <span className="mono max-sm:hidden self-center transition-colors duration-300 group-hover:text-[color:var(--ink)]">{f.year} &#8599;</span>
               </CutLink>
             </motion.li>
           ))}
