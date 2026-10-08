@@ -63,34 +63,10 @@ export function ColdOpen() {
 
   return (
     <section className="relative h-[100svh] min-h-[640px] overflow-hidden bg-[color:var(--stage)]">
-      {/* the film behind everything */}
+      {/* the film backdrop behind everything */}
       <div aria-hidden="true" className="absolute inset-0">
-        {bg.poster && (
-          <motion.img
-            src={bg.poster}
-            alt=""
-            initial={reduced ? false : { scale: 1.04 }}
-            animate={reduced ? {} : { scale: 1.14 }}
-            transition={{ duration: 38, ease: "linear", repeat: Infinity, repeatType: "mirror" }}
-            className="absolute inset-0 h-full w-full object-cover object-[50%_30%] opacity-45"
-          />
-        )}
-        {bg.videoUrl && (
-          <video
-            ref={videoRef}
-            muted
-            loop
-            playsInline
-            preload="none"
-            onPlaying={() => setPlaying(true)}
-            className={
-              "absolute inset-0 h-full w-full object-cover transition-opacity duration-[1400ms] " +
-              (playing ? "opacity-55" : "opacity-0")
-            }
-          />
-        )}
         <HeroBackdrop />
-        <div className="absolute inset-0 bg-gradient-to-t from-[rgba(11,11,12,0.94)] via-[rgba(11,11,12,0.45)] to-[rgba(11,11,12,0.6)]" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[rgba(11,11,12,0.95)] via-[rgba(11,11,12,0.6)] to-[rgba(11,11,12,0.7)]" />
         <HeroDust />
       </div>
 

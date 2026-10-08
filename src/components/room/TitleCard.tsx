@@ -38,16 +38,16 @@ export function TitleCard() {
         </motion.p>
 
         <motion.div {...rise} className="mt-20 grid grid-cols-1 border-t border-[color:var(--rule)] sm:grid-cols-3 md:mt-28">
-          <div className="flex items-baseline justify-between gap-4 border-b border-[color:var(--rule)] py-7 sm:block sm:border-b-0 sm:py-9 sm:pr-8">
-            <span className="display tabular flex items-start text-[clamp(56px,7vw,120px)] leading-none">
+          <div className="flex items-baseline justify-between gap-4 border-b border-[color:var(--rule)] py-7 sm:block sm:border-b-0 sm:py-9 sm:pr-6 md:pr-8">
+            <span className="display tabular flex items-start text-[clamp(40px,4.8vw,80px)] xl:text-[clamp(44px,5.2vw,96px)] leading-none tracking-tight">
               <Odometer value={5000000000} />
               <span className="odo-sep text-[color:var(--ink-mid)]">+</span>
             </span>
             <span className="mono mt-3 block">Organic views</span>
           </div>
 
-          <div className="flex items-baseline justify-between gap-4 border-b border-[color:var(--rule)] py-7 sm:block sm:border-b-0 sm:py-9 sm:pr-8">
-            <span className="display tabular flex items-start text-[clamp(56px,7vw,120px)] leading-none">
+          <div className="flex items-baseline justify-between gap-4 border-b border-[color:var(--rule)] py-7 sm:block sm:border-b-0 sm:py-9 sm:pr-6 md:pr-8">
+            <span className="display tabular flex items-start text-[clamp(40px,4.8vw,80px)] xl:text-[clamp(44px,5.2vw,96px)] leading-none tracking-tight">
               <span className="odo-sep text-[color:var(--ink-mid)]">$</span>
               <Odometer value={250000000} />
               <span className="odo-sep text-[color:var(--ink-mid)]">+</span>
@@ -55,8 +55,8 @@ export function TitleCard() {
             <span className="mono mt-3 block">Revenue generated</span>
           </div>
 
-          <div className="flex items-baseline justify-between gap-4 border-b border-[color:var(--rule)] py-7 sm:block sm:border-b-0 sm:py-9 sm:pr-8">
-            <span className="display tabular flex items-start text-[clamp(56px,7vw,120px)] leading-none">
+          <div className="flex items-baseline justify-between gap-4 border-b border-[color:var(--rule)] py-7 sm:block sm:border-b-0 sm:py-9 sm:pr-6 md:pr-8">
+            <span className="display tabular flex items-start text-[clamp(40px,4.8vw,80px)] xl:text-[clamp(44px,5.2vw,96px)] leading-none tracking-tight">
               <Odometer value={11} />
               <span className="odo-sep text-[color:var(--ink-mid)]">+</span>
             </span>

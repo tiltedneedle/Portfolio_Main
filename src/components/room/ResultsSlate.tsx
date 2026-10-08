@@ -36,10 +36,10 @@ export function ResultsSlate() {
                 data-cursor="Open"
               >
                 <span className="mono transition-colors duration-300 group-hover:text-[color:var(--tally)]">{pad2(f.index)}</span>
-                <span className="flex items-center gap-3 text-[21px] text-[color:var(--ink)] transition-transform duration-300 group-hover:translate-x-1.5 md:text-[25px]">
+                <span className="flex items-center gap-4 text-[21px] text-[color:var(--ink)] transition-transform duration-300 group-hover:translate-x-1.5 md:text-[25px]">
                   {f.poster && (
-                    <span className="relative hidden h-9 w-6 shrink-0 overflow-hidden rounded-[1px] border border-[color:var(--rule-strong)] opacity-0 shadow-lg transition-all duration-300 group-hover:opacity-100 sm:inline-block">
-                      <img src={f.poster} alt="" className="h-full w-full object-cover" />
+                    <span className="relative inline-block h-14 w-10 shrink-0 overflow-hidden rounded-[2px] border border-[color:var(--rule-strong)] shadow-md transition-transform duration-300 group-hover:scale-105 sm:h-16 sm:w-11">
+                      <img src={f.poster} alt={f.client} className="h-full w-full object-cover" />
                     </span>
                   )}
                   {f.client}
