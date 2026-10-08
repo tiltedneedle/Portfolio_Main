@@ -7,7 +7,7 @@ export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 const readouts = [
-  { value: "2B+", label: "ORGANIC VIEWS" },
+  { value: "5B+", label: "ORGANIC VIEWS" },
   { value: "$250M+", label: "REVENUE GENERATED" },
   { value: "11+", label: "FLAGSHIP CLIENTS" },
 ];

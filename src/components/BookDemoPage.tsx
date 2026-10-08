@@ -73,7 +73,7 @@ export function BookDemoPage() {
           <motion.div {...rise(0.24)} className="mt-12 grid max-w-[900px] grid-cols-1 border-t border-[color:var(--rule)] sm:grid-cols-3">
             <div className="flex items-baseline gap-4 border-b border-[color:var(--rule)] py-6 last:border-b-0 sm:block sm:border-b-0">
               <span className="display tabular flex items-start text-[clamp(36px,4.5vw,64px)] leading-none">
-                <Odometer value={2000000000} />
+                <Odometer value={5000000000} />
                 <span className="odo-sep text-[color:var(--ink-mid)]">+</span>
               </span>
               <span className="mono mt-3 block">Organic views</span>

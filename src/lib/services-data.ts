@@ -164,7 +164,7 @@ export const servicesList: Service[] = [
     },
     stats: [
       {
-        value: "2B+",
+        value: "5B+",
         label: "Organic Views",
       },
       {

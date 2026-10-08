@@ -54,7 +54,7 @@ const mono = localFont({
 });
 
 const DESCRIPTION =
-  "A short-form production studio in London and Dubai. Eight films, 2B+ views, $250M+ in revenue for the people in them.";
+  "A short-form production studio in London and Dubai. Eight films, 5B+ views, $250M+ in revenue for the people in them.";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://tiltedneedle.com"),

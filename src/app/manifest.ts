@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "Tilted Needle",
     short_name: "Tilted Needle",
     description:
-      "A short-form production studio in London and Dubai. Six films, 2B+ views, $250M+ in revenue for the people in them.",
+      "A short-form production studio in London and Dubai. Eight films, 5B+ views, $250M+ in revenue for the people in them.",
     start_url: "/",
     display: "standalone",
     background_color: "#0b0b0c",

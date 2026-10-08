@@ -15,7 +15,7 @@ export const organizationSchema = {
   logo: `${BASE_URL}/white-logo.png`,
   email: "info@tiltedneedle.com",
   description:
-    "A short-form production studio in London and Dubai. Eight films, 2B+ views, $250M+ in revenue for the people in them.",
+    "A short-form production studio in London and Dubai. Eight films, 5B+ views, $250M+ in revenue for the people in them.",
   areaServed: "Worldwide",
   address: [
     { "@type": "PostalAddress", addressLocality: "London", addressCountry: "GB" },

@@ -118,7 +118,7 @@ export function ColdOpen() {
               transition={{ duration: 1, delay: 0.7 }}
               className="mt-6 max-w-[42ch] text-[17px] leading-relaxed text-[color:var(--ink-soft)]"
             >
-              A short-form studio in London and Dubai. Eight films below, two billion views
+              A short-form studio in London and Dubai. Eight films below, five billion views
               between them, and $250M+ in revenue for the people on screen.
             </motion.p>
           </div>

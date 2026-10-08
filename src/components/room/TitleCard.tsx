@@ -40,7 +40,7 @@ export function TitleCard() {
         <motion.div {...rise} className="mt-20 grid grid-cols-1 border-t border-[color:var(--rule)] sm:grid-cols-3 md:mt-28">
           <div className="flex items-baseline justify-between gap-4 border-b border-[color:var(--rule)] py-7 sm:block sm:border-b-0 sm:py-9 sm:pr-8">
             <span className="display tabular flex items-start text-[clamp(56px,7vw,120px)] leading-none">
-              <Odometer value={2000000000} />
+              <Odometer value={5000000000} />
               <span className="odo-sep text-[color:var(--ink-mid)]">+</span>
             </span>
             <span className="mono mt-3 block">Organic views</span>
