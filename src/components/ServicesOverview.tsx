@@ -62,12 +62,18 @@ export function ServicesOverview() {
                 >
                   <div className="grid grid-cols-[auto_1fr_auto] items-baseline gap-x-6 md:gap-x-12">
                     <span className="mono pl-1">{String(i + 1).padStart(2, "0")}</span>
-                    <div>
-                      <h2 className="display text-[clamp(32px,4.5vw,72px)]">
-                        <LastWordSerif text={service.shortTitle} />
-                      </h2>
-                      <p className="mt-3 max-w-[64ch] text-[15px] text-[color:var(--ink-soft)] md:text-[17px]">{service.tagline}</p>
-                      <p className="mono mt-4 hidden md:block">{service.features.slice(0, 4).join(" / ")}</p>
+                    <div className="flex items-center gap-6">
+                      <div className="relative hidden h-20 w-32 shrink-0 overflow-hidden rounded-[2px] border border-[color:var(--rule)] bg-[color:var(--stage)] opacity-40 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105 group-hover:opacity-100 lg:block">
+                        <img src={service.imageUrl} alt="" className="h-full w-full object-cover" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-[rgba(11,11,12,0.6)] to-transparent" />
+                      </div>
+                      <div>
+                        <h2 className="display text-[clamp(32px,4.5vw,72px)]">
+                          <LastWordSerif text={service.shortTitle} />
+                        </h2>
+                        <p className="mt-3 max-w-[64ch] text-[15px] text-[color:var(--ink-soft)] md:text-[17px]">{service.tagline}</p>
+                        <p className="mono mt-4 hidden md:block">{service.features.slice(0, 4).join(" / ")}</p>
+                      </div>
                     </div>
                     <span
                       aria-hidden="true"
