@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
+import { CutLink } from "@/components/room/CutLink";
 import { films } from "@/lib/films";
 import { EASE_OUT_EXPO } from "@/lib/design-tokens";
 
@@ -77,11 +78,17 @@ export function CreditsRoll() {
               key={f.slug}
               {...rise}
               transition={{ ...rise.transition, delay: 0.04 * i }}
-              className="grid grid-cols-[auto_1fr_auto] items-baseline gap-x-6 border-t border-[color:var(--rule)] py-5"
+              className="border-t border-[color:var(--rule)]"
             >
-              <span className="mono">{f.index < 10 ? "0" + f.index : f.index}</span>
-              <span className="display text-[clamp(28px,3.2vw,48px)] font-bold">{f.client}</span>
-              <span className="mono text-right max-sm:hidden">{f.title}</span>
+              <CutLink
+                href={"/film/" + f.slug}
+                className="group grid grid-cols-[auto_1fr_auto] items-baseline gap-x-6 py-5 transition-colors duration-300 hover:text-[color:var(--ink)]"
+                data-cursor="Open"
+              >
+                <span className="mono transition-colors duration-300 group-hover:text-[color:var(--tally)]">{f.index < 10 ? "0" + f.index : f.index}</span>
+                <span className="display text-[clamp(28px,3.2vw,48px)] font-bold transition-transform duration-300 group-hover:translate-x-1.5">{f.client}</span>
+                <span className="mono text-right max-sm:hidden transition-colors duration-300 group-hover:text-[color:var(--ink)]">{f.title} &#8599;</span>
+              </CutLink>
             </motion.li>
           ))}
           <li className="border-t border-[color:var(--rule)]" />
