@@ -2,13 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
+import { Odometer } from "@/components/room/Odometer";
 import { EASE_OUT_EXPO } from "@/lib/design-tokens";
-
-const readouts = [
-  { value: "2B+", label: "Organic views" },
-  { value: "$250M+", label: "Revenue generated" },
-  { value: "11+", label: "Flagship clients" },
-];
 
 const expectations = [
   "A deep dive into your brand goals and challenges",
@@ -76,12 +71,28 @@ export function BookDemoPage() {
           </motion.p>
 
           <motion.div {...rise(0.24)} className="mt-12 grid max-w-[900px] grid-cols-1 border-t border-[color:var(--rule)] sm:grid-cols-3">
-            {readouts.map((s) => (
-              <div key={s.label} className="flex items-baseline gap-4 border-b border-[color:var(--rule)] py-6 last:border-b-0 sm:block sm:border-b-0">
-                <span className="display tabular block text-[clamp(36px,4.5vw,64px)] leading-none">{s.value}</span>
-                <span className="mono mt-3 block">{s.label}</span>
-              </div>
-            ))}
+            <div className="flex items-baseline gap-4 border-b border-[color:var(--rule)] py-6 last:border-b-0 sm:block sm:border-b-0">
+              <span className="display tabular flex items-start text-[clamp(36px,4.5vw,64px)] leading-none">
+                <Odometer value={2000000000} />
+                <span className="odo-sep text-[color:var(--ink-mid)]">+</span>
+              </span>
+              <span className="mono mt-3 block">Organic views</span>
+            </div>
+            <div className="flex items-baseline gap-4 border-b border-[color:var(--rule)] py-6 last:border-b-0 sm:block sm:border-b-0">
+              <span className="display tabular flex items-start text-[clamp(36px,4.5vw,64px)] leading-none">
+                <span className="odo-sep text-[color:var(--ink-mid)]">$</span>
+                <Odometer value={250000000} />
+                <span className="odo-sep text-[color:var(--ink-mid)]">+</span>
+              </span>
+              <span className="mono mt-3 block">Revenue generated</span>
+            </div>
+            <div className="flex items-baseline gap-4 border-b border-[color:var(--rule)] py-6 last:border-b-0 sm:block sm:border-b-0">
+              <span className="display tabular flex items-start text-[clamp(36px,4.5vw,64px)] leading-none">
+                <Odometer value={11} />
+                <span className="odo-sep text-[color:var(--ink-mid)]">+</span>
+              </span>
+              <span className="mono mt-3 block">Flagship clients</span>
+            </div>
           </motion.div>
         </div>
       </section>

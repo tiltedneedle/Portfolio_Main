@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { CutLink } from "@/components/room/CutLink";
 import { attachThrottledVideo } from "@/lib/video-slots";
-import { pad2, timecode, type Film } from "@/lib/films";
+import { pad2, timecode, films, type Film } from "@/lib/films";
 
 /**
  * A film page is a suite with one clip loaded. The slate runs across the top
@@ -65,7 +65,7 @@ export function FilmPage({ film, next }: { film: Film; next: Film }) {
       <header className="mx-auto max-w-[1600px] px-6 md:px-14">
         <div className="grid grid-cols-2 gap-x-6 gap-y-2 border-y border-[color:var(--rule-strong)] py-4 mono md:grid-cols-4">
           <p>
-            <span className="text-[color:var(--ink-faint)]">Film</span> {pad2(film.index)} / {pad2(6)}
+            <span className="text-[color:var(--ink-faint)]">Film</span> {pad2(film.index)} / {pad2(films.length)}
           </p>
           <p>
             <span className="text-[color:var(--ink-faint)]">Client</span> {film.client}
@@ -222,14 +222,21 @@ export function FilmPage({ film, next }: { film: Film; next: Film }) {
         data-cursor="Cut"
       >
         <div className="mx-auto flex max-w-[1600px] items-end justify-between gap-8 px-6 py-16 md:px-14 md:py-24">
-          <div>
-            <p className="mono">Next film {pad2(next.index)}</p>
-            <p className="display mt-4 text-[clamp(40px,7vw,120px)] transition-colors duration-300 group-hover:text-white">
-              {next.title}
-            </p>
-            <p className="mono mt-4">{next.client}</p>
+          <div className="flex items-end gap-8">
+            {next.poster && (
+              <div className="relative hidden h-24 w-16 shrink-0 overflow-hidden rounded-[2px] border border-[color:var(--rule-strong)] shadow-xl sm:block">
+                <img src={next.poster} alt="" className="h-full w-full object-cover transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105" />
+              </div>
+            )}
+            <div>
+              <p className="mono">Next film {pad2(next.index)}</p>
+              <p className="display mt-4 text-[clamp(40px,7vw,120px)] transition-colors duration-300 group-hover:text-white">
+                {next.title}
+              </p>
+              <p className="mono mt-4">{next.client}</p>
+            </div>
           </div>
-          <span aria-hidden="true" className="display text-[clamp(40px,7vw,120px)] text-[color:var(--ink-faint)] transition-colors duration-300 group-hover:text-[color:var(--ink)]">
+          <span aria-hidden="true" className="display text-[clamp(40px,7vw,120px)] text-[color:var(--ink-faint)] transition-all duration-300 group-hover:translate-x-2 group-hover:text-[color:var(--ink)]">
             &#8599;
           </span>
         </div>
