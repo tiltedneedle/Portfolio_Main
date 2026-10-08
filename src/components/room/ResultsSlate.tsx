@@ -13,7 +13,7 @@ export function ResultsSlate() {
   const reduced = useReducedMotion();
 
   return (
-    <section id="results" className="scroll-mt-16 bg-[color:var(--stage)] py-28 md:py-40">
+    <section id="results" className="scroll-mt-16 bg-[color:var(--stage)] pt-12 pb-24 md:pt-16 md:pb-36">
       <div className="mx-auto max-w-[1600px] px-6 md:px-14">
         <p className="mono">04 &mdash; Results</p>
         <h2 className="display mt-8 text-[clamp(48px,7vw,120px)] md:mt-12">

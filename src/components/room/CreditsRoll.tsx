@@ -53,7 +53,7 @@ export function CreditsRoll() {
       };
 
   return (
-    <section className="relative overflow-hidden border-y border-[color:var(--rule)] bg-black py-4">
+    <section className="relative overflow-hidden border-y border-[color:var(--rule)] bg-black py-2 md:py-3">
       <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 left-0 z-10 w-20 bg-gradient-to-r from-black to-transparent md:w-36" />
       <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 right-0 z-10 w-20 bg-gradient-to-l from-black to-transparent md:w-36" />
       <div className="flex overflow-hidden">

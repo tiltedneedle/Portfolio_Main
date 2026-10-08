@@ -20,7 +20,7 @@ export function TitleCard() {
   };
 
   return (
-    <section className="bg-[color:var(--stage-2)] py-28 md:py-40">
+    <section className="bg-[color:var(--stage-2)] pt-24 pb-10 md:pt-36 md:pb-14">
       <div className="mx-auto max-w-[1600px] px-6 md:px-14">
         <motion.p {...rise} className="mono">
           02 &mdash; The studio
@@ -70,7 +70,7 @@ export function TitleCard() {
           </div>
         </motion.div>
 
-        <motion.div {...rise} className="mt-14 border-t border-[color:var(--rule)] pt-6">
+        <motion.div {...rise} className="mt-8 border-t border-[color:var(--rule)] pt-5">
           <CutLink href="/services" className="slate-link text-[13px]" data-cursor="Cut">
             What the studio does &#8599;
           </CutLink>
