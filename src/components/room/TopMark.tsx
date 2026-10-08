@@ -30,12 +30,15 @@ export function TopMark() {
       type="button"
       onClick={() => window.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" })}
       aria-label="Back to top"
+      data-cursor="Top"
       className={
-        "slate-link fixed bottom-6 right-6 z-40 border border-[color:var(--rule-strong)] bg-[rgba(11,11,12,0.7)] px-3 py-2 backdrop-blur-md transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] md:right-14 " +
+        "group fixed bottom-6 right-6 z-40 flex items-center gap-2 rounded-[2px] border border-[color:var(--rule-strong)] bg-[rgba(11,11,12,0.85)] px-3.5 py-2 mono backdrop-blur-md transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-[color:var(--ink)] hover:text-[color:var(--ink)] md:right-14 " +
         (shown ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-3 opacity-0")
       }
     >
-      Top &#8593;
+      <span className="lamp-off transition-colors duration-300 group-hover:bg-[color:var(--tally)]" aria-hidden="true" />
+      <span>Top</span>
+      <span aria-hidden="true" className="transition-transform duration-300 group-hover:-translate-y-0.5">&#8593;</span>
     </button>
   );
 }
