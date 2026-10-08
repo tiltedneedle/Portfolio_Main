@@ -8,7 +8,7 @@ import { films, pad2, timecode, type Film } from "@/lib/films";
 import picksData from "@/lib/published-picks.json";
 
 /**
- * The sequence. Six films racked on a timeline, each 9:16, standing in the
+ * The sequence. Eight films racked on a timeline, each 9:16, standing in the
  * dark like clips in a bin. On desktop the section pins and vertical scroll
  * shuttles the strip sideways: the scroll IS the playhead, and the ruler
  * underneath reads where you are. The film under the playhead plays; hover
