@@ -111,7 +111,7 @@ export function EndSlate() {
                   </p>
                 </motion.div>
               ) : (
-                <motion.form key="form" onSubmit={onSubmit} className="grid grid-cols-1 gap-x-12 gap-y-9 md:grid-cols-2">
+                <motion.form key="form" id="contact-form" onSubmit={onSubmit} className="scroll-mt-28 grid grid-cols-1 gap-x-12 gap-y-9 md:grid-cols-2">
                   <div>
                     <label htmlFor="c-name" className={labelClass}>
                       Name

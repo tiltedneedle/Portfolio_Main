@@ -20,7 +20,13 @@ export function CutOverlay() {
     }
     if (!isCutting()) return;
     // The new scene has committed. Hold the black for one beat, then reveal.
-    window.scrollTo({ top: 0, behavior: "auto" });
+    const hash = window.location.hash.slice(1);
+    const targetEl = hash ? document.getElementById(hash) : null;
+    if (targetEl) {
+      targetEl.scrollIntoView({ behavior: "auto", block: "start" });
+    } else {
+      window.scrollTo({ top: 0, behavior: "auto" });
+    }
     const t = setTimeout(endCut, HOLD_MS);
     return () => clearTimeout(t);
   }, [pathname]);

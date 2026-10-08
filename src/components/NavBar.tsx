@@ -45,13 +45,34 @@ function RoomLink({
   onPointerEnter?: () => void;
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
+
   if (href.startsWith("/#")) {
+    const targetId = href.slice(2); // e.g. "contact" or "work"
+
+    const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+      onClick?.();
+
+      if (pathname === "/") {
+        e.preventDefault();
+        // Give time for any menu state / body overflow locks to release
+        requestAnimationFrame(() => {
+          const el = document.getElementById(targetId);
+          if (el) {
+            el.scrollIntoView({ behavior: "smooth", block: "start" });
+            window.history.pushState(null, "", `#${targetId}`);
+          }
+        });
+      }
+    };
+
     return (
-      <a href={href} className={className} onClick={onClick} onPointerEnter={onPointerEnter}>
+      <a href={href} className={className} onClick={handleClick} onPointerEnter={onPointerEnter}>
         {children}
       </a>
     );
   }
+
   return (
     <CutLink href={href} className={className} onClick={onClick} onPointerEnter={onPointerEnter}>
       {children}

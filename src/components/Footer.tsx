@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { CutLink } from "@/components/room/CutLink";
 import { WordStrip } from "@/components/editorial/WordStrip";
@@ -29,11 +30,24 @@ const link = "underline-draw w-fit text-[15px] text-[color:var(--ink-soft)] tran
 
 /** The tail leader. Credits in mono, the crawl above it, nothing floating. */
 export function Footer() {
+  const pathname = usePathname();
   const [year, setYear] = useState(BUILD_YEAR);
   useEffect(() => {
     const current = new Date().getFullYear();
     if (current !== BUILD_YEAR) setYear(current);
   }, []);
+
+  const handleHashClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (href.startsWith("/#") && pathname === "/") {
+      e.preventDefault();
+      const targetId = href.slice(2);
+      const el = document.getElementById(targetId);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+        window.history.pushState(null, "", `#${targetId}`);
+      }
+    }
+  };
 
   return (
     <footer className="border-t border-[color:var(--rule)] bg-[color:var(--stage)] text-[color:var(--ink-soft)]">
@@ -57,7 +71,12 @@ export function Footer() {
             <nav className="flex flex-col gap-3" aria-label="Footer">
               {navigate.map((n) =>
                 n.href.startsWith("/#") ? (
-                  <a key={n.href} href={n.href} className={link}>
+                  <a
+                    key={n.href}
+                    href={n.href}
+                    onClick={(e) => handleHashClick(e, n.href)}
+                    className={link}
+                  >
                     {n.label}
                   </a>
                 ) : (
