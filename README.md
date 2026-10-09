@@ -32,10 +32,10 @@ Get-NetTCPConnection -LocalPort 3400 -State Listen | ForEach-Object { Stop-Proce
 | Route | Notes |
 |---|---|
 | `/` | The reel: slate (once per device), cold open, sequence, title card, credits, results, end slate |
-| `/film/[slug]` | One film per page with real transport (play, scrub, sound) and a match cut to the next |
+| `/film/[slug]` | One film per page: the published cut (YouTube, loaded on Play) or a link to it, transport for self-hosted files, a match cut to the next, its own share card |
 | `/services` | The studio: four capabilities as an index |
 | `/services/[slug]` | Four detail pages, statically generated from `src/lib/services-data.ts` |
-| `/portfolio` | The library: a pannable, zoomable contact sheet of 108 clips |
+| `/portfolio` | The library: a pannable, zoomable contact sheet of every published vertical clip |
 | `/careers` | Crew call: perks, expandable roles, application form |
 | `/book-demo` | Calendly embed, coloured from the URL so it sits in the room |
 | `/privacy`, `/terms` | Shared `LegalPage` component |
@@ -73,8 +73,9 @@ in is a one-file change in `src/app/layout.tsx`.
 - **Slate** — the clapperboard intro. Server-rendered so nothing flashes
   beneath it; a layout effect removes it before first paint for anyone who
   has seen it (`localStorage` `tn-slate-seen`) or prefers reduced motion.
-- **ColdOpen** — the statement over a muted film, with the room's readouts
-  (running timecode, studio clocks) and three mono controls.
+- **ColdOpen** — the statement over a drifting strip of published stills
+  (HeroBackdrop), with the room's readouts (running timecode, studio
+  clocks) and two mono controls.
 - **Sequence** — six 9:16 frames on a pinned strip. Vertical scroll drives
   the horizontal shuttle; the ruler underneath shows the playhead and a
   timecode. The frame under the playhead plays, hover plays any other,
@@ -141,6 +142,36 @@ With no transport configured the route answers `{ fallback: true, to, subject }`
 and the client opens a prefilled `mailto:` link, and says "Almost there"
 rather than claiming delivery. Per-IP rate limit (5/min, in memory), 16 KB
 body cap, per-field caps, type checks, email validation, 8s upstream timeout.
+A post whose `Origin` is another site is refused (403), and both forms carry
+a hidden honeypot field (`src/lib/honeypot.ts`): a submission with it filled
+is answered `{ ok: true }` and dropped.
+
+These variables belong to the Vercel project, and the site moved to its own
+project (Portfolio_Main) on 2026-10-09: a new project starts with none, and
+until they are set every enquiry takes the `mailto:` route. Never test the
+form by sending; run a local server with them unset instead.
+
+## Site address and share cards
+
+`src/lib/site.ts` resolves the address every absolute URL is built on
+(canonical links, share cards, robots.txt, the sitemap, structured data):
+`NEXT_PUBLIC_SITE_URL`, else Vercel's production domain, else
+tiltedneedle.com. Adding tiltedneedle.com to the Vercel project moves it
+everywhere at once. Pages build their metadata with `pageMeta()`
+(`src/lib/page-meta.ts`), because a page that sets `openGraph` replaces the
+root's card instead of merging into it. Each film has its own card
+(`app/(site)/film/[slug]/opengraph-image.tsx`, shared parts in `src/lib/og.tsx`).
+
+## Images and video
+
+Remote stills go through `next/image`, sized to where they are drawn.
+`images.remotePatterns` in `next.config.ts` admits only the exact URL shapes
+the data uses (no stray paths or query strings), and `minimumCacheTTL` is a
+month: every distinct image, width and format counts against Vercel's
+monthly transformation allowance (5,000 on Hobby, then new images fail with
+402 until the cycle ends). Background loops use `room/AmbientVideo`, which
+loads a small rendition only when its section is near, and nothing at all
+for reduced motion, data saver, or (where a section says so) phones.
 
 ## Verifying
 

@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { CutLink } from "@/components/room/CutLink";
 import { WordStrip } from "@/components/editorial/WordStrip";
+import { scrollBehavior } from "@/lib/utils";
 
 // Frozen at build time; the effect corrects it if the visitor's year differs.
 const BUILD_YEAR = new Date().getFullYear();
@@ -43,7 +44,7 @@ export function Footer() {
       const targetId = href.slice(2);
       const el = document.getElementById(targetId);
       if (el) {
-        el.scrollIntoView({ behavior: "smooth", block: "start" });
+        el.scrollIntoView({ behavior: scrollBehavior(), block: "start" });
         window.history.pushState(null, "", `#${targetId}`);
       }
     }

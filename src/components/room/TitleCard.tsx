@@ -3,6 +3,7 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { Odometer } from "@/components/room/Odometer";
 import { CutLink } from "@/components/room/CutLink";
+import { AmbientVideo } from "@/components/room/AmbientVideo";
 import { EASE_OUT_EXPO } from "@/lib/design-tokens";
 
 /**
@@ -21,17 +22,14 @@ export function TitleCard() {
 
   return (
     <section className="relative overflow-hidden bg-[color:var(--stage-2)] pt-24 pb-10 md:pt-36 md:pb-14">
-      {/* Background cinematic video layer */}
+      {/* Background cinematic video layer (Pexels stock). At 25% under this
+          gradient only a few percent of it shows, so the 640px rendition
+          (0.6 MB) reads the same as the 4K one did (14 MB), and phones are
+          spared it entirely. */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-        <video
-          src="https://videos.pexels.com/video-files/5752729/5752729-uhd_2560_1440_30fps.mp4"
-          muted
-          loop
-          playsInline
-          autoPlay={!reduced}
-          preload="metadata"
+        <AmbientVideo
+          src="https://videos.pexels.com/video-files/5752729/5752729-sd_640_360_30fps.mp4"
           className="h-full w-full object-cover opacity-25"
-          aria-hidden="true"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-[color:var(--stage-2)] via-[rgba(20,20,22,0.88)] to-[color:var(--stage-2)]" />
       </div>

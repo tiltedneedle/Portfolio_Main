@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import { CutLink } from "@/components/room/CutLink";
 import { films, pad2 } from "@/lib/films";
@@ -39,7 +40,17 @@ export function ResultsSlate() {
                 <span className="flex items-center gap-4 text-[21px] font-medium text-[color:var(--ink)] transition-transform duration-300 group-hover:translate-x-1.5 md:text-[25px]">
                   {f.poster && (
                     <span className="relative inline-block h-16 w-11 shrink-0 overflow-hidden rounded-[2px] border border-[color:var(--rule-strong)] shadow-md transition-all duration-300 group-hover:scale-105 group-hover:border-[color:var(--ink)] sm:h-18 sm:w-12 md:h-20 md:w-[54px]">
-                      <img src={f.poster} alt={f.client} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                      {/* The film's published still at thumbnail size (64px,
+                          128px on dense screens) instead of the full 9:16
+                          original. No alt: the client's name is the next
+                          word, and repeating it made the link read it twice. */}
+                      <Image
+                        src={f.poster}
+                        alt=""
+                        width={54}
+                        height={80}
+                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
                     </span>
                   )}
                   <span>{f.client}</span>

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { FilmPage } from "@/components/room/FilmPage";
 import { filmBySlug, films, nextFilm } from "@/lib/films";
+import { pageMeta } from "@/lib/page-meta";
 
 export function generateStaticParams() {
   return films.map((f) => ({ slug: f.slug }));
@@ -12,12 +13,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const film = filmBySlug(slug);
   if (!film) return {};
   const title = film.title + " | " + film.client + " | Tilted Needle";
-  return {
-    title,
-    description: film.summary,
-    alternates: { canonical: "/film/" + film.slug },
-    openGraph: { title, description: film.summary, type: "video.other" },
-  };
+  // The card's picture is this segment's own opengraph-image (the film's slate).
+  return pageMeta({ title, description: film.summary, path: "/film/" + film.slug, type: "video.other", homeCard: false });
 }
 
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {

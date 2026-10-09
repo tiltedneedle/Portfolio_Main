@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ServiceDetailPage } from "@/components/ServiceDetailPage";
 import { servicesList } from "@/lib/services-data";
+import { pageMeta } from "@/lib/page-meta";
 
 export function generateStaticParams() {
   return servicesList.map((service) => ({ slug: service.slug }));
@@ -15,11 +16,11 @@ export async function generateMetadata({
   const { slug } = await params;
   const service = servicesList.find((s) => s.slug === slug);
   if (!service) return {};
-  return {
+  return pageMeta({
     title: `${service.title} | Tilted Needle`,
     description: service.description,
-    alternates: { canonical: `/services/${service.slug}` },
-  };
+    path: `/services/${service.slug}`,
+  });
 }
 
 export default async function ServicePage({

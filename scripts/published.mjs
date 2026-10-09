@@ -81,6 +81,27 @@ for (const i of items) {
     });
   }
 }
+// Drop entries whose still no longer answers. A Short that was deleted or
+// made private keeps its row in the ops database, but YouTube stops serving
+// its still (404) and refuses to embed it, so on the board it was an empty
+// tile that opened a dead player (two of them, found 2026-10-09).
+const alive = new Map();
+const queue = [...new Set(out.map((p) => p.thumb))];
+await Promise.all(
+  Array.from({ length: 8 }, async () => {
+    for (let u = queue.shift(); u; u = queue.shift()) {
+      try {
+        alive.set(u, (await fetch(u, { method: "HEAD", signal: AbortSignal.timeout(15000) })).ok);
+      } catch {
+        alive.set(u, true); // a network hiccup is not proof it is gone
+      }
+    }
+  })
+);
+const gone = out.filter((p) => !alive.get(p.thumb));
+for (const p of gone) console.log("dropped, still gone:", p.client, "|", p.title.slice(0, 50), "|", p.url);
+out.splice(0, out.length, ...out.filter((p) => alive.get(p.thumb)));
+
 out.sort((a, b) => (b.posted || "").localeCompare(a.posted || ""));
 writeFileSync(resolve(site, "published.json"), JSON.stringify(out, null, 1) + "\n");
 
@@ -89,7 +110,16 @@ const pick = (client) => {
   if (client === "EuroEyes") mine = mine.filter((p) => !/augenlasern|deutschland|_de\b/i.test(p.handle) && !german.test(p.title + " " + p.subject));
   return mine.find((p) => p.platform === "youtube_shorts") || mine[0] || null;
 };
-const picks = {};
+// Start from the picks already in the file: five of them (Noor Charchafchi,
+// Alexis Gauthier, Rastah, Ameerh Naran, Youmi Khoury) were set by hand for
+// the case-study films and are not computed here, and writing a fresh object
+// would silently take those films' published cuts away.
+let picks = {};
+try {
+  picks = JSON.parse(readFileSync(resolve(site, "published-picks.json"), "utf8"));
+} catch {
+  picks = {};
+}
 for (const c of ["The Jet Business", "EuroEyes", "Frankie Mardell", "Tilted Needle"]) picks[c] = pick(c);
 const tn = out.filter((p) => p.client === "Tilted Needle" && p.platform === "youtube_shorts");
 picks.__reel = tn.find((p) => /week in the life/i.test(p.title)) || tn[0] || null;

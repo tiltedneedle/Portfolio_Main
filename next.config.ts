@@ -22,13 +22,32 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
   images: {
+    // Each pattern is held to the shapes the site actually uses, with the
+    // query string fixed. Every distinct URL, width and format the optimizer
+    // is asked for counts against the plan's monthly allowance of image
+    // transformations (5,000 on Hobby, after which new images fail with 402
+    // for the rest of the cycle), so an open pattern let anyone spend it on
+    // any photo on these hosts, or on one photo with endless query strings.
     remotePatterns: [
-      { protocol: "https", hostname: "images.unsplash.com" },
+      // the service pages' four photos
+      { protocol: "https", hostname: "images.unsplash.com", pathname: "/photo-*", search: "?w=800&h=600&fit=crop" },
       // stills for the published work: YouTube's, and the studio's own cache
-      { protocol: "https", hostname: "i.ytimg.com" },
-      { protocol: "https", hostname: "tkmvuxjnfzbdpditvdbo.supabase.co" },
+      { protocol: "https", hostname: "i.ytimg.com", pathname: "/vi/*/oardefault.jpg", search: "" },
+      { protocol: "https", hostname: "i.ytimg.com", pathname: "/vi/*/mqdefault.jpg", search: "" },
+      // what scripts/published.mjs falls back to for long-form videos
+      { protocol: "https", hostname: "i.ytimg.com", pathname: "/vi/*/maxresdefault.jpg", search: "" },
+      {
+        protocol: "https",
+        hostname: "tkmvuxjnfzbdpditvdbo.supabase.co",
+        pathname: "/storage/v1/object/public/post-thumbnails/*",
+        search: "",
+      },
     ],
     formats: ["image/avif", "image/webp"],
+    // A month, not the default four hours. Each expiry is a fresh
+    // transformation on Vercel (and a fresh fetch from the source), and these
+    // stills never change in place: a new still is a new URL.
+    minimumCacheTTL: 2678400,
   },
   async headers() {
     return [

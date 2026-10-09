@@ -7,6 +7,8 @@ export type FormPayload = {
   role?: string;
   experience?: string;
   link?: string;
+  /** The hidden field's value (lib/honeypot). Empty for every real visitor. */
+  trap?: string;
 };
 
 /**

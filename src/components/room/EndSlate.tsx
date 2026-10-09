@@ -5,6 +5,8 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { CutLink } from "@/components/room/CutLink";
 import { submitForm } from "@/lib/submit-form";
 import { EASE_OUT_EXPO } from "@/lib/design-tokens";
+import { HONEYPOT } from "@/lib/honeypot";
+import { Honeypot } from "@/components/Honeypot";
 
 /**
  * The end slate. Contact, set as the last card of the reel: a claim about
@@ -36,6 +38,7 @@ export function EndSlate() {
       email: String(data.get("email") || ""),
       company: String(data.get("company") || ""),
       message: String(data.get("message") || ""),
+      trap: String(data.get(HONEYPOT) || ""),
     });
     setSubmitting(false);
     if (result.ok) {
@@ -52,23 +55,12 @@ export function EndSlate() {
   };
 
   return (
-    <section id="contact" className="relative overflow-hidden scroll-mt-16 bg-black py-24 text-[color:var(--ink)] md:py-36">
-      {/* Background cinematic video layer */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-        <video
-          src="https://assets.mixkit.co/videos/preview/mixkit-taking-photos-with-a-camera-1868-large.mp4"
-          muted
-          loop
-          playsInline
-          autoPlay={!reduced}
-          preload="metadata"
-          className="h-full w-full object-cover opacity-20"
-          aria-hidden="true"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-black via-[rgba(0,0,0,0.86)] to-black" />
-      </div>
-
-      <div className="relative z-10 mx-auto max-w-[1600px] px-6 md:px-14">
+    // The background loop added here (a mixkit clip) never played: mixkit
+    // refuses the request (403), so every visit logged an error for a layer
+    // that showed nothing. Removed rather than swapped for another stock
+    // clip; the studio's own footage is the thing to put here.
+    <section id="contact" className="relative scroll-mt-16 bg-black py-24 text-[color:var(--ink)] md:py-36">
+      <div className="mx-auto max-w-[1600px] px-6 md:px-14">
         <motion.p {...rise} className="mono">
           05 &mdash; End slate
         </motion.p>
@@ -127,6 +119,7 @@ export function EndSlate() {
                 </motion.div>
               ) : (
                 <motion.form key="form" id="contact-form" onSubmit={onSubmit} className="scroll-mt-28 grid grid-cols-1 gap-x-12 gap-y-9 md:grid-cols-2">
+                  <Honeypot />
                   <div>
                     <label htmlFor="c-name" className={labelClass}>
                       Name

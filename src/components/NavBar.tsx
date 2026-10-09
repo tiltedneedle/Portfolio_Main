@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { CutLink } from "@/components/room/CutLink";
 import { Wordmark } from "@/components/room/Wordmark";
-import { cn } from "@/lib/utils";
+import { cn, scrollBehavior } from "@/lib/utils";
 import { EASE_OUT_EXPO } from "@/lib/design-tokens";
 
 /**
@@ -59,7 +59,7 @@ function RoomLink({
         requestAnimationFrame(() => {
           const el = document.getElementById(targetId);
           if (el) {
-            el.scrollIntoView({ behavior: "smooth", block: "start" });
+            el.scrollIntoView({ behavior: scrollBehavior(), block: "start" });
             window.history.pushState(null, "", `#${targetId}`);
           }
         });
@@ -149,7 +149,11 @@ export function NavBar() {
                 )}
                 onPointerEnter={() => setHot(i)}
               >
-                <span aria-hidden="true" className="mr-1.5 text-[color:var(--ink-faint)]">
+                {/* ink-mid, not ink-faint: faint is for large or purely
+                    decorative type (globals.css), and these small numerals
+                    measured 2.6:1 against the bar; mid is 5.7:1 and still
+                    sits a step below the label. */}
+                <span aria-hidden="true" className="mr-1.5 text-[color:var(--ink-mid)]">
                   {r.n}
                 </span>
                 {r.label}

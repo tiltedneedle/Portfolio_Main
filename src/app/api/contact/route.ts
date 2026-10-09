@@ -34,6 +34,22 @@ function rateLimited(ip: string) {
   return recent.length > MAX_PER_WINDOW;
 }
 
+// A browser always sends Origin with a POST from a page. One from another
+// site's page is refused: this endpoint only serves the site's own forms.
+// Requests with no Origin at all (scripts, curl) still meet the limits below.
+function fromAnotherSite(request: Request) {
+  const origin = request.headers.get("origin");
+  if (!origin) return false;
+  const host = request.headers.get("x-forwarded-host") || request.headers.get("host");
+  try {
+    return new URL(origin).host !== host;
+  } catch {
+    return true;
+  }
+}
+
+// On Vercel the platform overwrites X-Forwarded-For with the real client
+// address, so its first entry cannot be forged from outside.
 function clientIp(request: Request) {
   const fwd = request.headers.get("x-forwarded-for");
   if (fwd) return fwd.split(",")[0].trim();
@@ -51,6 +67,8 @@ type Payload = {
   role?: string;
   experience?: string;
   link?: string;
+  /** The hidden field (lib/honeypot). Only bots fill it in. */
+  trap?: string;
 };
 
 function renderBody(payload: Payload) {
@@ -76,6 +94,10 @@ function renderBody(payload: Payload) {
 }
 
 export async function POST(request: Request) {
+  if (fromAnotherSite(request)) {
+    return NextResponse.json({ ok: false, error: "Invalid request." }, { status: 403 });
+  }
+
   if (rateLimited(clientIp(request))) {
     return NextResponse.json(
       { ok: false, error: "Too many messages. Please wait a moment and try again." },
@@ -99,6 +121,12 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, error: "Invalid request." }, { status: 400 });
   }
 
+  // A bot filled the hidden field. Answer as if it went, so it learns
+  // nothing, and send nothing.
+  if (typeof payload.trap === "string" && payload.trap.trim()) {
+    return NextResponse.json({ ok: true });
+  }
+
   // Coerce to strings and enforce per-field caps.
   for (const [field, limit] of Object.entries(MAX_FIELD) as Array<
     [keyof typeof MAX_FIELD, number]
@@ -116,7 +144,9 @@ export async function POST(request: Request) {
     }
   }
 
-  const type = typeof payload.type === "string" && payload.type in SUBJECTS ? payload.type : "contact";
+  // Own keys only: `in` also accepted inherited names such as "toString",
+  // which made the subject a function and the send fail.
+  const type = typeof payload.type === "string" && Object.hasOwn(SUBJECTS, payload.type) ? payload.type : "contact";
   const subject = SUBJECTS[type];
 
   // Applications carry their detail in role/experience/link, and the careers

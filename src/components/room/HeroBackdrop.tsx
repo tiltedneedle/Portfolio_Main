@@ -1,9 +1,7 @@
 "use client";
 
+import Image from "next/image";
 import { HeroMotion } from "@/components/room/HeroMotion";
-import { films } from "@/lib/films";
-import picksData from "@/lib/published-picks.json";
-import type { Published } from "@/lib/published";
 
 /**
  * The Hero Film Backdrop: A continuous reel of the studio's published vertical cuts
@@ -43,11 +41,20 @@ export function HeroBackdrop() {
       {DIVERSE_HERO_STILLS.map((s, i) => (
         <span key={s.id + '-' + i} className="film-frame">
           <span className="block h-[180px] w-[101px] md:h-[230px] md:w-[129px] overflow-hidden rounded-[2px] bg-[color:var(--stage-2)] border border-[color:var(--rule)]">
-            <img
+            {/* Through the optimizer at the strip's own size (256px, 384px
+                on dense screens): the originals are YouTube's full 9:16
+                stills and the studio's cached copies, 100 to 370 KB each,
+                for a frame 129px wide. Eager because the strip drifts and a
+                lazy frame clipped by the hero would pop in as it arrives;
+                low priority so they queue behind what the page needs. The
+                second row repeats the first, so it costs no extra request. */}
+            <Image
               src={s.thumb}
               alt=""
+              width={129}
+              height={230}
               loading="eager"
-              decoding="async"
+              fetchPriority="low"
               className="h-full w-full object-cover"
             />
           </span>

@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 import { LegalPage } from "@/components/LegalPage";
 import { privacyLastUpdated, privacySections } from "@/lib/legal-data";
+import { pageMeta } from "@/lib/page-meta";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMeta({
   title: "Privacy Policy | Tilted Needle",
-  alternates: { canonical: "/privacy" },
+  path: "/privacy",
   description:
     "How Tilted Needle collects, uses, and protects your personal data. Our commitment to your privacy under UK GDPR and applicable data protection law.",
-};
+});
 
 export default function Privacy() {
   return (

@@ -40,10 +40,6 @@ export function publishedFor(client?: string): Published | undefined {
   return pool.find((p) => p.platform === "youtube_shorts") ?? pool[0];
 }
 
-export function embedUrl(videoId: string) {
-  return (
-    "https://www.youtube-nocookie.com/embed/" +
-    videoId +
-    "?rel=0&modestbranding=1&playsinline=1&color=white&autoplay=1"
-  );
-}
+// Lives in lib/embed so it can be imported without this index; re-exported
+// here for the board, which needs both.
+export { embedUrl } from "@/lib/embed";

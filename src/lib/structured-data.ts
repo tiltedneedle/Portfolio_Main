@@ -12,7 +12,9 @@ export const organizationSchema = {
   "@id": `${BASE_URL}/#organization`,
   name: "Tilted Needle",
   url: BASE_URL,
-  logo: `${BASE_URL}/white-logo.png`,
+  // The dark mark: search engines show an organisation's logo on white, where
+  // the white one (the site's own, on its dark stage) would be invisible.
+  logo: `${BASE_URL}/black-logo.png`,
   email: "info@tiltedneedle.com",
   description:
     "A short-form production studio in London and Dubai. Eight films, 5B+ views, $250M+ in revenue for the people in them.",

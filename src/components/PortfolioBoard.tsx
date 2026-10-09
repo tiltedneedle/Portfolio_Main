@@ -127,21 +127,34 @@ function clampPos(x: number, y: number, scale: number, w: number, h: number) {
 // A still per clip, lazy, with the platform in the corner. The stills are
 // durable (YouTube's own, or the studio's cached copy) so a tile is never a
 // black hole; the clip itself plays in the lightbox.
-function BoardStill({ frame, className }: { frame: Frame; className?: string }) {
+//
+// Sized by the optimizer to the tile (184px wide at rest on a laptop, 128px
+// on a phone, so 256px or 384px files). The originals are full 9:16 stills
+// of 100 to 700 KB each, and the board used to pull 15 to 29 MB of them,
+// most from the ops app's own storage, whose free monthly allowance every
+// visit was spending.
+//
+// `show` is false for the intro's opening wide shot: that frame lasts 600ms
+// and the tiles it mounts are mostly unmounted when the zoom starts, so their
+// downloads were thrown away. The tiles still draw, as empty frames.
+const STILL_SIZES = "(min-width: 768px) 184px, 128px";
+
+function BoardStill({ frame, className, show }: { frame: Frame; className?: string; show: boolean }) {
   const [loaded, setLoaded] = useState(false);
   return (
     <div className={className}>
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={frame.thumb}
-        alt=""
-        loading="lazy"
-        decoding="async"
-        onLoad={() => setLoaded(true)}
-        className={"w-full h-full object-cover pointer-events-none transition-opacity duration-500 " + (loaded ? "opacity-100" : "opacity-0")}
-        style={{ background: "var(--stage-2)" }}
-        draggable={false}
-      />
+      {show && (
+        <Image
+          src={frame.thumb}
+          alt=""
+          fill
+          sizes={STILL_SIZES}
+          onLoad={() => setLoaded(true)}
+          className={"object-cover pointer-events-none transition-opacity duration-500 " + (loaded ? "opacity-100" : "opacity-0")}
+          style={{ background: "var(--stage-2)" }}
+          draggable={false}
+        />
+      )}
       <span aria-hidden="true" className="mono pointer-events-none absolute left-2 top-2 text-[9px] text-[color:var(--ink)]/80">
         {frame.platform === "youtube_shorts" ? "YT" : frame.platform === "instagram" ? "IG" : frame.platform === "tiktok" ? "TT" : "YT"}
       </span>
@@ -596,6 +609,7 @@ export function PortfolioBoard() {
                   <div className="h-full overflow-hidden rounded-[2px] border border-[color:var(--rule)] bg-[color:var(--stage-2)] p-[5px] transition-colors duration-500 group-hover:border-[color:var(--rule-strong)]">
                     <BoardStill
                       frame={frame}
+                      show={phase !== "start"}
                       className="w-full h-full relative overflow-hidden rounded-[2px] transition-transform duration-[1s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
                     />
                   </div>

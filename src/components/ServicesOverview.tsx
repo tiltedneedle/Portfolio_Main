@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import { CutLink } from "@/components/room/CutLink";
 import { servicesList } from "@/lib/services-data";
@@ -64,7 +65,10 @@ export function ServicesOverview() {
                     <span className="mono pl-1">{String(i + 1).padStart(2, "0")}</span>
                     <div className="flex items-center gap-6">
                       <div className="relative hidden h-20 w-32 shrink-0 overflow-hidden rounded-[2px] border border-[color:var(--rule)] bg-[color:var(--stage)] opacity-40 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105 group-hover:opacity-100 lg:block">
-                        <img src={service.imageUrl} alt="" className="h-full w-full object-cover" />
+                        {/* Lazy and thumbnail-sized: the box only shows from
+                            1024px up, and an eager <img> inside it fetched
+                            the 800px photo on phones that never show it. */}
+                        <Image src={service.imageUrl} alt="" width={128} height={80} className="h-full w-full object-cover" />
                         <div className="absolute inset-0 bg-gradient-to-t from-[rgba(11,11,12,0.6)] to-transparent" />
                       </div>
                       <div>

@@ -5,9 +5,16 @@ import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { submitForm } from "@/lib/submit-form";
 import { EASE_OUT_EXPO } from "@/lib/design-tokens";
 import { cn } from "@/lib/utils";
+import { HONEYPOT } from "@/lib/honeypot";
+import { Honeypot } from "@/components/Honeypot";
+import { AmbientVideo } from "@/components/room/AmbientVideo";
 
-const CAREERS_REEL =
-  "https://videos.pexels.com/video-files/3045163/3045163-hd_1920_1080_25fps.mp4";
+// Stock footage (Pexels), not the studio's own: swap in a real shoot when
+// there is one. Under the hero's gradient a quarter of it shows, so 960px
+// (4.5 MB) holds up on a laptop where the 1080p file was 14 MB; phones get
+// the 640px one (1.6 MB), and nothing at all on data saver.
+const CAREERS_REEL = "https://videos.pexels.com/video-files/3045163/3045163-sd_960_540_25fps.mp4";
+const CAREERS_REEL_NARROW = "https://videos.pexels.com/video-files/3045163/3045163-sd_640_360_25fps.mp4";
 
 const perks = [
   {
@@ -93,6 +100,7 @@ function ApplicationForm({ role, onRoleChange }: { role: string; onRoleChange: (
       experience: String(data.get("experience") || ""),
       link: String(data.get("link") || ""),
       message: String(data.get("message") || ""),
+      trap: String(data.get(HONEYPOT) || ""),
     });
     setSubmitting(false);
     if (result.ok) {
@@ -139,6 +147,7 @@ function ApplicationForm({ role, onRoleChange }: { role: string; onRoleChange: (
           transition={{ duration: 0.6, ease: EASE_OUT_EXPO }}
           className="grid grid-cols-1 gap-x-10 gap-y-7 border-t border-[color:var(--rule)] pt-12 md:grid-cols-2"
         >
+          <Honeypot />
           <div>
             <label htmlFor="app-name" className="mono mb-3 block">
               Name
@@ -291,16 +300,9 @@ export function CareersPage() {
       <section className="relative min-h-[85vh] flex flex-col justify-end overflow-hidden pb-16 pt-32 md:min-h-[90vh] md:pb-24 md:pt-40">
         {/* Background video layer covering entire hero */}
         <div aria-hidden="true" className="absolute inset-0 pointer-events-none">
-          <video
-            src={CAREERS_REEL}
-            muted
-            loop
-            playsInline
-            autoPlay={!reduced}
-            preload="metadata"
-            className="h-full w-full object-cover"
-            aria-label="Behind the scenes of a Tilted Needle shoot"
-          />
+          {/* No label: the layer is decoration (aria-hidden above), and the old
+              one called stock footage a Tilted Needle shoot. */}
+          <AmbientVideo src={CAREERS_REEL} narrowSrc={CAREERS_REEL_NARROW} className="h-full w-full object-cover" />
           {/* Gradients ensuring strong text contrast and cinematic stage grounding */}
           <div className="absolute inset-0 bg-gradient-to-t from-[color:var(--stage)] via-[rgba(11,11,12,0.72)] to-[rgba(11,11,12,0.78)]" />
         </div>

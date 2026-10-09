@@ -5,6 +5,7 @@ import { TopMark } from "@/components/room/TopMark";
 import { Cursor } from "@/components/room/Cursor";
 import { CutOverlay } from "@/components/room/CutOverlay";
 import { organizationSchema, websiteSchema } from "@/lib/structured-data";
+import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 
 // Four faces, all vendored as woff2 so the build needs no network, all SIL OFL.
@@ -57,7 +58,12 @@ const DESCRIPTION =
   "A short-form production studio in London and Dubai. Eight films, 5B+ views, $250M+ in revenue for the people in them.";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://tiltedneedle.com"),
+  // The same address robots.txt, the sitemap and the structured data use.
+  // Hardcoding tiltedneedle.com sent every canonical link and share card to
+  // the old Squarespace site while the domain still points there, so link
+  // previews had no image. On Vercel this follows the project's production
+  // domain by itself: once tiltedneedle.com is added to the project, it moves.
+  metadataBase: new URL(SITE_URL),
   title: "Tilted Needle | Cut for the scroll",
   description: DESCRIPTION,
   authors: [{ name: "Tilted Needle" }],
@@ -75,7 +81,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Tilted Needle | Cut for the scroll",
     description: DESCRIPTION,
-    url: "https://tiltedneedle.com",
+    url: SITE_URL,
     siteName: "Tilted Needle",
     locale: "en_GB",
     type: "website",
@@ -86,8 +92,11 @@ export const metadata: Metadata = {
     title: "Tilted Needle | Cut for the scroll",
     description: DESCRIPTION,
   },
+  // This list replaces the icon file conventions rather than adding to them,
+  // so app/apple-icon.png has to be named here or it is never linked.
   icons: {
     icon: [{ url: "/favicon.ico", sizes: "256x256", type: "image/x-icon" }],
+    apple: [{ url: "/apple-icon.png", sizes: "180x180", type: "image/png" }],
   },
 };
 

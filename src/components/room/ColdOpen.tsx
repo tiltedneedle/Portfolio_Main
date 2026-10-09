@@ -1,11 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { EmbedModal } from "@/components/room/EmbedModal";
 import { RunningTimecode, StudioClocks } from "@/components/room/Readouts";
-import { attachThrottledVideo } from "@/lib/video-slots";
-import { films } from "@/lib/films";
 import picksData from "@/lib/published-picks.json";
 import type { Published } from "@/lib/published";
 import { HeroDust } from "@/components/room/HeroDust";
@@ -13,11 +11,15 @@ import { HeroBackdrop } from "@/components/room/HeroBackdrop";
 import { EASE_OUT_EXPO } from "@/lib/design-tokens";
 
 /**
- * The cold open. No slate, no title: a film is already running behind the
- * statement, dimmed to the point where the type reads. When there is no file
- * to run, the film's still stands in and drifts slowly, so the frame is never
- * empty. The statement is the studio's claim, set in the condensed face with
- * one word dropped to the serif italic. Three controls, all mono.
+ * The cold open. No slate, no title: a strip of the studio's published cuts
+ * drifts behind the statement (HeroBackdrop), dimmed to the point where the
+ * type reads. The statement is the studio's claim, set in the condensed face
+ * with one word dropped to the serif italic. Two controls, both mono.
+ *
+ * The backdrop used to be a running film with a sound toggle. When the strip
+ * replaced it (2ed6f47) the video element went but its loader, its playing
+ * and sound state and the Sound button stayed behind, wired to nothing; they
+ * are gone now. The lamp reads "Rec" while the reel is open.
  */
 
 // The reel behind "play reel": the studio's own week-in-the-life short from
@@ -41,25 +43,8 @@ function Masked({ children, delay = 0 }: { children: React.ReactNode; delay?: nu
 }
 
 export function ColdOpen() {
-  const bg = films[0];
-  const reduced = useReducedMotion();
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [playing, setPlaying] = useState(false);
-  const [sound, setSound] = useState(false);
   const [reelOpen, setReelOpen] = useState(false);
-
-  useEffect(() => {
-    const v = videoRef.current;
-    if (!v || !bg.videoUrl) return;
-    return attachThrottledVideo(v, bg.videoUrl, 4000);
-  }, [bg.videoUrl]);
-
-  useEffect(() => {
-    const v = videoRef.current;
-    if (v) v.muted = !sound;
-  }, [sound]);
-
-  const live = playing || reelOpen;
+  const live = reelOpen;
 
   return (
     <section className="relative h-[100svh] min-h-[640px] overflow-hidden bg-[color:var(--stage)]">
@@ -113,17 +98,6 @@ export function ColdOpen() {
             {reel?.videoId && (
               <button type="button" onClick={() => setReelOpen(true)} className="slate-link text-[13px]" data-cursor="Play">
                 Play reel &#9654;
-              </button>
-            )}
-            {bg.videoUrl && (
-              <button
-                type="button"
-                onClick={() => setSound((s) => !s)}
-                className="slate-link flex items-center gap-2 text-[13px]"
-                aria-pressed={sound}
-              >
-                <span className={sound ? "lamp" : "lamp-off"} aria-hidden="true" />
-                Sound {sound ? "on" : "off"}
               </button>
             )}
           </motion.div>

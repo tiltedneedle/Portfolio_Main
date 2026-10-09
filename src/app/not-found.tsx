@@ -1,5 +1,12 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { CutLink } from "@/components/room/CutLink";
+
+// Next adds noindex to a 404 by itself; the title is so the tab does not
+// claim to be the home page.
+export const metadata: Metadata = {
+  title: "Page not found | Tilted Needle",
+};
 
 export default function NotFound() {
   return (
