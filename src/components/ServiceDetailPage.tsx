@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { motion, useReducedMotion } from "framer-motion";
+import { m, useReducedMotion } from "framer-motion";
 import { CutLink } from "@/components/room/CutLink";
 import { servicesList, type Service } from "@/lib/services-data";
 import { EASE_OUT_EXPO } from "@/lib/design-tokens";
@@ -22,7 +22,7 @@ function StepRows({ steps }: { steps: Service["process"] }) {
   return (
     <div className="mt-8 md:mt-10">
       {steps.map((step, i) => (
-        <motion.div
+        <m.div
           key={step.step}
           initial={{ opacity: 0, y: reduced ? 0 : 16 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -35,7 +35,7 @@ function StepRows({ steps }: { steps: Service["process"] }) {
           <p className="col-start-2 max-w-[68ch] text-[15px] leading-relaxed text-[color:var(--ink-mid)] md:col-start-3">
             {step.description}
           </p>
-        </motion.div>
+        </m.div>
       ))}
       <div className="border-t border-[color:var(--rule)]" />
     </div>
@@ -97,7 +97,7 @@ export function ServiceDetailPage({ service }: { service: Service }) {
           <h2 className="mono">What is included</h2>
           <div className="mt-8 grid grid-cols-1 gap-x-16 md:mt-10 md:grid-cols-2">
             {service.features.map((feature, i) => (
-              <motion.p
+              <m.p
                 key={feature}
                 initial={{ opacity: 0, y: reduced ? 0 : 12 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -106,7 +106,7 @@ export function ServiceDetailPage({ service }: { service: Service }) {
                 className="border-t border-[color:var(--rule)] py-5 text-[17px] text-[color:var(--ink)] md:py-6 md:text-[20px]"
               >
                 {feature}
-              </motion.p>
+              </m.p>
             ))}
           </div>
           <div className="border-t border-[color:var(--rule)]" />
@@ -135,7 +135,7 @@ export function ServiceDetailPage({ service }: { service: Service }) {
           <h2 className="mono">Why Tilted Needle</h2>
           <div className="mt-8 grid grid-cols-1 gap-x-16 md:mt-10 md:grid-cols-2">
             {service.benefits.map((benefit, i) => (
-              <motion.div
+              <m.div
                 key={benefit.title}
                 initial={{ opacity: 0, y: reduced ? 0 : 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -145,7 +145,7 @@ export function ServiceDetailPage({ service }: { service: Service }) {
               >
                 <h3 className="text-[21px] text-[color:var(--ink)] md:text-[25px]">{benefit.title}</h3>
                 <p className="mt-3 max-w-[58ch] text-[15px] leading-relaxed text-[color:var(--ink-mid)]">{benefit.description}</p>
-              </motion.div>
+              </m.div>
             ))}
           </div>
           <div className="border-t border-[color:var(--rule)]" />
@@ -176,7 +176,7 @@ export function ServiceDetailPage({ service }: { service: Service }) {
                     </span>
                   </button>
                 </h3>
-                <motion.div
+                <m.div
                   id={"faq-panel-" + i}
                   role="region"
                   aria-labelledby={"faq-trigger-" + i}
@@ -186,7 +186,7 @@ export function ServiceDetailPage({ service }: { service: Service }) {
                   className="overflow-hidden"
                 >
                   <p className="max-w-[62ch] pb-7 text-[15px] leading-relaxed text-[color:var(--ink-mid)]">{item.answer}</p>
-                </motion.div>
+                </m.div>
               </div>
             ))}
             <div className="border-t border-[color:var(--rule)]" />

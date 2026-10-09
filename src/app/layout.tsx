@@ -4,6 +4,7 @@ import { FilmGrain } from "@/components/FilmGrain";
 import { TopMark } from "@/components/room/TopMark";
 import { Cursor } from "@/components/room/Cursor";
 import { CutOverlay } from "@/components/room/CutOverlay";
+import { MotionProvider } from "@/components/MotionProvider";
 import { organizationSchema, websiteSchema } from "@/lib/structured-data";
 import { SITE_URL } from "@/lib/site";
 import "./globals.css";
@@ -113,10 +114,12 @@ export default function RootLayout({
   return (
     // suppressHydrationWarning: the home page's inline script may set
     // data-slate on <html> before React hydrates it (see app/(site)/page.tsx).
-    <html lang="en" className={`${sans.variable} ${display.variable} ${serif.variable} ${mono.variable}`} suppressHydrationWarning>
+    // en-GB, as the share cards and structured data already say: a screen
+    // reader picks its voice and spellings from this.
+    <html lang="en-GB" className={`${sans.variable} ${display.variable} ${serif.variable} ${mono.variable}`} suppressHydrationWarning>
       <body className="antialiased">
         <FilmGrain />
-        {children}
+        <MotionProvider>{children}</MotionProvider>
         <TopMark />
         <Cursor />
         <CutOverlay />

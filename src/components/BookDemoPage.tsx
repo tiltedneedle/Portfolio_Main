@@ -63,15 +63,18 @@ export function BookDemoPage() {
             attached.
           </p>
 
+          {/* Each label sits under its figure at every width, as on the home
+              page's title card. Side by side, "Revenue generated" ran off
+              the edge of a 320px phone. */}
           <div className="enter-rise mt-12 grid max-w-[900px] grid-cols-1 border-t border-[color:var(--rule)] sm:grid-cols-3" style={{ animationDelay: "0.24s" }}>
-            <div className="flex items-baseline gap-4 border-b border-[color:var(--rule)] py-6 last:border-b-0 sm:block sm:border-b-0">
+            <div className="border-b border-[color:var(--rule)] py-6 last:border-b-0 sm:border-b-0">
               <span className="display tabular flex items-start text-[clamp(36px,4.5vw,64px)] leading-none">
                 <Odometer value={5000000000} />
                 <span className="odo-sep text-[color:var(--ink-mid)]">+</span>
               </span>
               <span className="mono mt-3 block">Organic views</span>
             </div>
-            <div className="flex items-baseline gap-4 border-b border-[color:var(--rule)] py-6 last:border-b-0 sm:block sm:border-b-0">
+            <div className="border-b border-[color:var(--rule)] py-6 last:border-b-0 sm:border-b-0">
               <span className="display tabular flex items-start text-[clamp(36px,4.5vw,64px)] leading-none">
                 <span className="odo-sep text-[color:var(--ink-mid)]">$</span>
                 <Odometer value={250000000} />
@@ -79,7 +82,7 @@ export function BookDemoPage() {
               </span>
               <span className="mono mt-3 block">Revenue generated</span>
             </div>
-            <div className="flex items-baseline gap-4 border-b border-[color:var(--rule)] py-6 last:border-b-0 sm:block sm:border-b-0">
+            <div className="border-b border-[color:var(--rule)] py-6 last:border-b-0 sm:border-b-0">
               <span className="display tabular flex items-start text-[clamp(36px,4.5vw,64px)] leading-none">
                 <Odometer value={11} />
                 <span className="odo-sep text-[color:var(--ink-mid)]">+</span>
@@ -111,7 +114,10 @@ export function BookDemoPage() {
                   )}
                 </div>
               )}
-              <div className="calendly-inline-widget" data-url={CALENDLY_URL} style={{ minWidth: "320px", height: "700px" }} />
+              {/* Calendly's own snippet sets min-width 320px; inside this padded
+                  column that pushed the scheduler 24px past a 320px screen,
+                  where the edge cut it off. Never wider than the column. */}
+              <div className="calendly-inline-widget" data-url={CALENDLY_URL} style={{ minWidth: "min(320px, 100%)", height: "700px" }} />
             </div>
 
             <div className="order-1 lg:order-2">

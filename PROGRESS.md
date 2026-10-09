@@ -60,6 +60,42 @@ Measured before/after on a phone (unthrottled, cold cache): home 18.4 MB to
   in the home page (`data-slate` on html); its own layout effect only ran
   after hydration, seconds late on a phone. Careers plays its reel on
   laptops only (on phones the 640px file became the largest paint at 5.3s).
+- Round three ("continue to find more and fix them"):
+  - The old Squarespace addresses (its sitemap: /home, /what-we-do,
+    /our-work, /new-page, /form, /positions and seven role pages) redirect
+    308 to their new homes (next.config.ts, OLD_SITE), ready for the day
+    tiltedneedle.com moves here.
+  - 320px phones: a film figure (£1.893M at 48px) and book-demo's "Revenue
+    generated" ran past the edge, where the body's sideways clip cut them;
+    Calendly's 320px min-width pushed the scheduler 24px off screen. Fixed;
+    no text or control passes the edge at 320, 360 or 375 on any page.
+    (Measure text by Range rects, not element boxes: the box fits while the
+    unbreakable word overflows it.)
+  - Keyboard: back-to-top was invisible but focusable (now `invisible` when
+    hidden); the phone menu let Tab walk into the page behind it (now
+    main/footer/back-to-top are inert while it is open) and Escape left
+    focus on the page (now back on Menu); the Menu button has a 40px target.
+    Film numbers list their label (dt) before the figure (dd).
+  - Framer Motion runs as `m.*` under LazyMotion + domAnimation
+    (components/MotionProvider; write new animated elements as `m.div`).
+    The logo strip and footer word strip are CSS marquees (compositor, pause
+    on hover, stop under reduced motion); the logo strip is a server
+    component now. Studio clocks no longer use Intl (its first call loads
+    ICU data, ~400ms at 4x CPU, on the hydration path); proven equal to Intl
+    at every quarter hour 2024-2030. The running timecode only runs on screen.
+  - Library lightbox stills through the optimizer; sitemap lastmod only on
+    the legal pages (their stated dates, not the build time); html lang
+    en-GB; Permissions-Policy browsing-topics instead of the dead
+    interest-cohort.
+  - Not changed, for the user: the privacy policy says the site uses
+    analytics cookies (it installs none) and names none of the services
+    visitors' data reaches (Calendly, YouTube on Play, Pexels for the video
+    loops, Vercel); the Calendly embed passes hide_gdpr_banner=1, hiding
+    Calendly's own consent banner. Legal calls, not code.
+  - Measuring: this machine's connection was slow (24-83 KB/s) that
+    evening, so live timings were meaningless; local builds were used. A
+    first layout of 300-500ms at 4x CPU is the browser's own start-up cost
+    here (no CSS suspect moved it).
 
 ## The concept (approved 2026-09-03, "do whatever seems right")
 

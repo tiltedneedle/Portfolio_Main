@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { motion, useReducedMotion } from "framer-motion";
+import { m, useReducedMotion } from "framer-motion";
 import { CutLink } from "@/components/room/CutLink";
 import { servicesList } from "@/lib/services-data";
 import { EASE_OUT_EXPO } from "@/lib/design-tokens";
@@ -45,7 +45,7 @@ export function ServicesOverview() {
           <p className="mono">The index</p>
           <div className="mt-8 md:mt-10">
             {servicesList.map((service, i) => (
-              <motion.div
+              <m.div
                 key={service.slug}
                 // The first service is on the first screen: CSS, so it shows
                 // with the first paint (it was the page's largest paint, at
@@ -90,7 +90,7 @@ export function ServicesOverview() {
                     </span>
                   </div>
                 </CutLink>
-              </motion.div>
+              </m.div>
             ))}
             <div className="border-t border-[color:var(--rule)]" />
           </div>

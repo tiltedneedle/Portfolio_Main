@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
-import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { m, AnimatePresence, useReducedMotion } from "framer-motion";
 import { Maximize2, Move, X, ZoomIn, ZoomOut } from "lucide-react";
 import { NavBar } from "@/components/NavBar";
 import { CutLink } from "@/components/room/CutLink";
@@ -648,7 +648,7 @@ export function PortfolioBoard() {
 
       <AnimatePresence>
         {selected && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -656,7 +656,7 @@ export function PortfolioBoard() {
             className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
             onClick={() => setSelected(null)}
           >
-            <motion.div
+            <m.div
               initial={{ opacity: 0, scale: 0.92, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.92, y: 20 }}
@@ -687,8 +687,10 @@ export function PortfolioBoard() {
                     className="absolute inset-0 h-full w-full"
                   />
                 ) : (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={selected.thumb} alt="" className="absolute inset-0 h-full w-full object-contain" />
+                  // Through the optimizer like the tiles, at the size the still
+                  // is drawn here, not the original (up to 700 KB, from the ops
+                  // app's own storage for most of these clips).
+                  <Image src={selected.thumb} alt="" fill sizes="(min-width: 768px) 360px, 75vw" className="object-contain" />
                 )}
               </div>
 
@@ -709,8 +711,8 @@ export function PortfolioBoard() {
                   </button>
                 </div>
               </div>
-            </motion.div>
-          </motion.div>
+            </m.div>
+          </m.div>
         )}
       </AnimatePresence>
     </>

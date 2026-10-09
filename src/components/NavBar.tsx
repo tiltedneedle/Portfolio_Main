@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, m, useReducedMotion } from "framer-motion";
 import { CutLink } from "@/components/room/CutLink";
 import { Wordmark } from "@/components/room/Wordmark";
 import { cn, scrollBehavior } from "@/lib/utils";
@@ -83,6 +83,7 @@ function RoomLink({
 export function NavBar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const toggleRef = useRef<HTMLButtonElement>(null);
   // Which room the pointer is over; it and everything to its left light up.
   const [hot, setHot] = useState<number | null>(null);
   const pathname = usePathname();
@@ -109,12 +110,22 @@ export function NavBar() {
   useEffect(() => {
     if (!open) return;
     document.body.style.overflow = "hidden";
+    // Everything behind the open menu goes inert: Tab stays in the header
+    // (where Close is) and the menu, and screen readers stop reading the page
+    // underneath. Before, Tab walked out of the menu into the hidden page.
+    const behind = Array.from(document.querySelectorAll<HTMLElement>("main, footer, [data-topmark]"));
+    behind.forEach((el) => el.setAttribute("inert", ""));
     const key = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
+      if (e.key === "Escape") {
+        setOpen(false);
+        // back to the button that opened it, not lost to the page
+        toggleRef.current?.focus();
+      }
     };
     window.addEventListener("keydown", key);
     return () => {
       document.body.style.overflow = "";
+      behind.forEach((el) => el.removeAttribute("inert"));
       window.removeEventListener("keydown", key);
     };
   }, [open]);
@@ -169,9 +180,12 @@ export function NavBar() {
             </CutLink>
           </div>
 
+          {/* -m-3 p-3: a 40px tap target around the 11px label, without
+              moving the label. */}
           <button
+            ref={toggleRef}
             type="button"
-            className="slate-link text-[color:var(--ink)] md:hidden"
+            className="slate-link -m-3 p-3 text-[color:var(--ink)] md:hidden"
             onClick={() => setOpen((o) => !o)}
             aria-expanded={open}
             aria-controls="room-menu"
@@ -183,7 +197,7 @@ export function NavBar() {
 
       <AnimatePresence>
         {open && (
-          <motion.div
+          <m.div
             id="room-menu"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -194,7 +208,7 @@ export function NavBar() {
             <nav className="flex h-full flex-col justify-between px-6 pb-10 pt-24" aria-label="Menu">
               <ul className="flex flex-col gap-5">
                 {rooms.map((r, i) => (
-                  <motion.li
+                  <m.li
                     key={r.href}
                     initial={reduced ? false : { opacity: 0, y: 18 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -206,7 +220,7 @@ export function NavBar() {
                       </span>
                       <span className="display text-[56px] text-[color:var(--ink)]">{r.label}</span>
                     </RoomLink>
-                  </motion.li>
+                  </m.li>
                 ))}
               </ul>
 
@@ -231,7 +245,7 @@ export function NavBar() {
                 </ul>
               </div>
             </nav>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
     </>

@@ -774,6 +774,26 @@ a:focus-visible > .wm {
   animation: enter-rise 0.8s var(--ease-out-expo) both;
 }
 
+/* Endless marquees (the client logos, the footer's word strip). In CSS they
+   run on the compositor; as Framer Motion `x` animations they ran script on
+   the main thread every frame, forever. They pause while hovered or while
+   anything inside has focus; reduced motion stops them (below). Two copies
+   of the track sit side by side, each sliding its own width. */
+@keyframes marquee {
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+.marquee-track {
+  animation: marquee var(--marquee-duration, 32s) linear infinite;
+}
+
+.marquee:hover .marquee-track,
+.marquee:focus-within .marquee-track {
+  animation-play-state: paused;
+}
+
 /* The slate (clapperboard) is server-rendered, and its own code removes it
    for returning visitors, but only once the JavaScript has run: on a slow
    phone every returning visitor sat on it for seconds. An inline script in
@@ -802,6 +822,7 @@ html[data-slate="skip"] [data-slate-root] {
   .enter-mask,
   .enter-fade,
   .enter-rise,
+  .marquee-track,
   .grain,
   .skeleton,
   .lamp,

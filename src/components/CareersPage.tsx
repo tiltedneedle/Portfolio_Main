@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { m, AnimatePresence, useReducedMotion } from "framer-motion";
 import { submitForm } from "@/lib/submit-form";
 import { EASE_OUT_EXPO } from "@/lib/design-tokens";
 import { cn } from "@/lib/utils";
@@ -112,7 +112,7 @@ function ApplicationForm({ role, onRoleChange }: { role: string; onRoleChange: (
   return (
     <AnimatePresence mode="wait">
       {sent ? (
-        <motion.div
+        <m.div
           key="success"
           role="status"
           initial={{ opacity: 0, y: reduced ? 0 : 16 }}
@@ -136,9 +136,9 @@ function ApplicationForm({ role, onRoleChange }: { role: string; onRoleChange: (
               ? "Your email app has opened with your application ready. Send it and we read every word."
               : "Thanks for applying to Tilted Needle. We read every application and will be in touch if there is a fit."}
           </p>
-        </motion.div>
+        </m.div>
       ) : (
-        <motion.form
+        <m.form
           key="form"
           onSubmit={onSubmit}
           initial={{ opacity: 0, y: reduced ? 0 : 16 }}
@@ -217,7 +217,7 @@ function ApplicationForm({ role, onRoleChange }: { role: string; onRoleChange: (
               {error}
             </p>
           </div>
-        </motion.form>
+        </m.form>
       )}
     </AnimatePresence>
   );
@@ -252,7 +252,7 @@ function RoleRow({ role, index, onApply }: { role: Role; index: number; onApply:
           </span>
         </button>
       </h3>
-      <motion.div
+      <m.div
         id={"role-panel-" + index}
         role="region"
         aria-labelledby={"role-trigger-" + index}
@@ -273,7 +273,7 @@ function RoleRow({ role, index, onApply }: { role: Role; index: number; onApply:
             </button>
           </div>
         </div>
-      </motion.div>
+      </m.div>
     </div>
   );
 }
@@ -323,7 +323,7 @@ export function CareersPage() {
           <h2 className="mono">Life here</h2>
           <div className="mt-8 grid grid-cols-1 gap-x-16 md:mt-10 md:grid-cols-2">
             {perks.map((perk, i) => (
-              <motion.div
+              <m.div
                 key={perk.title}
                 initial={{ opacity: 0, y: reduced ? 0 : 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -333,7 +333,7 @@ export function CareersPage() {
               >
                 <h3 className="text-[21px] text-[color:var(--ink)] md:text-[25px]">{perk.title}</h3>
                 <p className="mt-3 max-w-[54ch] text-[15px] leading-relaxed text-[color:var(--ink-mid)]">{perk.description}</p>
-              </motion.div>
+              </m.div>
             ))}
           </div>
           <div className="border-t border-[color:var(--rule)]" />

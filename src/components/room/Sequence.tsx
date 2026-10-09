@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { motion, useMotionValueEvent, useScroll, useTransform } from "framer-motion";
+import { m, useMotionValueEvent, useScroll, useTransform } from "framer-motion";
 import { CutLink } from "@/components/room/CutLink";
 import { attachThrottledVideo } from "@/lib/video-slots";
 import { films, pad2, timecode, type Film } from "@/lib/films";
@@ -235,7 +235,7 @@ export function Sequence() {
       {/* overflow-clip, not hidden: a hidden box still scrolls when a child is
           focused, which would offset the strip under the transform. Clip cannot. */}
       <div className="md:sticky md:top-0 md:flex md:h-[100svh] md:flex-col md:justify-center md:overflow-clip">
-        <motion.div
+        <m.div
           ref={track}
           style={mobile ? undefined : { x }}
           className="flex flex-col md:w-max md:flex-row md:items-center md:gap-6 md:px-[8vw]"
@@ -272,7 +272,7 @@ export function Sequence() {
             </CutLink>
             <p className="mono mt-4">{LIBRARY_COUNT} clips, on the board</p>
           </div>
-        </motion.div>
+        </m.div>
 
         {/* the ruler */}
         <div className="mx-[8vw] mt-8 max-md:hidden">
@@ -288,7 +288,7 @@ export function Sequence() {
                 <span className="mt-1 block">{pad2(i + 1)}</span>
               </span>
             ))}
-            <motion.span
+            <m.span
               aria-hidden="true"
               style={{ left: playhead }}
               className="absolute -top-px h-4 w-[2px] -translate-x-1/2 bg-[color:var(--tally)] shadow-[0_0_8px_var(--tally-glow)]"

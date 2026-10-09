@@ -25,15 +25,21 @@ export function TopMark() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Hidden means `invisible` as well as transparent: an opacity-0 button still
+  // took keyboard focus, so a keyboard user landed on a control nobody could
+  // see. visibility also takes it out of the accessibility tree, and with the
+  // transition it only flips after the fade. data-topmark: the phone menu
+  // makes it inert while open (NavBar).
   return (
     <button
       type="button"
+      data-topmark=""
       onClick={() => window.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" })}
       aria-label="Back to top"
       data-cursor="Top"
       className={
         "group fixed bottom-6 right-6 z-40 flex items-center gap-2 rounded-[2px] border border-[color:var(--rule-strong)] bg-[rgba(11,11,12,0.85)] px-3.5 py-2 mono backdrop-blur-md transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-[color:var(--ink)] hover:text-[color:var(--ink)] md:right-14 " +
-        (shown ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-3 opacity-0")
+        (shown ? "visible translate-y-0 opacity-100" : "pointer-events-none invisible translate-y-3 opacity-0")
       }
     >
       <span className="lamp-off transition-colors duration-300 group-hover:bg-[color:var(--tally)]" aria-hidden="true" />

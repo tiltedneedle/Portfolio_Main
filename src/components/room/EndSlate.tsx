@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, m, useReducedMotion } from "framer-motion";
 import { CutLink } from "@/components/room/CutLink";
 import { submitForm } from "@/lib/submit-form";
 import { EASE_OUT_EXPO } from "@/lib/design-tokens";
@@ -61,16 +61,16 @@ export function EndSlate() {
     // clip; the studio's own footage is the thing to put here.
     <section id="contact" className="relative scroll-mt-16 bg-black py-24 text-[color:var(--ink)] md:py-36">
       <div className="mx-auto max-w-[1600px] px-6 md:px-14">
-        <motion.p {...rise} className="mono">
+        <m.p {...rise} className="mono">
           05 &mdash; End slate
-        </motion.p>
+        </m.p>
 
-        <motion.h2 {...rise} className="display mt-8 max-w-[10ch] text-[clamp(64px,11vw,176px)] md:mt-12">
+        <m.h2 {...rise} className="display mt-8 max-w-[10ch] text-[clamp(64px,11vw,176px)] md:mt-12">
           Your film <span className="em-serif">next.</span>
-        </motion.h2>
+        </m.h2>
 
         <div className="mt-16 grid grid-cols-1 gap-x-24 gap-y-16 md:mt-24 lg:grid-cols-[minmax(0,420px)_1fr]">
-          <motion.div {...rise}>
+          <m.div {...rise}>
             <div className="border-t border-[color:var(--rule)] py-6">
               <p className={labelClass}>Email</p>
               <a href="mailto:info@tiltedneedle.com" className="underline-draw text-[21px] text-[color:var(--ink)] md:text-[25px]">
@@ -87,12 +87,12 @@ export function EndSlate() {
                 Book a 30-minute call &#8599;
               </CutLink>
             </div>
-          </motion.div>
+          </m.div>
 
-          <motion.div {...rise}>
+          <m.div {...rise}>
             <AnimatePresence mode="wait">
               {sent ? (
-                <motion.div
+                <m.div
                   key="success"
                   role="status"
                   initial={{ opacity: 0, y: reduced ? 0 : 16 }}
@@ -116,9 +116,9 @@ export function EndSlate() {
                       ? "Your email app has opened with the message ready. Send it and we reply within 48 hours."
                       : "We reply within 48 hours."}
                   </p>
-                </motion.div>
+                </m.div>
               ) : (
-                <motion.form key="form" id="contact-form" onSubmit={onSubmit} className="scroll-mt-28 grid grid-cols-1 gap-x-12 gap-y-9 md:grid-cols-2">
+                <m.form key="form" id="contact-form" onSubmit={onSubmit} className="scroll-mt-28 grid grid-cols-1 gap-x-12 gap-y-9 md:grid-cols-2">
                   <Honeypot />
                   <div>
                     <label htmlFor="c-name" className={labelClass}>
@@ -153,10 +153,10 @@ export function EndSlate() {
                       {error}
                     </p>
                   </div>
-                </motion.form>
+                </m.form>
               )}
             </AnimatePresence>
-          </motion.div>
+          </m.div>
         </div>
       </div>
     </section>

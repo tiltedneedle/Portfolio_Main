@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { motion, useReducedMotion } from "framer-motion";
+import { m, useReducedMotion } from "framer-motion";
 import { CutLink } from "@/components/room/CutLink";
 import { films, pad2 } from "@/lib/films";
 import { EASE_OUT_EXPO } from "@/lib/design-tokens";
@@ -23,7 +23,7 @@ export function ResultsSlate() {
 
         <ul className="mt-14 md:mt-20">
           {films.map((f, i) => (
-            <motion.li
+            <m.li
               key={f.slug}
               initial={{ opacity: 0, y: reduced ? 0 : 16 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -60,7 +60,7 @@ export function ResultsSlate() {
                 </span>
                 <span className="mono max-sm:hidden self-center transition-colors duration-300 group-hover:text-[color:var(--ink)]">{f.year} &#8599;</span>
               </CutLink>
-            </motion.li>
+            </m.li>
           ))}
           <li className="border-t border-[color:var(--rule)]" />
         </ul>

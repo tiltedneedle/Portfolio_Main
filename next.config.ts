@@ -10,7 +10,9 @@ const securityHeaders = [
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
   {
     key: "Permissions-Policy",
-    value: "camera=(), microphone=(), geolocation=(), interest-cohort=()",
+    // browsing-topics, not interest-cohort: FLoC was withdrawn, and Chrome
+    // logs an "unrecognized feature" error for it on every page.
+    value: "camera=(), microphone=(), geolocation=(), browsing-topics=()",
   },
   {
     key: "Strict-Transport-Security",
@@ -18,9 +20,34 @@ const securityHeaders = [
   },
 ];
 
+// The old Squarespace site's addresses (its sitemap, 2026-10-09), sent to
+// where that content lives now, so links and search results that point at
+// tiltedneedle.com keep working once the domain moves to this site. Its
+// /careers and / already match. Permanent: search engines carry the old
+// pages' standing over to the new ones.
+const OLD_SITE: Array<[string, string]> = [
+  ["/home", "/"],
+  ["/what-we-do", "/services"],
+  ["/our-work", "/portfolio"],
+  ["/new-page", "/#contact"], // "Work with us": the contact form
+  ["/form", "/careers#apply"], // "Join our team": the application form
+  ["/positions", "/careers#roles"],
+  // one page per open role on the old site; the roles are listed on /careers
+  ["/contentcreator", "/careers#roles"],
+  ["/hrmanager", "/careers#roles"],
+  ["/productionassistant", "/careers#roles"],
+  ["/sales", "/careers#roles"],
+  ["/scriptwriter", "/careers#roles"],
+  ["/videographer", "/careers#roles"],
+  ["/videographer-2", "/careers#roles"],
+];
+
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
+  async redirects() {
+    return OLD_SITE.map(([source, destination]) => ({ source, destination, permanent: true }));
+  },
   images: {
     // Each pattern is held to the shapes the site actually uses, with the
     // query string fixed. Every distinct URL, width and format the optimizer

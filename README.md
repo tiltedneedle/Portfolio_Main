@@ -162,6 +162,10 @@ everywhere at once. Pages build their metadata with `pageMeta()`
 root's card instead of merging into it. Each film has its own card
 (`app/(site)/film/[slug]/opengraph-image.tsx`, shared parts in `src/lib/og.tsx`).
 
+The old Squarespace site's addresses (from its sitemap) redirect permanently
+to their new homes: `OLD_SITE` in `next.config.ts`. Add to it if more old
+links turn up in search results after the domain moves.
+
 ## Images and video
 
 Remote stills go through `next/image`, sized to where they are drawn.
@@ -185,10 +189,22 @@ around a click to time the cut. The custom cursor and slate are absent under
 ## Motion and reduced motion
 
 The `prefers-reduced-motion` block in `globals.css` stops CSS animations
-only. Framer Motion ignores it, so every `motion.*` element guards itself
+only. Framer Motion ignores it, so every animated element guards itself
 with `useReducedMotion()`: reveals set `initial={false}` or a zero offset,
 and nothing is ever parked at `opacity: 0` waiting on an observer that a
 reduced-motion user will not trigger. Fades are allowed; movement is not.
+
+Framer Motion is used through `m.*` components under `LazyMotion` with
+`domAnimation` (`components/MotionProvider.tsx`, in the root layout). Write
+`m.div`, not `motion.div`: the full `motion.*` brings every feature into the
+page and layout-projection bookkeeping for each element, for layout and drag
+animations the site never uses. In development a stray `motion.*` throws.
+
+Endless loops (the logo strip, the footer's word strip) are CSS marquees
+(`.marquee` / `.marquee-track` in globals.css): they run on the compositor,
+pause on hover, and stop under reduced motion. Avoid `Intl` in anything that
+runs while the page hydrates: its first call loads ICU data, about 400ms on
+a slow phone (the studio clocks compute London and Dubai time by hand).
 
 Anything on a page's first screen enters in CSS instead (`.enter-rise`,
 `.enter-fade`, `.enter-mask`, delay via `style={{ animationDelay }}`): a

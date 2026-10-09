@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { m, useReducedMotion } from "framer-motion";
 import { EASE_OUT_EXPO } from "@/lib/design-tokens";
 
 // legal-data carries **bold** runs and [text](url) links inside plain strings.
@@ -110,7 +110,7 @@ export function LegalPage({ title, lastUpdated, sections }: Props) {
       <section className="pb-24 md:pb-36">
         <div className="mx-auto max-w-[900px] px-6 md:px-[60px]">
           {sections.map((section, i) => (
-            <motion.div
+            <m.div
               key={section.heading}
               {...(i === 0
                 ? { className: "enter-rise border-t border-[color:var(--rule)] py-10", style: { animationDelay: "0.15s" } }
@@ -150,7 +150,7 @@ export function LegalPage({ title, lastUpdated, sections }: Props) {
                   )}
                 </div>
               </div>
-            </motion.div>
+            </m.div>
           ))}
           <div className="border-t border-[color:var(--rule)]" />
         </div>

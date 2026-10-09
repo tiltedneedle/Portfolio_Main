@@ -249,11 +249,16 @@ export function FilmPage({ film, next }: { film: Film; next: Film }) {
 
           <div className="mt-12 border-t border-[color:var(--rule)] pt-8">
             <p className="mono">The numbers</p>
+            {/* The label (dt) comes first in the markup, as a definition list
+                requires, so a screen reader says "Views, 1B+"; the column
+                reverses it so the figure still sits on top. The figure's
+                floor is 40px: at 48 "£1.893M" was wider than its column on a
+                320px phone and the edge cut it off. */}
             <dl className="mt-6 grid grid-cols-2 gap-8">
               {film.metrics.map((m) => (
-                <div key={m.label}>
-                  <dd className="display tabular text-[clamp(48px,6vw,104px)] leading-none">{m.value}</dd>
+                <div key={m.label} className="flex flex-col-reverse">
                   <dt className="mono mt-3">{m.label}</dt>
+                  <dd className="display tabular text-[clamp(40px,6vw,104px)] leading-none">{m.value}</dd>
                 </div>
               ))}
             </dl>

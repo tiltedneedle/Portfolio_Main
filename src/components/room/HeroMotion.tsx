@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, type ReactNode } from "react";
-import { motion, useAnimationFrame, useInView, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform, useVelocity } from "framer-motion";
+import { m, useAnimationFrame, useInView, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform, useVelocity } from "framer-motion";
 
 const DRIFT = -50 / 160;
 
@@ -44,10 +44,10 @@ export function HeroMotion({ children }: { children: ReactNode }) {
   });
 
   return (
-    <motion.div className="hero-band" style={{ y, filter, opacity }}>
-      <motion.div ref={ref} className="flex w-max opacity-40" style={{ x: xPercent, skewX }}>
+    <m.div className="hero-band" style={{ y, filter, opacity }}>
+      <m.div ref={ref} className="flex w-max opacity-40" style={{ x: xPercent, skewX }}>
         {children}
-      </motion.div>
-    </motion.div>
+      </m.div>
+    </m.div>
   );
 }
