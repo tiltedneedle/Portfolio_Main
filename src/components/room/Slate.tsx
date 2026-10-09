@@ -71,8 +71,13 @@ export function Slate() {
 
   if (phase === "done") return null;
 
+  // data-slate-root: hidden by CSS from the first paint for anyone the
+  // home page's inline script marks (seen it, or reduced motion). The layout
+  // effect above runs only once the JavaScript has loaded, which on a slow
+  // phone is seconds after that paint.
   return (
     <div
+      data-slate-root=""
       className="fixed inset-0 z-[9996] bg-black text-[color:var(--ink)]"
       onClick={() => setPhase("black")}
       aria-hidden={phase === "black"}

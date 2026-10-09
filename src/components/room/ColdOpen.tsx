@@ -1,14 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
 import { EmbedModal } from "@/components/room/EmbedModal";
 import { RunningTimecode, StudioClocks } from "@/components/room/Readouts";
 import picksData from "@/lib/published-picks.json";
 import type { Published } from "@/lib/published";
 import { HeroDust } from "@/components/room/HeroDust";
 import { HeroBackdrop } from "@/components/room/HeroBackdrop";
-import { EASE_OUT_EXPO } from "@/lib/design-tokens";
 
 /**
  * The cold open. No slate, no title: a strip of the studio's published cuts
@@ -26,18 +24,15 @@ import { EASE_OUT_EXPO } from "@/lib/design-tokens";
 // the published index, until a cut showreel exists.
 const reel = (picksData as unknown as Record<string, Published | null>)["__reel"];
 
+// The statement's lines rise out of a mask. CSS (globals.css, .enter-mask),
+// not Framer Motion, so the rise starts with the first paint instead of
+// after hydration; reduced motion shows the line at rest.
 function Masked({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
-  const reduced = useReducedMotion();
   return (
     <span className="block overflow-hidden pb-[0.06em]">
-      <motion.span
-        className="block"
-        initial={reduced ? false : { y: "108%" }}
-        animate={{ y: 0 }}
-        transition={{ duration: 1.1, delay, ease: EASE_OUT_EXPO }}
-      >
+      <span className="enter-mask block" style={{ animationDelay: delay + "s" }}>
         {children}
-      </motion.span>
+      </span>
     </span>
   );
 }
@@ -75,23 +70,16 @@ export function ColdOpen() {
                 <span className="em-serif">scroll.</span>
               </Masked>
             </h1>
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1, delay: 0.7 }}
-              className="mt-6 max-w-[42ch] text-[17px] leading-relaxed text-[color:var(--ink-soft)]"
+            <p
+              className="enter-fade mt-6 max-w-[42ch] text-[17px] leading-relaxed text-[color:var(--ink-soft)]"
+              style={{ animationDelay: "0.7s" }}
             >
               A short-form studio in London and Dubai. Eight films below, five billion views
               between them, and $250M+ in revenue for the people on screen.
-            </motion.p>
+            </p>
           </div>
 
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 0.9 }}
-            className="flex flex-wrap items-center gap-x-8 gap-y-3 mono-lg"
-          >
+          <div className="enter-fade flex flex-wrap items-center gap-x-8 gap-y-3 mono-lg" style={{ animationDelay: "0.9s" }}>
             <a href="#work" className="slate-link text-[13px]" data-cursor="Cut">
               View work &darr;
             </a>
@@ -100,7 +88,7 @@ export function ColdOpen() {
                 Play reel &#9654;
               </button>
             )}
-          </motion.div>
+          </div>
         </div>
       </div>
 

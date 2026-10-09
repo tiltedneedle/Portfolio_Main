@@ -1,9 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
 import { Odometer } from "@/components/room/Odometer";
-import { EASE_OUT_EXPO } from "@/lib/design-tokens";
 
 const expectations = [
   "A deep dive into your brand goals and challenges",
@@ -29,7 +27,6 @@ const CALENDLY_URL =
 
 /** Book a demo: the call sheet. */
 export function BookDemoPage() {
-  const reduced = useReducedMotion();
   const [schedulerLoaded, setSchedulerLoaded] = useState(false);
   const [schedulerFailed, setSchedulerFailed] = useState(false);
 
@@ -49,28 +46,24 @@ export function BookDemoPage() {
     };
   }, []);
 
-  const rise = (delay: number) => ({
-    initial: { opacity: 0, y: reduced ? 0 : 24 },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.8, delay, ease: EASE_OUT_EXPO },
-  });
-
   return (
     <div className="bg-[color:var(--stage)]">
+      {/* First-screen entrances in CSS (globals.css, .enter-rise): they start
+          with the first paint instead of waiting for hydration. */}
       <section className="pb-12 pt-32 md:pb-16 md:pt-40">
         <div className="mx-auto max-w-[1600px] px-6 md:px-14">
-          <motion.p {...rise(0)} className="mono mb-8">
+          <p className="enter-rise mono mb-8">
             Book a demo <span className="text-[color:var(--ink-faint)]">/</span> Free 30-minute strategy session
-          </motion.p>
-          <motion.h1 {...rise(0.08)} className="display max-w-[12ch] text-[clamp(56px,9.5vw,150px)]">
+          </p>
+          <h1 className="enter-rise display max-w-[12ch] text-[clamp(56px,9.5vw,150px)]" style={{ animationDelay: "0.08s" }}>
             Let&apos;s plan your <span className="em-serif">next cut.</span>
-          </motion.h1>
-          <motion.p {...rise(0.16)} className="mt-10 max-w-[48ch] text-[19px] leading-relaxed text-[color:var(--ink-soft)] md:text-[21px]">
+          </h1>
+          <p className="enter-rise mt-10 max-w-[48ch] text-[19px] leading-relaxed text-[color:var(--ink-soft)] md:text-[21px]" style={{ animationDelay: "0.16s" }}>
             Book a call with the team. We map out a plan to scale your brand. No strings
             attached.
-          </motion.p>
+          </p>
 
-          <motion.div {...rise(0.24)} className="mt-12 grid max-w-[900px] grid-cols-1 border-t border-[color:var(--rule)] sm:grid-cols-3">
+          <div className="enter-rise mt-12 grid max-w-[900px] grid-cols-1 border-t border-[color:var(--rule)] sm:grid-cols-3" style={{ animationDelay: "0.24s" }}>
             <div className="flex items-baseline gap-4 border-b border-[color:var(--rule)] py-6 last:border-b-0 sm:block sm:border-b-0">
               <span className="display tabular flex items-start text-[clamp(36px,4.5vw,64px)] leading-none">
                 <Odometer value={5000000000} />
@@ -93,7 +86,7 @@ export function BookDemoPage() {
               </span>
               <span className="mono mt-3 block">Flagship clients</span>
             </div>
-          </motion.div>
+          </div>
         </div>
       </section>
 

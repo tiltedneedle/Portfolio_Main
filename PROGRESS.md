@@ -50,6 +50,16 @@ Measured before/after on a phone (unthrottled, cold cache): home 18.4 MB to
   Nav/footer hash links respect reduced motion. Dead ColdOpen video state
   removed. Apple touch icon and square manifest icons; JSON-LD logo is the
   dark mark. 404 and library titles; book-demo said 2B+ (now 5B+).
+- Round two, measured on the live site (throttled phone, largest paint):
+  the first screens waited for hydration, because their entrances were
+  Framer Motion props (home 7.9s after round one). They are CSS now
+  (`.enter-rise/.enter-fade/.enter-mask` in globals.css; no entrance at all
+  under reduced motion): home, careers, studio, service pages, book-demo,
+  legal. Below-the-fold reveals keep Framer. The slate is hidden from the
+  first paint for returning visitors and reduced motion by an inline script
+  in the home page (`data-slate` on html); its own layout effect only ran
+  after hydration, seconds late on a phone. Careers plays its reel on
+  laptops only (on phones the 640px file became the largest paint at 5.3s).
 
 ## The concept (approved 2026-09-03, "do whatever seems right")
 

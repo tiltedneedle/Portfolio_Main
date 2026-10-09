@@ -48,23 +48,19 @@ export function ServiceDetailPage({ service }: { service: Service }) {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const index = servicesList.findIndex((s) => s.slug === service.slug) + 1;
 
-  const rise = (delay: number) => ({
-    initial: { opacity: 0, y: reduced ? 0 : 24 },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.8, delay, ease: EASE_OUT_EXPO },
-  });
-
   return (
     <div className="bg-[color:var(--stage)]">
+      {/* First-screen entrances in CSS (globals.css, .enter-rise): they start
+          with the first paint instead of waiting for hydration. */}
       <section className="pb-16 pt-32 md:pb-20 md:pt-40">
         <div className="mx-auto max-w-[1600px] px-6 md:px-14">
-          <motion.p {...rise(0)} className="mono mb-8">
+          <p className="enter-rise mono mb-8">
             Service {String(index).padStart(2, "0")} <span className="text-[color:var(--ink-faint)]">/</span> {service.shortTitle}
-          </motion.p>
-          <motion.h1 {...rise(0.08)} className="display max-w-[14ch] text-[clamp(56px,9.5vw,150px)]">
+          </p>
+          <h1 className="enter-rise display max-w-[14ch] text-[clamp(56px,9.5vw,150px)]" style={{ animationDelay: "0.08s" }}>
             <LastWordSerif text={service.title} />
-          </motion.h1>
-          <motion.div {...rise(0.16)} className="mt-10 flex flex-wrap items-end justify-between gap-8">
+          </h1>
+          <div className="enter-rise mt-10 flex flex-wrap items-end justify-between gap-8" style={{ animationDelay: "0.16s" }}>
             <p className="max-w-[52ch] text-[19px] leading-relaxed text-[color:var(--ink-soft)] md:text-[21px]">{service.description}</p>
             <div className="flex shrink-0 items-center gap-8">
               <CutLink href="/book-demo" className="pill pill-solid px-7 py-3 text-[15px]">
@@ -74,12 +70,13 @@ export function ServiceDetailPage({ service }: { service: Service }) {
                 How we work &darr;
               </a>
             </div>
-          </motion.div>
+          </div>
         </div>
 
-        <motion.div {...rise(0.24)} className="mx-auto mt-14 max-w-[1600px] px-6 md:px-14">
+        <div className="enter-rise mx-auto mt-14 max-w-[1600px] px-6 md:px-14" style={{ animationDelay: "0.24s" }}>
           <div className="plate relative aspect-[21/9] w-full">
-            <Image src={service.imageUrl} alt="" fill sizes="100vw" priority className="object-cover" />
+            {/* preload: Next 16 retired `priority` for it (same <link> in the head). */}
+            <Image src={service.imageUrl} alt="" fill sizes="100vw" preload className="object-cover" />
           </div>
           <div className="mt-2 grid grid-cols-1 border-t border-[color:var(--rule)] sm:grid-cols-3">
             {service.stats.map((s) => (
@@ -92,7 +89,7 @@ export function ServiceDetailPage({ service }: { service: Service }) {
               </div>
             ))}
           </div>
-        </motion.div>
+        </div>
       </section>
 
       <section className="py-16 md:py-24">

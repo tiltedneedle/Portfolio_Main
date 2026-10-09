@@ -21,26 +21,22 @@ function LastWordSerif({ text }: { text: string }) {
 export function ServicesOverview() {
   const reduced = useReducedMotion();
 
-  const rise = (delay: number) => ({
-    initial: { opacity: 0, y: reduced ? 0 : 24 },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.8, delay, ease: EASE_OUT_EXPO },
-  });
-
   return (
     <div className="bg-[color:var(--stage)]">
+      {/* First-screen entrances in CSS (globals.css, .enter-rise): they start
+          with the first paint instead of waiting for hydration. */}
       <section className="pb-16 pt-32 md:pb-24 md:pt-40">
         <div className="mx-auto max-w-[1600px] px-6 md:px-14">
-          <motion.p {...rise(0)} className="mono mb-8">
+          <p className="enter-rise mono mb-8">
             02 &mdash; The studio
-          </motion.p>
-          <motion.h1 {...rise(0.08)} className="display max-w-[12ch] text-[clamp(56px,9.5vw,150px)]">
+          </p>
+          <h1 className="enter-rise display max-w-[12ch] text-[clamp(56px,9.5vw,150px)]" style={{ animationDelay: "0.08s" }}>
             Four capabilities, one <span className="em-serif">engine.</span>
-          </motion.h1>
-          <motion.p {...rise(0.16)} className="mt-10 max-w-[52ch] text-[19px] leading-relaxed text-[color:var(--ink-soft)] md:text-[21px]">
+          </h1>
+          <p className="enter-rise mt-10 max-w-[52ch] text-[19px] leading-relaxed text-[color:var(--ink-soft)] md:text-[21px]" style={{ animationDelay: "0.16s" }}>
             Content creation, influencer marketing, paid and performance, and app and web
             development, run as one integrated system rather than four separate vendors.
-          </motion.p>
+          </p>
         </div>
       </section>
 
@@ -51,10 +47,17 @@ export function ServicesOverview() {
             {servicesList.map((service, i) => (
               <motion.div
                 key={service.slug}
-                initial={{ opacity: 0, y: reduced ? 0 : 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-40px" }}
-                transition={{ duration: 0.6, delay: 0.05 * i, ease: EASE_OUT_EXPO }}
+                // The first service is on the first screen: CSS, so it shows
+                // with the first paint (it was the page's largest paint, at
+                // 4s on a slow phone). The rest reveal on scroll as before.
+                {...(i === 0
+                  ? { className: "enter-rise", style: { animationDelay: "0.24s" } }
+                  : {
+                      initial: { opacity: 0, y: reduced ? 0 : 20 },
+                      whileInView: { opacity: 1, y: 0 },
+                      viewport: { once: true, margin: "-40px" },
+                      transition: { duration: 0.6, delay: 0.05 * i, ease: EASE_OUT_EXPO },
+                    })}
               >
                 <CutLink
                   href={"/services/" + service.slug}

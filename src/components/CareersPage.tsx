@@ -11,10 +11,10 @@ import { AmbientVideo } from "@/components/room/AmbientVideo";
 
 // Stock footage (Pexels), not the studio's own: swap in a real shoot when
 // there is one. Under the hero's gradient a quarter of it shows, so 960px
-// (4.5 MB) holds up on a laptop where the 1080p file was 14 MB; phones get
-// the 640px one (1.6 MB), and nothing at all on data saver.
+// (4.5 MB) holds up on a laptop where the 1080p file was 14 MB. Phones get
+// none: even the 640px file (1.6 MB) became the page's largest paint at
+// 5.3s on a slow connection, for a texture the gradient mostly hides.
 const CAREERS_REEL = "https://videos.pexels.com/video-files/3045163/3045163-sd_960_540_25fps.mp4";
-const CAREERS_REEL_NARROW = "https://videos.pexels.com/video-files/3045163/3045163-sd_640_360_25fps.mp4";
 
 const perks = [
   {
@@ -289,12 +289,6 @@ export function CareersPage() {
     applyRef.current?.scrollIntoView({ behavior: reduced ? "auto" : "smooth" });
   };
 
-  const rise = (delay: number) => ({
-    initial: { opacity: 0, y: reduced ? 0 : 24 },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.8, delay, ease: EASE_OUT_EXPO },
-  });
-
   return (
     <div className="bg-[color:var(--stage)]">
       <section className="relative min-h-[85vh] flex flex-col justify-end overflow-hidden pb-16 pt-32 md:min-h-[90vh] md:pb-24 md:pt-40">
@@ -302,23 +296,25 @@ export function CareersPage() {
         <div aria-hidden="true" className="absolute inset-0 pointer-events-none">
           {/* No label: the layer is decoration (aria-hidden above), and the old
               one called stock footage a Tilted Needle shoot. */}
-          <AmbientVideo src={CAREERS_REEL} narrowSrc={CAREERS_REEL_NARROW} className="h-full w-full object-cover" />
+          <AmbientVideo src={CAREERS_REEL} className="h-full w-full object-cover" />
           {/* Gradients ensuring strong text contrast and cinematic stage grounding */}
           <div className="absolute inset-0 bg-gradient-to-t from-[color:var(--stage)] via-[rgba(11,11,12,0.72)] to-[rgba(11,11,12,0.78)]" />
         </div>
 
-        {/* Content overlaid on top of the background */}
+        {/* Content overlaid on top of the background. The entrances are CSS
+            (globals.css, .enter-rise) so they start with the first paint; as
+            Framer Motion props the headline waited for hydration. */}
         <div className="relative z-10 mx-auto w-full max-w-[1600px] px-6 md:px-14">
-          <motion.p {...rise(0)} className="mono mb-6 md:mb-8 text-[color:var(--ink-soft)]">
+          <p className="enter-rise mono mb-6 md:mb-8 text-[color:var(--ink-soft)]">
             Crew call <span className="text-[color:var(--ink-faint)]">/</span>{" "}London &middot; Dubai
-          </motion.p>
-          <motion.h1 {...rise(0.08)} className="display max-w-[12ch] text-[clamp(56px,9.5vw,150px)] text-[color:var(--ink)]">
+          </p>
+          <h1 className="enter-rise display max-w-[12ch] text-[clamp(56px,9.5vw,150px)] text-[color:var(--ink)]" style={{ animationDelay: "0.08s" }}>
             The team behind the <span className="em-serif">views.</span>
-          </motion.h1>
-          <motion.p {...rise(0.16)} className="mt-8 max-w-[52ch] text-[19px] leading-relaxed text-[color:var(--ink-soft)] md:mt-10 md:text-[21px]">
+          </h1>
+          <p className="enter-rise mt-8 max-w-[52ch] text-[19px] leading-relaxed text-[color:var(--ink-soft)] md:mt-10 md:text-[21px]" style={{ animationDelay: "0.16s" }}>
             A social-media production company working with world-class brands and creators.
             If your bar is as high as ours, we should talk.
-          </motion.p>
+          </p>
         </div>
       </section>
 

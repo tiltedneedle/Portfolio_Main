@@ -189,3 +189,10 @@ only. Framer Motion ignores it, so every `motion.*` element guards itself
 with `useReducedMotion()`: reveals set `initial={false}` or a zero offset,
 and nothing is ever parked at `opacity: 0` waiting on an observer that a
 reduced-motion user will not trigger. Fades are allowed; movement is not.
+
+Anything on a page's first screen enters in CSS instead (`.enter-rise`,
+`.enter-fade`, `.enter-mask`, delay via `style={{ animationDelay }}`): a
+Framer `initial` is server-rendered as `opacity: 0` and stays there until
+the JavaScript has loaded and hydrated, which on a slow phone left the
+headline invisible for seconds after the page had painted. The CSS
+entrances start with the first paint, and reduced motion drops them.

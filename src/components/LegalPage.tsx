@@ -93,22 +93,17 @@ export function LegalPage({ title, lastUpdated, sections }: Props) {
     <div className="bg-[var(--paper)]">
       <section className="pt-32 md:pt-40 pb-12 md:pb-16">
         <div className="mx-auto max-w-[900px] px-6 md:px-[60px]">
-          <motion.h1
-            initial={{ opacity: 0, y: reduced ? 0 : 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: EASE_OUT_EXPO }}
-            className="display text-[clamp(48px,8vw,120px)]"
-          >
+          {/* The title, the date and the first section enter in CSS
+              (globals.css, .enter-rise), from the first paint; as Framer
+              Motion props they waited for hydration, and the first section's
+              paragraph is the page's largest paint. Later sections keep their
+              reveal on scroll. */}
+          <h1 className="enter-rise display text-[clamp(48px,8vw,120px)]">
             <LastWordSerif text={title} />
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: reduced ? 0 : 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1, ease: EASE_OUT_EXPO }}
-            className="mono mt-6"
-          >
+          </h1>
+          <p className="enter-rise mono mt-6" style={{ animationDelay: "0.1s" }}>
             Last updated <span className="text-[color:var(--ink-faint)]">/</span> {lastUpdated}
-          </motion.p>
+          </p>
         </div>
       </section>
 
@@ -117,11 +112,15 @@ export function LegalPage({ title, lastUpdated, sections }: Props) {
           {sections.map((section, i) => (
             <motion.div
               key={section.heading}
-              initial={{ opacity: 0, y: reduced ? 0 : 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-40px" }}
-              transition={{ duration: 0.5, delay: Math.min(0.03 * i, 0.2), ease: EASE_OUT_EXPO }}
-              className="border-t border-[color:var(--rule)] py-10"
+              {...(i === 0
+                ? { className: "enter-rise border-t border-[color:var(--rule)] py-10", style: { animationDelay: "0.15s" } }
+                : {
+                    className: "border-t border-[color:var(--rule)] py-10",
+                    initial: { opacity: 0, y: reduced ? 0 : 16 },
+                    whileInView: { opacity: 1, y: 0 },
+                    viewport: { once: true, margin: "-40px" },
+                    transition: { duration: 0.5, delay: Math.min(0.03 * i, 0.2), ease: EASE_OUT_EXPO },
+                  })}
             >
               <div className="md:grid md:grid-cols-[auto_1fr] md:gap-x-12">
                 <span className="mono">{String(i + 1).padStart(2, "0")}</span>

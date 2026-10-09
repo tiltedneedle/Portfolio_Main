@@ -111,7 +111,9 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${sans.variable} ${display.variable} ${serif.variable} ${mono.variable}`}>
+    // suppressHydrationWarning: the home page's inline script may set
+    // data-slate on <html> before React hydrates it (see app/(site)/page.tsx).
+    <html lang="en" className={`${sans.variable} ${display.variable} ${serif.variable} ${mono.variable}`} suppressHydrationWarning>
       <body className="antialiased">
         <FilmGrain />
         {children}
