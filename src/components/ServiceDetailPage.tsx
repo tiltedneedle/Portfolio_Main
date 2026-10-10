@@ -160,6 +160,7 @@ export function ServiceDetailPage({ service }: { service: Service }) {
               <div key={item.question} className="border-t border-[color:var(--rule)]">
                 <h3>
                   <button
+                    type="button"
                     onClick={() => setOpenFaq(openFaq === i ? null : i)}
                     aria-expanded={openFaq === i}
                     aria-controls={"faq-panel-" + i}
@@ -176,17 +177,19 @@ export function ServiceDetailPage({ service }: { service: Service }) {
                     </span>
                   </button>
                 </h3>
-                <m.div
+                {/* A labelled section is a region by itself; inert while
+                    closed, so screen readers do not read a collapsed answer. */}
+                <m.section
                   id={"faq-panel-" + i}
-                  role="region"
                   aria-labelledby={"faq-trigger-" + i}
+                  inert={openFaq !== i}
                   initial={false}
                   animate={{ height: openFaq === i ? "auto" : 0, opacity: openFaq === i ? 1 : 0 }}
                   transition={{ duration: 0.3, ease: EASE_OUT_EXPO }}
                   className="overflow-hidden"
                 >
                   <p className="max-w-[62ch] pb-7 text-[15px] leading-relaxed text-[color:var(--ink-mid)]">{item.answer}</p>
-                </m.div>
+                </m.section>
               </div>
             ))}
             <div className="border-t border-[color:var(--rule)]" />

@@ -96,6 +96,32 @@ Measured before/after on a phone (unthrottled, cold cache): home 18.4 MB to
     evening, so live timings were meaningless; local builds were used. A
     first layout of 300-500ms at 4x CPU is the browser's own start-up cost
     here (no CSS suspect moved it).
+- Round four (2026-10-10, "continue to find more and fix them"):
+  - Without JavaScript (off, blocked, failed) the slate covered the home
+    page for good and Framer's reveals stayed at opacity 0: half the text
+    on nine pages. `@media (scripting: none)` in globals.css hides the
+    slate, shows the reveals at rest and opens the accordions.
+  - app/error.tsx (the 404's slate, "Try again" = `retry`, which in Next
+    16.3 re-fetches; `reset` only clears) and app/global-error.tsx (own
+    document, inline styles) replace Next's bare "Application error".
+    Tested with a throwaway page that throws, removed before commit.
+  - Careers roles and service FAQs: collapsed panels are `inert` (their
+    "Apply for this role" buttons took focus while invisible, and screen
+    readers read closed answers) and are labelled `section`s, not
+    role="region" divs.
+  - HTML validity (html-validate): the library tile put divs inside a
+    button (now block spans); nine buttons lacked type="button". Its
+    "<link> without href" on film/service pages is Next's responsive image
+    preload (imagesrcset), which the spec allows.
+  - Library lightbox: the posting date was ink-faint text (now ink-mid).
+  - Checked clean: WebKit on all pages at laptop and iPhone (only
+    Calendly's own cross-origin frame error on book-demo); axe
+    best-practice rules on every page; axe in opened states (phone menu,
+    lightbox both kinds, careers role, service FAQ, reel pop-up, film after
+    Play, contact form error).
+  - Considered and left: a Content-Security-Policy (next.config.ts keeps the
+    author's reasoning; script-src would still need 'unsafe-inline' for
+    Next's inline scripts on static pages, so it would add little).
 
 ## The concept (approved 2026-09-03, "do whatever seems right")
 

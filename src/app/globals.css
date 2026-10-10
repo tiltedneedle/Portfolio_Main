@@ -802,6 +802,29 @@ html[data-slate="skip"] [data-slate-root] {
   display: none;
 }
 
+/* ========================================================= without scripts */
+
+/* With JavaScript off, nothing would ever dismiss the slate, which then
+   covered the home page for good, and every reveal Framer Motion renders at
+   opacity 0 (style="opacity:0;transform:...") stayed invisible: half the
+   text on nine pages. Show it all, at rest. */
+@media (scripting: none) {
+  [data-slate-root] {
+    display: none !important;
+  }
+
+  [style*="opacity:0"] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  /* The careers roles and service FAQs open by script; without one, show
+     them open rather than leave their text unreachable. */
+  section[style*="height:0px"] {
+    height: auto !important;
+  }
+}
+
 /* ============================================================ reduced motion */
 
 @media (prefers-reduced-motion: reduce) {

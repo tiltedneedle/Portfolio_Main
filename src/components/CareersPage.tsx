@@ -230,6 +230,7 @@ function RoleRow({ role, index, onApply }: { role: Role; index: number; onApply:
     <div className="border-t border-[color:var(--rule)]">
       <h3>
         <button
+          type="button"
           onClick={() => setOpen(!open)}
           aria-expanded={open}
           aria-controls={"role-panel-" + index}
@@ -252,10 +253,14 @@ function RoleRow({ role, index, onApply }: { role: Role; index: number; onApply:
           </span>
         </button>
       </h3>
-      <m.div
+      {/* A labelled section is a region by itself. Inert while closed: the
+          collapsed panel is only squeezed to nothing, and its "Apply for
+          this role" button still took keyboard focus, invisibly, and screen
+          readers still read the closed text. */}
+      <m.section
         id={"role-panel-" + index}
-        role="region"
         aria-labelledby={"role-trigger-" + index}
+        inert={!open}
         initial={false}
         animate={{ height: open ? "auto" : 0, opacity: open ? 1 : 0 }}
         transition={{ duration: 0.3, ease: EASE_OUT_EXPO }}
@@ -268,12 +273,12 @@ function RoleRow({ role, index, onApply }: { role: Role; index: number; onApply:
           <div>
             <p className="max-w-[62ch] text-[15px] leading-relaxed text-[color:var(--ink-mid)]">{role.description}</p>
             <p className="mono mt-4">{role.requirements.join(" / ")}</p>
-            <button onClick={() => onApply(role.title)} className="slate-link mt-6 text-[13px] text-[color:var(--ink)]">
+            <button type="button" onClick={() => onApply(role.title)} className="slate-link mt-6 text-[13px] text-[color:var(--ink)]">
               Apply for this role &darr;
             </button>
           </div>
         </div>
-      </m.div>
+      </m.section>
     </div>
   );
 }

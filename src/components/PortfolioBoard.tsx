@@ -139,10 +139,12 @@ function clampPos(x: number, y: number, scale: number, w: number, h: number) {
 // downloads were thrown away. The tiles still draw, as empty frames.
 const STILL_SIZES = "(min-width: 768px) 184px, 128px";
 
+// Spans set to block, not divs: the still sits inside the tile's <button>,
+// which may only hold phrasing content.
 function BoardStill({ frame, className, show }: { frame: Frame; className?: string; show: boolean }) {
   const [loaded, setLoaded] = useState(false);
   return (
-    <div className={className}>
+    <span className={"block " + (className ?? "")}>
       {show && (
         <Image
           src={frame.thumb}
@@ -158,7 +160,7 @@ function BoardStill({ frame, className, show }: { frame: Frame; className?: stri
       <span aria-hidden="true" className="mono pointer-events-none absolute left-2 top-2 text-[9px] text-[color:var(--ink)]/80">
         {frame.platform === "youtube_shorts" ? "YT" : frame.platform === "instagram" ? "IG" : frame.platform === "tiktok" ? "TT" : "YT"}
       </span>
-    </div>
+    </span>
   );
 }
 
@@ -598,6 +600,7 @@ export function PortfolioBoard() {
                 style={{ left: frame.x, top: frame.y, width: frame.w, height: frame.h }}
               >
                 <button
+                  type="button"
                   onClick={(e) => {
                     e.stopPropagation();
                     setSelected(frame);
@@ -606,13 +609,13 @@ export function PortfolioBoard() {
                   data-cursor="Play"
                   className="block w-full h-full text-left rounded-[2px] focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--ink)]"
                 >
-                  <div className="h-full overflow-hidden rounded-[2px] border border-[color:var(--rule)] bg-[color:var(--stage-2)] p-[5px] transition-colors duration-500 group-hover:border-[color:var(--rule-strong)]">
+                  <span className="block h-full overflow-hidden rounded-[2px] border border-[color:var(--rule)] bg-[color:var(--stage-2)] p-[5px] transition-colors duration-500 group-hover:border-[color:var(--rule-strong)]">
                     <BoardStill
                       frame={frame}
                       show={phase !== "start"}
                       className="w-full h-full relative overflow-hidden rounded-[2px] transition-transform duration-[1s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
                     />
-                  </div>
+                  </span>
                 </button>
               </div>
             ))}
@@ -623,6 +626,7 @@ export function PortfolioBoard() {
             <div className="absolute bottom-24 right-4 md:right-6 flex flex-col gap-1.5 z-20">
               {controls.map((control) => (
                 <button
+                  type="button"
                   key={control.label}
                   onClick={control.action}
                   className="w-10 h-10 rounded-full bg-[rgba(20,20,22,0.8)] backdrop-blur-xl border border-[color:var(--rule)] flex items-center justify-center text-[color:var(--ink)] hover:bg-[color:var(--stage-3)] active:scale-95 transition-all"
@@ -670,6 +674,7 @@ export function PortfolioBoard() {
               tabIndex={-1}
             >
               <button
+                type="button"
                 onClick={() => setSelected(null)}
                 aria-label="Close video"
                 className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-black/50 backdrop-blur-sm text-[color:var(--ink)] flex items-center justify-center hover:bg-black/80 active:scale-95 transition-all"
@@ -697,7 +702,12 @@ export function PortfolioBoard() {
               <div className="p-5 md:p-8">
                 <p className="mono">
                   {selected.client} <span className="text-[color:var(--ink-faint)]">/</span> {PLATFORM_LABEL[selected.platform]}
-                  {selected.posted ? <span className="text-[color:var(--ink-faint)]"> / {selected.posted.slice(0, 7)}</span> : null}
+                  {/* the date is text, so ink-mid like the rest of the line; only the separator is faint */}
+                  {selected.posted ? (
+                    <span>
+                      <span className="text-[color:var(--ink-faint)]"> /</span> {selected.posted.slice(0, 7)}
+                    </span>
+                  ) : null}
                 </p>
                 <h2 id="board-modal-title" className="mt-2 text-[17px] leading-snug text-[color:var(--ink)] md:text-[19px]">
                   {selected.title || selected.subject}
@@ -706,7 +716,7 @@ export function PortfolioBoard() {
                   <a href={selected.url} target="_blank" rel="noopener noreferrer" className="pill pill-solid px-6 py-2.5 text-[13px] md:text-[15px]">
                     {selected.videoId ? "Open on YouTube" : "Watch on " + PLATFORM_LABEL[selected.platform]}
                   </a>
-                  <button onClick={() => setSelected(null)} className="slate-link text-[13px]">
+                  <button type="button" onClick={() => setSelected(null)} className="slate-link text-[13px]">
                     Back to the board
                   </button>
                 </div>
