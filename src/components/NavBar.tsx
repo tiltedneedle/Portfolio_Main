@@ -6,7 +6,7 @@ import { AnimatePresence, m, useReducedMotion } from "framer-motion";
 import { CutLink } from "@/components/room/CutLink";
 import { Wordmark } from "@/components/room/Wordmark";
 import { cn, scrollBehavior } from "@/lib/utils";
-import { EASE_OUT_EXPO } from "@/lib/design-tokens";
+import { EASE_OUT_EXPO, SETTLED, lifted } from "@/lib/design-tokens";
 
 /**
  * The nav is a slate: four numbered rooms in mono, the wordmark, and on a
@@ -109,12 +109,21 @@ export function NavBar() {
 
   useEffect(() => {
     if (!open) return;
-    document.body.style.overflow = "hidden";
     // Everything behind the open menu goes inert: Tab stays in the header
     // (where Close is) and the menu, and screen readers stop reading the page
     // underneath. Before, Tab walked out of the menu into the hidden page.
+    // That and the scroll lock are applied a frame after the menu has
+    // painted: each restyles or lays out the whole page, and done with the
+    // tap they held the menu's first paint (about a quarter of a second on
+    // a slow phone).
     const behind = Array.from(document.querySelectorAll<HTMLElement>("main, footer, [data-topmark]"));
-    behind.forEach((el) => el.setAttribute("inert", ""));
+    let later = 0;
+    const raf = requestAnimationFrame(() => {
+      later = window.setTimeout(() => {
+        document.body.style.overflow = "hidden";
+        behind.forEach((el) => el.setAttribute("inert", ""));
+      }, 0);
+    });
     const key = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         setOpen(false);
@@ -124,6 +133,8 @@ export function NavBar() {
     };
     window.addEventListener("keydown", key);
     return () => {
+      cancelAnimationFrame(raf);
+      window.clearTimeout(later);
       document.body.style.overflow = "";
       behind.forEach((el) => el.removeAttribute("inert"));
       window.removeEventListener("keydown", key);
@@ -220,8 +231,8 @@ export function NavBar() {
                 {rooms.map((r, i) => (
                   <m.li
                     key={r.href}
-                    initial={reduced ? false : { opacity: 0, y: 18 }}
-                    animate={{ opacity: 1, y: 0 }}
+                    initial={reduced ? false : lifted(18)}
+                    animate={SETTLED}
                     transition={{ delay: 0.05 * i, duration: 0.5, ease: EASE_OUT_EXPO }}
                   >
                     <RoomLink href={r.href} onClick={() => setOpen(false)} className="flex items-baseline gap-4">

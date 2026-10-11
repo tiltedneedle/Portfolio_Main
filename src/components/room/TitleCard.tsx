@@ -4,7 +4,7 @@ import { m, useReducedMotion } from "framer-motion";
 import { Odometer } from "@/components/room/Odometer";
 import { CutLink } from "@/components/room/CutLink";
 import { AmbientVideo } from "@/components/room/AmbientVideo";
-import { EASE_OUT_EXPO } from "@/lib/design-tokens";
+import { EASE_OUT_EXPO, SETTLED, lifted } from "@/lib/design-tokens";
 
 /**
  * The title card. The studio, said once, in the condensed face, followed by
@@ -14,8 +14,8 @@ import { EASE_OUT_EXPO } from "@/lib/design-tokens";
 export function TitleCard() {
   const reduced = useReducedMotion();
   const rise = {
-    initial: { opacity: 0, y: reduced ? 0 : 24 },
-    whileInView: { opacity: 1, y: 0 },
+    initial: lifted(24, reduced),
+    whileInView: SETTLED,
     viewport: { once: true, margin: "-80px" },
     transition: { duration: 0.9, ease: EASE_OUT_EXPO },
   };

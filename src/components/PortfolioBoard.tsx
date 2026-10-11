@@ -8,7 +8,7 @@ import { NavBar } from "@/components/NavBar";
 import { CutLink } from "@/components/room/CutLink";
 import { useFocusTrap } from "@/lib/use-focus-trap";
 import { PLATFORM_LABEL, embedUrl, published, type Published } from "@/lib/published";
-import { EASE_OUT_EXPO } from "@/lib/design-tokens";
+import { EASE_OUT_EXPO, SETTLED } from "@/lib/design-tokens";
 
 /* ------------------------------------------------------------------ layout */
 
@@ -748,9 +748,9 @@ export function PortfolioBoard() {
             onClick={() => setSelected(null)}
           >
             <m.div
-              initial={{ opacity: 0, scale: 0.92, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.92, y: 20 }}
+              initial={{ opacity: 0, transform: "translateY(20px) scale(0.92)" }}
+              animate={SETTLED}
+              exit={{ opacity: 0, transform: "translateY(20px) scale(0.92)" }}
               transition={{ duration: 0.4, ease: EASE_OUT_EXPO }}
               onClick={(e) => e.stopPropagation()}
               className="relative bg-[color:var(--stage-2)] border border-[color:var(--rule)] rounded-[2px] overflow-hidden max-w-3xl w-full max-h-[85vh] flex flex-col"

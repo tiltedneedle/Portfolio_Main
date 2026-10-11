@@ -5,7 +5,7 @@ import Image from "next/image";
 import { m, useReducedMotion } from "framer-motion";
 import { CutLink } from "@/components/room/CutLink";
 import { servicesList } from "@/lib/services-data";
-import { EASE_OUT_EXPO } from "@/lib/design-tokens";
+import { EASE_OUT_EXPO, SETTLED, lifted } from "@/lib/design-tokens";
 
 function LastWordSerif({ text }: { text: string }) {
   const words = text.split(" ");
@@ -53,8 +53,8 @@ export function ServicesOverview() {
                 {...(i === 0
                   ? { className: "enter-rise", style: { animationDelay: "0.24s" } }
                   : {
-                      initial: { opacity: 0, y: reduced ? 0 : 20 },
-                      whileInView: { opacity: 1, y: 0 },
+                      initial: lifted(20, reduced),
+                      whileInView: SETTLED,
                       viewport: { once: true, margin: "-40px" },
                       transition: { duration: 0.6, delay: 0.05 * i, ease: EASE_OUT_EXPO },
                     })}

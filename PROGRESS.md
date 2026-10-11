@@ -205,6 +205,35 @@ Measured before/after on a phone (unthrottled, cold cache): home 18.4 MB to
     (proved by a screencast during a main-thread block), but input scroll
     waits for the main thread, and idle main-thread A/B swings +-50ms/s on
     identical pages, so only interleaved runs and stall tests count.
+- Round seven (2026-10-12, "continue to find more and fix them"):
+  - A pause for the site's motion (WCAG 2.2.2, level A): the crawls, the
+    hero's drift, grain, dust and beam, the wordmark, the lamp's glow, the
+    timecode and the films' autoplay ran for good with no way to stop them
+    but hover (no use to a keyboard or a touch screen) or the OS setting.
+    MotionToggle ("Pause motion") sits in the footer on every page and on
+    the client-logo crawl; lib/still.ts keeps the choice in localStorage and
+    an inline script puts data-motion="still" on <html> before the first
+    paint. CSS holds the endless loops only (one-shot entrances run, or
+    they would hold text unseen); script-driven motion asks isStill(). The
+    switch hides under reduced motion, where nothing loops.
+  - High contrast (forced colours): the marks drawn as fills vanished (the
+    lamp, the ruler's playhead, the films' progress bars), and on a light
+    theme the wordmark's white figure vanished into the white. The marks
+    keep system colours (.tally-mark); the figure is inverted on light.
+  - Tap to next paint on a slow phone (4x CPU, interleaved medians): the
+    phone menu 264 -> 216ms and the reel pop-up 328 -> 296ms; their heavy
+    steps (page inert and scroll lock; YouTube's frame) now wait a painted
+    frame. The scroll reveals and menu items animate a whole `transform`
+    (design-tokens: lifted, SETTLED), which Framer hands to the browser:
+    before, every reveal's rise was stepped from script on the main thread
+    (seen as Web Animations: opacity only before, opacity + transform now).
+  - The book-demo page preconnects to Calendly's two hosts.
+  - The dormant self-hosted transport's progress bar glides like the
+    strip's (no film has a file today).
+  - Checked clean: no failed requests or console errors on any page, live;
+    no memory growth over six rounds of in-site navigation (nodes and
+    listeners flat, the heap's growth tailing off as the router's cache
+    fills).
 
 ## The concept (approved 2026-09-03, "do whatever seems right")
 

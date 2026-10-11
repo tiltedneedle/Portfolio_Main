@@ -4,7 +4,7 @@ import { useState } from "react";
 import { AnimatePresence, m, useReducedMotion } from "framer-motion";
 import { CutLink } from "@/components/room/CutLink";
 import { submitForm } from "@/lib/submit-form";
-import { EASE_OUT_EXPO } from "@/lib/design-tokens";
+import { EASE_OUT_EXPO, SETTLED, lifted } from "@/lib/design-tokens";
 import { HONEYPOT } from "@/lib/honeypot";
 import { Honeypot } from "@/components/Honeypot";
 
@@ -48,8 +48,8 @@ export function EndSlate() {
   };
 
   const rise = {
-    initial: { opacity: 0, y: reduced ? 0 : 24 },
-    whileInView: { opacity: 1, y: 0 },
+    initial: lifted(24, reduced),
+    whileInView: SETTLED,
     viewport: { once: true, margin: "-80px" },
     transition: { duration: 0.8, ease: EASE_OUT_EXPO },
   };
@@ -95,8 +95,8 @@ export function EndSlate() {
                 <m.div
                   key="success"
                   role="status"
-                  initial={{ opacity: 0, y: reduced ? 0 : 16 }}
-                  animate={{ opacity: 1, y: 0 }}
+                  initial={lifted(16, reduced)}
+                  animate={SETTLED}
                   transition={{ duration: 0.5, ease: EASE_OUT_EXPO }}
                   className="border-t border-[color:var(--rule)] pt-10"
                 >

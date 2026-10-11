@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { attachThrottledVideo } from "@/lib/video-slots";
+import { isStill, onStillChange } from "@/lib/still";
 
 type Props = {
   /** The clip for screens 768px and wider. */
@@ -40,21 +41,36 @@ export function AmbientVideo({ src, narrowSrc, className }: Props) {
     const chosen = window.matchMedia("(min-width: 768px)").matches ? src : narrowSrc;
     if (!chosen) return;
 
+    // Motion paused by the visitor (lib/still.ts) holds the loop, and one
+    // never started is never fetched until it is played again.
     let release: (() => void) | undefined;
+    let visible = false;
+    const update = () => {
+      if (!visible || isStill()) {
+        video.pause();
+        return;
+      }
+      if (!release) release = attachThrottledVideo(video, chosen, 4000);
+      else video.play().catch(() => {});
+    };
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (!entry?.isIntersecting) {
-          video.pause();
-          return;
-        }
-        if (!release) release = attachThrottledVideo(video, chosen, 4000);
-        else video.play().catch(() => {});
+        visible = !!entry?.isIntersecting;
+        update();
       },
       { rootMargin: "200px 0px" }
     );
     observer.observe(video);
+    // a load already under way may start playing after the pause was asked for
+    const hold = () => {
+      if (isStill()) video.pause();
+    };
+    video.addEventListener("play", hold);
+    const offStill = onStillChange(update);
     return () => {
       observer.disconnect();
+      offStill();
+      video.removeEventListener("play", hold);
       release?.();
     };
   }, [src, narrowSrc]);

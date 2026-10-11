@@ -40,10 +40,19 @@ export function FilmPage({ film, next }: { film: Film; next: Film }) {
     if (v) v.muted = !sound;
   }, [sound]);
 
+  // As on the home strip: the bar scales and glides to each report (about
+  // four a second); a loop or a scrub back snaps.
+  const shown = useRef(0);
   const onTime = () => {
     const v = videoRef.current;
     if (!v || !v.duration) return;
-    if (bar.current) bar.current.style.width = (v.currentTime / v.duration) * 100 + "%";
+    const p = Math.min(1, v.currentTime / v.duration);
+    const b = bar.current;
+    if (b) {
+      b.style.transition = p < shown.current ? "none" : "transform 0.25s linear";
+      b.style.transform = "scaleX(" + p + ")";
+    }
+    shown.current = p;
     if (tc.current) tc.current.textContent = timecode(v.currentTime);
   };
 
@@ -216,7 +225,7 @@ export function FilmPage({ film, next }: { film: Film; next: Film }) {
                 data-cursor="Scrub"
               >
                 <span className="block h-px w-full bg-[color:var(--rule-strong)]">
-                  <span ref={bar} className="block h-px w-0 bg-[color:var(--tally)]" />
+                  <span ref={bar} className="tally-mark block h-px w-full origin-left bg-[color:var(--tally)]" style={{ transform: "scaleX(0)" }} />
                 </span>
               </button>
               <div className="flex items-center justify-between mono">

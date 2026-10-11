@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { CutLink } from "@/components/room/CutLink";
 import { WordStrip } from "@/components/editorial/WordStrip";
+import { MotionToggle } from "@/components/MotionToggle";
 import { scrollBehavior } from "@/lib/utils";
 
 // Frozen at build time; the effect corrects it if the visitor's year differs.
@@ -108,7 +109,8 @@ export function Footer() {
           <p>
             &copy; {year} Tilted Needle <span className="text-[color:var(--ink-faint)]">/</span> End of reel
           </p>
-          <div className="flex gap-6">
+          <div className="flex flex-wrap items-baseline gap-x-6 gap-y-2">
+            <MotionToggle />
             <CutLink href="/privacy" className="slate-link">
               Privacy
             </CutLink>

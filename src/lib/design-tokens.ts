@@ -50,3 +50,18 @@ export const SHIFT = {
 
 /** The signature easing curve. Matches `--ease-out-expo` in globals.css. */
 export const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
+
+/**
+ * A reveal's two ends, as whole transforms. Framer hands `opacity` and a
+ * whole `transform` to the browser (Web Animations, run on the compositor)
+ * but steps an independent `y` from script on every frame; the site's
+ * reveals all moved by `y`, so every one ran on the main thread, and a tap
+ * made while they played waited behind them. `lifted(16)` is where a reveal
+ * starts (clear, 16px low), SETTLED where it ends: no transform left behind
+ * to make a containing block of the revealed box. Under reduced motion it
+ * only fades.
+ */
+export function lifted(px: number, reduced?: boolean | null) {
+  return { opacity: 0, transform: reduced ? "none" : "translateY(" + px + "px)" };
+}
+export const SETTLED = { opacity: 1, transform: "none" };

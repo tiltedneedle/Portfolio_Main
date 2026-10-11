@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import { m, AnimatePresence, useReducedMotion } from "framer-motion";
 import { submitForm } from "@/lib/submit-form";
-import { EASE_OUT_EXPO } from "@/lib/design-tokens";
+import { EASE_OUT_EXPO, SETTLED, lifted } from "@/lib/design-tokens";
 import { cn } from "@/lib/utils";
 import { HONEYPOT } from "@/lib/honeypot";
 import { Honeypot } from "@/components/Honeypot";
@@ -115,8 +115,8 @@ function ApplicationForm({ role, onRoleChange }: { role: string; onRoleChange: (
         <m.div
           key="success"
           role="status"
-          initial={{ opacity: 0, y: reduced ? 0 : 16 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={lifted(16, reduced)}
+          animate={SETTLED}
           transition={{ duration: 0.5, ease: EASE_OUT_EXPO }}
           className="border-t border-[color:var(--rule)] py-14"
         >
@@ -141,8 +141,8 @@ function ApplicationForm({ role, onRoleChange }: { role: string; onRoleChange: (
         <m.form
           key="form"
           onSubmit={onSubmit}
-          initial={{ opacity: 0, y: reduced ? 0 : 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={lifted(16, reduced)}
+          whileInView={SETTLED}
           viewport={{ once: true, margin: "-40px" }}
           transition={{ duration: 0.6, ease: EASE_OUT_EXPO }}
           className="grid grid-cols-1 gap-x-10 gap-y-7 border-t border-[color:var(--rule)] pt-12 md:grid-cols-2"
@@ -330,8 +330,8 @@ export function CareersPage() {
             {perks.map((perk, i) => (
               <m.div
                 key={perk.title}
-                initial={{ opacity: 0, y: reduced ? 0 : 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={lifted(16, reduced)}
+                whileInView={SETTLED}
                 viewport={{ once: true, margin: "-40px" }}
                 transition={{ duration: 0.5, delay: 0.04 * i, ease: EASE_OUT_EXPO }}
                 className="border-t border-[color:var(--rule)] py-8 md:py-10"

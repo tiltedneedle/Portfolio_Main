@@ -5,7 +5,7 @@ import Image from "next/image";
 import { m, useReducedMotion } from "framer-motion";
 import { CutLink } from "@/components/room/CutLink";
 import { servicesList, type Service } from "@/lib/services-data";
-import { EASE_OUT_EXPO } from "@/lib/design-tokens";
+import { EASE_OUT_EXPO, SETTLED, lifted } from "@/lib/design-tokens";
 
 function LastWordSerif({ text }: { text: string }) {
   const words = text.split(" ");
@@ -24,8 +24,8 @@ function StepRows({ steps }: { steps: Service["process"] }) {
       {steps.map((step, i) => (
         <m.div
           key={step.step}
-          initial={{ opacity: 0, y: reduced ? 0 : 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={lifted(16, reduced)}
+          whileInView={SETTLED}
           viewport={{ once: true, margin: "-40px" }}
           transition={{ duration: 0.5, delay: 0.03 * i, ease: EASE_OUT_EXPO }}
           className="grid grid-cols-[auto_1fr] items-baseline gap-x-6 gap-y-2 border-t border-[color:var(--rule)] py-6 md:grid-cols-[auto_minmax(0,420px)_1fr] md:gap-x-12 md:py-8"
@@ -99,8 +99,8 @@ export function ServiceDetailPage({ service }: { service: Service }) {
             {service.features.map((feature, i) => (
               <m.p
                 key={feature}
-                initial={{ opacity: 0, y: reduced ? 0 : 12 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={lifted(12, reduced)}
+                whileInView={SETTLED}
                 viewport={{ once: true, margin: "-40px" }}
                 transition={{ duration: 0.45, delay: 0.02 * i, ease: EASE_OUT_EXPO }}
                 className="border-t border-[color:var(--rule)] py-5 text-[17px] text-[color:var(--ink)] md:py-6 md:text-[20px]"
@@ -137,8 +137,8 @@ export function ServiceDetailPage({ service }: { service: Service }) {
             {service.benefits.map((benefit, i) => (
               <m.div
                 key={benefit.title}
-                initial={{ opacity: 0, y: reduced ? 0 : 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={lifted(16, reduced)}
+                whileInView={SETTLED}
                 viewport={{ once: true, margin: "-40px" }}
                 transition={{ duration: 0.5, delay: 0.04 * i, ease: EASE_OUT_EXPO }}
                 className="border-t border-[color:var(--rule)] py-8 md:py-10"

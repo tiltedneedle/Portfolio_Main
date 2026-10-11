@@ -7,6 +7,7 @@ import { CutOverlay } from "@/components/room/CutOverlay";
 import { MotionProvider } from "@/components/MotionProvider";
 import { organizationSchema, websiteSchema } from "@/lib/structured-data";
 import { SITE_URL } from "@/lib/site";
+import { STILL_SCRIPT } from "@/lib/still";
 import "./globals.css";
 
 // Four faces, all vendored as woff2 so the build needs no network, all SIL OFL.
@@ -112,12 +113,16 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    // suppressHydrationWarning: the home page's inline script may set
-    // data-slate on <html> before React hydrates it (see app/(site)/page.tsx).
+    // suppressHydrationWarning: inline scripts may set data-slate (the home
+    // page, app/(site)/page.tsx) and data-motion (below) on <html> before
+    // React hydrates it.
     // en-GB, as the share cards and structured data already say: a screen
     // reader picks its voice and spellings from this.
     <html lang="en-GB" className={`${sans.variable} ${display.variable} ${serif.variable} ${mono.variable}`} suppressHydrationWarning>
       <body className="antialiased">
+        {/* A visitor who paused the site's motion (lib/still.ts) gets it
+            paused before the first paint, not once the scripts have run. */}
+        <script dangerouslySetInnerHTML={{ __html: STILL_SCRIPT }} />
         <FilmGrain />
         <MotionProvider>{children}</MotionProvider>
         <TopMark />

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Script from "next/script";
+import { preconnect } from "react-dom";
 import { BookDemoPage } from "@/components/BookDemoPage";
 import { pageMeta } from "@/lib/page-meta";
 
@@ -12,6 +13,12 @@ export const metadata: Metadata = pageMeta({
 });
 
 export default function BookDemo() {
+  // The scheduler's two hosts, connected while the page loads: its script
+  // comes from one once the page has loaded, its booking frame from the
+  // other, and on a phone each new connection is a few hundred milliseconds
+  // more of the wait for the calendar.
+  preconnect("https://assets.calendly.com");
+  preconnect("https://calendly.com");
   return (
     <>
       <BookDemoPage />

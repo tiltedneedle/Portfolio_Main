@@ -906,6 +906,14 @@ a:focus-visible > .wm {
   animation-play-state: paused;
 }
 
+/* Motion paused by the visitor (MotionToggle, lib/still.ts): every endless
+   loop holds where it is. Important, to beat the inline play state the
+   hero's drift gets while on screen. One-shot entrances run regardless. */
+html[data-motion="still"] :is(.marquee-track, .grain, .hero-drift, .hero-beam, .wm-l, .wm-a, .wm-b, .wm-mark),
+html[data-motion="still"] .lamp::after {
+  animation-play-state: paused !important;
+}
+
 /* The slate (clapperboard) is server-rendered, and its own code removes it
    for returning visitors, but only once the JavaScript has run: on a slow
    phone every returning visitor sat on it for seconds. An inline script in
@@ -993,6 +1001,31 @@ html[data-slate="skip"] [data-slate-root] {
   h2,
   h3 {
     break-after: avoid;
+  }
+}
+
+/* ========================================================== forced colours */
+
+/* High contrast (Windows' contrast themes and the like) repaints every fill
+   in the system's background colour, and two things went with it: the
+   marks drawn as fills (the lamp, the ruler's playhead, a film's progress
+   bar) and, on a light theme, the white figure of the wordmark, drawn for
+   the dark room, which vanished into the white. The marks keep system
+   colours, the live lamp the highlight; the figure is inverted. */
+@media (forced-colors: active) {
+  .lamp,
+  .lamp-off,
+  .tally-mark {
+    forced-color-adjust: none;
+    background: CanvasText;
+  }
+  .lamp {
+    background: Highlight;
+  }
+}
+@media (forced-colors: active) and (prefers-color-scheme: light) {
+  img[src*="white-logo"] {
+    filter: invert(1);
   }
 }
 

@@ -5,6 +5,7 @@ import Image from "next/image";
 import { m, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { CutLink } from "@/components/room/CutLink";
 import { attachThrottledVideo } from "@/lib/video-slots";
+import { useStill } from "@/lib/use-still";
 import { films, pad2, timecode, type Film } from "@/lib/films";
 import picksData from "@/lib/published-picks.json";
 
@@ -46,9 +47,11 @@ function Frame({
   const [inView, setInView] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [dead, setDead] = useState(false);
-  // Reduced motion: the films stand on their stills and slates instead of
-  // playing as they pass, as the pages' background loops already do.
+  // Reduced motion, or motion paused by the visitor (lib/still.ts): the
+  // films stand on their stills and slates instead of playing as they pass,
+  // as the pages' background loops do.
   const reduced = useReducedMotion();
+  const still = useStill();
   const shown = useRef(0);
 
   useEffect(() => {
@@ -61,7 +64,7 @@ function Frame({
     return () => io.disconnect();
   }, [mobile]);
 
-  const shouldPlay = inView && (mobile || live) && !dead && !reduced;
+  const shouldPlay = inView && (mobile || live) && !dead && !reduced && !still;
 
   useEffect(() => {
     const v = videoRef.current;
@@ -165,7 +168,7 @@ function Frame({
           <p className="mt-1 text-[17px] text-[color:var(--ink)]">{film.title}</p>
           <p className="em-serif mt-1 text-[17px] text-[color:var(--ink-soft)]">{film.highlight}</p>
           <span aria-hidden="true" className="mt-4 block h-px w-full bg-[color:var(--rule-strong)]">
-            <span ref={bar} className="block h-px w-full origin-left bg-[color:var(--tally)]" style={{ transform: "scaleX(0)" }} />
+            <span ref={bar} className="tally-mark block h-px w-full origin-left bg-[color:var(--tally)]" style={{ transform: "scaleX(0)" }} />
           </span>
         </div>
       </CutLink>
@@ -325,7 +328,7 @@ export function Sequence() {
               style={cssShuttle ? undefined : { x: playhead }}
               className={(cssShuttle && range > 0 ? "shuttle-playhead " : "") + "pointer-events-none absolute inset-x-0 -top-px block h-4 will-change-transform"}
             >
-              <span className="absolute left-0 top-0 h-4 w-[2px] -translate-x-1/2 bg-[color:var(--tally)] shadow-[0_0_8px_var(--tally-glow)]" />
+              <span className="tally-mark absolute left-0 top-0 h-4 w-[2px] -translate-x-1/2 bg-[color:var(--tally)] shadow-[0_0_8px_var(--tally-glow)]" />
             </m.span>
           </div>
           <div className="mt-3 flex items-center justify-between mono">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, m } from "framer-motion";
 import { useFocusTrap } from "@/lib/use-focus-trap";
 import { embedUrl } from "@/lib/embed";
@@ -22,6 +22,7 @@ export function EmbedModal({
   onClose: () => void;
 }) {
   const box = useRef<HTMLDivElement>(null);
+  const [player, setPlayer] = useState(false);
   useFocusTrap(open && !!videoId, box, videoId ?? undefined);
 
   useEffect(() => {
@@ -30,8 +31,21 @@ export function EmbedModal({
       if (e.key === "Escape") onClose();
     };
     document.addEventListener("keydown", key);
-    document.body.style.overflow = "hidden";
+    // The dialog paints first; the player and the page's scroll lock come a
+    // frame later. Done with the tap, building YouTube's frame and laying
+    // the page out again held the dialog's first paint for a third of a
+    // second on a slow phone.
+    let later = 0;
+    const raf = requestAnimationFrame(() => {
+      later = window.setTimeout(() => {
+        setPlayer(true);
+        document.body.style.overflow = "hidden";
+      }, 0);
+    });
     return () => {
+      cancelAnimationFrame(raf);
+      window.clearTimeout(later);
+      setPlayer(false);
       document.removeEventListener("keydown", key);
       document.body.style.overflow = "";
     };
@@ -67,13 +81,15 @@ export function EmbedModal({
               </button>
             </div>
             <div className="well w-full border border-[color:var(--rule)]">
-              <iframe
-                src={embedUrl(videoId)}
-                title={title}
-                allow="autoplay; encrypted-media; picture-in-picture"
-                allowFullScreen
-                className="absolute inset-0 h-full w-full"
-              />
+              {player && (
+                <iframe
+                  src={embedUrl(videoId)}
+                  title={title}
+                  allow="autoplay; encrypted-media; picture-in-picture"
+                  allowFullScreen
+                  className="absolute inset-0 h-full w-full"
+                />
+              )}
             </div>
             <p className="mono mt-3 text-[color:var(--ink-faint)]">{title}</p>
           </div>

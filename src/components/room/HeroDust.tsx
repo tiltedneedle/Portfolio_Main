@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { isStill, onStillChange } from "@/lib/still";
 
 /**
  * The air in the room the reel is running in: a shaft of light across the
@@ -102,7 +103,8 @@ export function HeroDust() {
     let last = 0;
     const draw = (now: number) => {
       raf = 0;
-      if (!on || document.hidden) return;
+      // Paused by the visitor (lib/still.ts): the field stays as it was drawn.
+      if (!on || document.hidden || isStill()) return;
       // Fewer frames than the screen offers: ask again, draw nothing.
       if (now - last < FRAME_MS) {
         raf = requestAnimationFrame(draw);
@@ -110,6 +112,11 @@ export function HeroDust() {
       }
       const dt = Math.min(0.064, (now - last) / 1000);
       last = now;
+      frame(dt);
+      raf = requestAnimationFrame(draw);
+    };
+    // One frame of the field, dt seconds on; at 0 it is drawn where it stands.
+    const frame = (dt: number) => {
       // How much of the push is left after this frame (it dies away in about a second).
       const keep = Math.exp(-dt / 0.9);
       ctx.clearRect(0, 0, w, h);
@@ -140,10 +147,14 @@ export function HeroDust() {
         ctx.fillStyle = "rgba(242, 239, 233, " + alpha.toFixed(3) + ")";
         ctx.fill();
       }
-      raf = requestAnimationFrame(draw);
     };
     const start = () => {
       if (raf || !ready || !on || document.hidden || !w || !h) return;
+      // Paused: a still field rather than an empty one.
+      if (isStill()) {
+        frame(0);
+        return;
+      }
       last = performance.now();
       raf = requestAnimationFrame(draw);
     };
@@ -168,6 +179,7 @@ export function HeroDust() {
     io.observe(zone);
     const vis = () => start();
     document.addEventListener("visibilitychange", vis);
+    const offStill = onStillChange(() => start());
     const ro = new ResizeObserver((entries) => {
       const box = entries[entries.length - 1].contentRect;
       if (!box.width || !box.height) return;
@@ -191,6 +203,7 @@ export function HeroDust() {
       io.disconnect();
       ro.disconnect();
       document.removeEventListener("visibilitychange", vis);
+      offStill();
       window.removeEventListener("load", begin);
       if (typeof window.cancelIdleCallback === "function") window.cancelIdleCallback(idle);
       else window.clearTimeout(idle);

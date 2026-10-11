@@ -1,7 +1,7 @@
 "use client";
 
 import { m, useReducedMotion } from "framer-motion";
-import { EASE_OUT_EXPO } from "@/lib/design-tokens";
+import { EASE_OUT_EXPO, SETTLED, lifted } from "@/lib/design-tokens";
 
 // legal-data carries **bold** runs and [text](url) links inside plain strings.
 // A hand-written scanner rather than a regex: no escaping to get wrong, and
@@ -116,8 +116,8 @@ export function LegalPage({ title, lastUpdated, sections }: Props) {
                 ? { className: "enter-rise border-t border-[color:var(--rule)] py-10", style: { animationDelay: "0.15s" } }
                 : {
                     className: "border-t border-[color:var(--rule)] py-10",
-                    initial: { opacity: 0, y: reduced ? 0 : 16 },
-                    whileInView: { opacity: 1, y: 0 },
+                    initial: lifted(16, reduced),
+                    whileInView: SETTLED,
                     viewport: { once: true, margin: "-40px" },
                     transition: { duration: 0.5, delay: Math.min(0.03 * i, 0.2), ease: EASE_OUT_EXPO },
                   })}

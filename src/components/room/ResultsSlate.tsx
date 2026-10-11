@@ -4,7 +4,7 @@ import Image from "next/image";
 import { m, useReducedMotion } from "framer-motion";
 import { CutLink } from "@/components/room/CutLink";
 import { films, pad2 } from "@/lib/films";
-import { EASE_OUT_EXPO } from "@/lib/design-tokens";
+import { EASE_OUT_EXPO, SETTLED, lifted } from "@/lib/design-tokens";
 
 /**
  * The results, as slate lines: number, who, what came true, when. Every row
@@ -25,8 +25,8 @@ export function ResultsSlate() {
           {films.map((f, i) => (
             <m.li
               key={f.slug}
-              initial={{ opacity: 0, y: reduced ? 0 : 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={lifted(16, reduced)}
+              whileInView={SETTLED}
               viewport={{ once: true, margin: "-40px" }}
               transition={{ duration: 0.5, delay: 0.04 * i, ease: EASE_OUT_EXPO }}
               className="border-t border-[color:var(--rule)]"
