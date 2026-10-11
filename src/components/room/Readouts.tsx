@@ -9,8 +9,9 @@ import { timecode } from "@/lib/films";
  * a time and the client never has to correct one.
  */
 
-// Redraws every frame, but only while it is on screen: it used to run for
-// as long as the page was open, scrolled away or not.
+// Runs only while it is on screen: it used to run for as long as the page
+// was open, scrolled away or not. It reads 25 frames a second, so the text
+// is written when it changes, not on every one of the screen's 60.
 export function RunningTimecode({ className = "" }: { className?: string }) {
   const ref = useRef<HTMLSpanElement>(null);
   useEffect(() => {
@@ -18,8 +19,10 @@ export function RunningTimecode({ className = "" }: { className?: string }) {
     if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const start = performance.now();
     let raf = 0;
+    let shown = "";
     const tick = () => {
-      el.textContent = timecode((performance.now() - start) / 1000);
+      const now = timecode((performance.now() - start) / 1000);
+      if (now !== shown) el.textContent = shown = now;
       raf = requestAnimationFrame(tick);
     };
     const observer = new IntersectionObserver(([entry]) => {

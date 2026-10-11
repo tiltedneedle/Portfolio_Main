@@ -182,6 +182,8 @@ export function PortfolioBoard() {
   const [size, setSize] = useState({ w: 1200, h: 800 });
   const pinchDist = useRef(0);
   const dialogRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLDivElement>(null);
+  const introTimers = useRef<ReturnType<typeof setTimeout>[]>([]);
   const reduced = useReducedMotion();
 
   useFocusTrap(!!selected, dialogRef, selected?.id);
@@ -283,6 +285,7 @@ export function PortfolioBoard() {
       setScale(target);
       setPos({ x: targetX, y: targetY });
     }, 4100);
+    introTimers.current = [t1, t2, t3, t4];
 
     return () => {
       clearTimeout(t1);
@@ -292,9 +295,43 @@ export function PortfolioBoard() {
     };
   }, [getSize, reduced]);
 
+  // The fly-in gives way to the visitor. It ignored every wheel, drag, pinch
+  // and key for its full 4.1 seconds, though the board looks settled after
+  // about one and a half; the first one now ends it where the board is on
+  // screen at that moment, read off the canvas mid-flight, so nothing jumps.
+  const takeOver = useCallback(() => {
+    introTimers.current.forEach((t) => clearTimeout(t));
+    introTimers.current = [];
+    const { w, h } = getSize();
+    let s = scale;
+    let x = pos.x;
+    let y = pos.y;
+    const c = canvasRef.current;
+    const t = c ? getComputedStyle(c).transform : "none";
+    if (c && t && t !== "none") {
+      const m = new DOMMatrixReadOnly(t);
+      s = m.a;
+      x = m.e;
+      y = m.f;
+      // Stopped on this frame, on the element: the state below lands a
+      // render later, the flight carried on until then, and the board
+      // overshot and eased back.
+      c.style.transition = "none";
+      c.style.transform = t;
+    }
+    const at = clampPos(x, y, s, w, h);
+    setPhase("done");
+    setScale(s);
+    setPos(at);
+    return at;
+  }, [getSize, pos, scale]);
+
   const onWheel = useCallback(
     (e: React.WheelEvent) => {
-      if (phase !== "done") return;
+      if (phase !== "done") {
+        takeOver(); // this tick stops the flight; the next ones zoom
+        return;
+      }
       e.preventDefault();
 
       const { w, h } = getSize();
@@ -317,19 +354,21 @@ export function PortfolioBoard() {
       setPos(clampPos(px - (next / scale) * dx, py - (next / scale) * dy, next, w, h));
       setScale(next);
     },
-    [scale, pos, getSize, phase]
+    [scale, pos, getSize, phase, takeOver]
   );
 
   const onPointerDown = useCallback(
     (e: React.PointerEvent) => {
-      if (phase !== "done" || e.pointerType === "touch") return;
+      if (e.pointerType === "touch") return;
       if ((e.target as HTMLElement).closest("[data-frame]")) return;
+      // during the fly-in, the drag starts from where the board is now
+      const at = phase === "done" ? pos : takeOver();
       setDragging(true);
       setDragStart({ x: e.clientX, y: e.clientY });
-      setDragOrigin(pos);
+      setDragOrigin(at);
       (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
     },
-    [pos, phase]
+    [pos, phase, takeOver]
   );
 
   const onPointerMove = useCallback(
@@ -355,13 +394,13 @@ export function PortfolioBoard() {
 
   const onTouchStart = useCallback(
     (e: React.TouchEvent) => {
-      if (phase !== "done") return;
       if ((e.target as HTMLElement).closest("[data-frame]")) return;
+      const at = phase === "done" ? pos : takeOver();
 
       if (e.touches.length === 1) {
         setDragging(true);
         setDragStart({ x: e.touches[0].clientX, y: e.touches[0].clientY });
-        setDragOrigin(pos);
+        setDragOrigin(at);
       } else if (e.touches.length === 2) {
         pinchDist.current = Math.hypot(
           e.touches[0].clientX - e.touches[1].clientX,
@@ -369,7 +408,7 @@ export function PortfolioBoard() {
         );
       }
     },
-    [pos, phase]
+    [pos, phase, takeOver]
   );
 
   const onTouchMove = useCallback(
@@ -432,7 +471,15 @@ export function PortfolioBoard() {
   // Arrow keys pan, +/- zoom, 0 fits — the board was pointer-only before.
   const onBoardKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
-      if (phase !== "done" || selected) return;
+      if (selected) return;
+      if (phase !== "done") {
+        // the first key stops the flight; the next ones pan and zoom
+        if (/^(Arrow|[-+=_0])/.test(e.key)) {
+          e.preventDefault();
+          takeOver();
+        }
+        return;
+      }
       // Panning unmounts off-screen tiles. If focus is on one, it would be
       // destroyed mid-keypress and focus would fall back to <body>.
       if ((e.target as HTMLElement).closest("[data-frame]")) return;
@@ -467,7 +514,7 @@ export function PortfolioBoard() {
         }
       }
     },
-    [phase, selected, getSize, pos, scale, zoomTo]
+    [phase, selected, getSize, pos, scale, zoomTo, takeOver]
   );
 
   // Tab walks the tiles mounted near the view, and those reach 250px past
@@ -605,6 +652,7 @@ export function PortfolioBoard() {
         />
 
         <div
+          ref={canvasRef}
           className="absolute top-0 left-0 origin-top-left will-change-transform"
           style={{
             width: canvasW,

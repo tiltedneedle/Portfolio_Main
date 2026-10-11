@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { m, useMotionValueEvent, useScroll, useTransform } from "framer-motion";
+import { m, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { CutLink } from "@/components/room/CutLink";
 import { attachThrottledVideo } from "@/lib/video-slots";
 import { films, pad2, timecode, type Film } from "@/lib/films";
@@ -46,6 +46,10 @@ function Frame({
   const [inView, setInView] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [dead, setDead] = useState(false);
+  // Reduced motion: the films stand on their stills and slates instead of
+  // playing as they pass, as the pages' background loops already do.
+  const reduced = useReducedMotion();
+  const shown = useRef(0);
 
   useEffect(() => {
     const el = root.current;
@@ -57,7 +61,7 @@ function Frame({
     return () => io.disconnect();
   }, [mobile]);
 
-  const shouldPlay = inView && (mobile || live) && !dead;
+  const shouldPlay = inView && (mobile || live) && !dead && !reduced;
 
   useEffect(() => {
     const v = videoRef.current;
@@ -69,10 +73,19 @@ function Frame({
     };
   }, [shouldPlay, film.videoUrl]);
 
+  // The bar scales rather than resizes, and glides to each report: they come
+  // about four times a second, so set outright it moved in visible jumps.
+  // A loop starting over snaps back.
   const onTime = () => {
     const v = videoRef.current;
     if (!v || !v.duration) return;
-    if (bar.current) bar.current.style.width = (v.currentTime / v.duration) * 100 + "%";
+    const p = Math.min(1, v.currentTime / v.duration);
+    const b = bar.current;
+    if (b) {
+      b.style.transition = p < shown.current ? "none" : "transform 0.25s linear";
+      b.style.transform = "scaleX(" + p + ")";
+    }
+    shown.current = p;
     if (tc.current) tc.current.textContent = timecode(v.currentTime);
   };
 
@@ -152,7 +165,7 @@ function Frame({
           <p className="mt-1 text-[17px] text-[color:var(--ink)]">{film.title}</p>
           <p className="em-serif mt-1 text-[17px] text-[color:var(--ink-soft)]">{film.highlight}</p>
           <span aria-hidden="true" className="mt-4 block h-px w-full bg-[color:var(--rule-strong)]">
-            <span ref={bar} className="block h-px w-0 bg-[color:var(--tally)]" />
+            <span ref={bar} className="block h-px w-full origin-left bg-[color:var(--tally)]" style={{ transform: "scaleX(0)" }} />
           </span>
         </div>
       </CutLink>
@@ -168,6 +181,15 @@ export function Sequence() {
   const [mobile, setMobile] = useState(false);
   const [active, setActive] = useState(0);
   const [hovered, setHovered] = useState<number | null>(null);
+  // Where the browser can drive the shuttle from the scroll itself
+  // (globals.css, .shuttle), it does, and this only tells it how far the
+  // strip travels; elsewhere the strip and playhead move from here.
+  // Decided after hydration, so server and first render agree.
+  const [cssShuttle, setCssShuttle] = useState(false);
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setCssShuttle(typeof CSS !== "undefined" && CSS.supports("animation-timeline: view()"));
+  }, []);
 
   const n = films.length;
   const total = films.reduce((s, f) => s + (f.duration ?? NOMINAL_SECONDS), 0);
@@ -229,16 +251,21 @@ export function Sequence() {
     <section
       id="work"
       ref={section}
-      className="relative bg-[color:var(--stage)]"
+      className="shuttle relative bg-[color:var(--stage)]"
       style={{ height: range > 0 ? "calc(100svh + " + range + "px)" : undefined }}
     >
       {/* overflow-clip, not hidden: a hidden box still scrolls when a child is
           focused, which would offset the strip under the transform. Clip cannot. */}
       <div className="md:sticky md:top-0 md:flex md:h-[100svh] md:flex-col md:justify-center md:overflow-clip">
+        {/* The scroll-driven classes go on once the travel is measured: the
+            section is then tall enough to scroll through. Started on a
+            section one screen tall, the animation had an empty range,
+            Chrome would not run it on the compositor, and did not try
+            again once the section grew. */}
         <m.div
           ref={track}
-          style={mobile ? undefined : { x }}
-          className="flex flex-col md:w-max md:flex-row md:items-center md:gap-6 md:px-[8vw]"
+          style={mobile ? undefined : cssShuttle ? ({ "--shuttle": -range + "px" } as React.CSSProperties) : { x }}
+          className={(cssShuttle && range > 0 ? "shuttle-track " : "") + "flex flex-col md:w-max md:flex-row md:items-center md:gap-6 md:px-[8vw]"}
         >
           {/* the bin label */}
           <div className="w-full shrink-0 px-6 py-20 md:w-[32vw] md:py-0">
@@ -250,7 +277,9 @@ export function Sequence() {
               Shot for the phone, cut for the scroll. Every one is a person, a claim and a
               number that came true.
             </p>
-            <p className="mono mt-8 max-md:hidden">Scroll to shuttle &middot; hover to play &middot; click to open</p>
+            <p className="mono mt-8 max-md:hidden">
+              Scroll to shuttle &middot; <span className="motion-reduce:hidden">hover to play &middot; </span>click to open
+            </p>
           </div>
 
           {films.map((f, i) => (
@@ -288,11 +317,16 @@ export function Sequence() {
                 <span className="mt-1 block">{pad2(i + 1)}</span>
               </span>
             ))}
+            {/* The playhead rides a layer as wide as the ruler, moved by
+                transform: positioned by `left` it was laid out again on
+                every frame of the scroll. */}
             <m.span
               aria-hidden="true"
-              style={{ left: playhead }}
-              className="absolute -top-px h-4 w-[2px] -translate-x-1/2 bg-[color:var(--tally)] shadow-[0_0_8px_var(--tally-glow)]"
-            />
+              style={cssShuttle ? undefined : { x: playhead }}
+              className={(cssShuttle && range > 0 ? "shuttle-playhead " : "") + "pointer-events-none absolute inset-x-0 -top-px block h-4 will-change-transform"}
+            >
+              <span className="absolute left-0 top-0 h-4 w-[2px] -translate-x-1/2 bg-[color:var(--tally)] shadow-[0_0_8px_var(--tally-glow)]" />
+            </m.span>
           </div>
           <div className="mt-3 flex items-center justify-between mono">
             <span>

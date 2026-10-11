@@ -165,6 +165,46 @@ Measured before/after on a phone (unthrottled, cold cache): home 18.4 MB to
   - Not changed, copy: US and UK spellings mix (optimize, analyze,
     industry-recognized beside organise, recognised, unauthorised,
     licences) on an en-GB site.
+- Motion (2026-10-11, "improve animations and motion"):
+  - The hero strip drifts on the compositor (.hero-drift, a CSS animation;
+    HeroMotion changes its playback rate with the scroll, capped at 25x,
+    and holds it off screen). Advanced by script every frame, it froze
+    through every long task: with the main thread blocked 1.5s it moved
+    0px; now 25px over 33 frames, its own pace. The sink-and-soften on
+    scroll is a scroll-driven CSS animation where supported (Framer
+    elsewhere), the blur split out so the sink itself composites.
+  - The home strip's shuttle and the ruler's playhead are scroll-driven CSS
+    where supported (view timeline on the section), identical in position
+    to the script they replace at every point checked. The classes go on
+    only once the travel is measured: started on a one-screen section the
+    range was empty, Chrome refused the compositor ("unsupported timing
+    parameters") and never retried. The playhead no longer moves by `left`
+    (a layout every scroll frame).
+  - The lamp breathes by fading and shrinking a glow layer instead of
+    animating box-shadow; the scheduler's loading bar slides a light layer
+    instead of animating background-position (both repainted every frame).
+  - Films' progress bars scale and glide between the video's reports (four
+    a second; they moved in jumps). Not seen playing here: Playwright's
+    Chromium has no H.264.
+  - The library's 4.1s fly-in ignored every wheel, drag, pinch and key;
+    the first now ends it where the board is on screen, stopped on the
+    element in the same handler (a render later it overshot and eased back).
+  - A cut held past 400ms shows the lamp and CUEING; the safety lift waits
+    4s instead of 2.5s (it lifted onto the page being left).
+  - Reduced motion: the hero's skew and parallax and the films' autoplay
+    were still on; now off (the hint drops "hover to play").
+  - The timecodes write when the text changes (25/s, not every frame); the
+    dead rise-in keyframes and a duplicate marquee are gone.
+  - Tried and reverted: the wordmark stitch as one pass every 7s from a
+    timer instead of forty endless loops. Starting and stopping transforms
+    on the letters laid them out again each time, and it measured worse
+    than the loops. The loops are still the largest cost of a page at rest
+    (all forty off: ~131 to ~40 ms/s at 4x CPU); a slower or simultaneous
+    stitch would be the user's design call.
+  - Measuring notes: this Chromium composites CSS transform animations
+    (proved by a screencast during a main-thread block), but input scroll
+    waits for the main thread, and idle main-thread A/B swings +-50ms/s on
+    identical pages, so only interleaved runs and stall tests count.
 
 ## The concept (approved 2026-09-03, "do whatever seems right")
 

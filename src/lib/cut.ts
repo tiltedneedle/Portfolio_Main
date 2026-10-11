@@ -6,11 +6,13 @@
  * CutOverlay clears it once the new pathname has committed, holding it for
  * HOLD_MS first so the cut reads as a cut rather than a flicker. A safety
  * timer clears it regardless, so a failed navigation can never leave the
- * site black.
+ * site black. A frame held past 400ms shows the lamp and CUEING (globals.css,
+ * .cut-cue), so the safety can wait four seconds for a slow network instead
+ * of lifting at two and a half onto the page the visitor had just left.
  */
 
 export const HOLD_MS = 140;
-export const SAFETY_MS = 2500;
+export const SAFETY_MS = 4000;
 
 let safety: ReturnType<typeof setTimeout> | null = null;
 

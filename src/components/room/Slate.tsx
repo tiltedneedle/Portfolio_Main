@@ -40,8 +40,11 @@ export function Slate() {
     document.body.style.overflow = "hidden";
     const start = performance.now();
     let raf = 0;
+    let shown = "";
     const tick = () => {
-      if (tc.current) tc.current.textContent = timecode((performance.now() - start) / 1000);
+      // 25 frames a second: written when it changes, not on every screen frame
+      const now = timecode((performance.now() - start) / 1000);
+      if (tc.current && now !== shown) tc.current.textContent = shown = now;
       raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);

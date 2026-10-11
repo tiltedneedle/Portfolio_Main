@@ -39,5 +39,12 @@ export function CutOverlay() {
     return () => window.removeEventListener("pageshow", onShow);
   }, []);
 
-  return <div className="cut-frame" aria-hidden="true" />;
+  return (
+    <div className="cut-frame" aria-hidden="true">
+      <p className="cut-cue mono">
+        <span className="lamp" />
+        Cueing
+      </p>
+    </div>
+  );
 }

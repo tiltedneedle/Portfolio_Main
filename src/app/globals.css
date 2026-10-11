@@ -253,15 +253,32 @@ select option {
   border-color: var(--rule);
 }
 
-/* The lamp. A dot that means "this is live". */
+/* The lamp. A dot that means "this is live". Its glow breathes on a layer
+   of its own, by fading and shrinking: breathing the box-shadow itself
+   repainted the lamp on the main thread every frame for as long as
+   something played. */
 .lamp {
+  position: relative;
   display: inline-block;
   width: 6px;
   height: 6px;
   border-radius: 50%;
   background: var(--tally);
+}
+.lamp::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
   box-shadow: 0 0 10px 2px var(--tally-glow);
   animation: lamp-breathe 2.4s ease-in-out infinite;
+}
+/* the glow at its fullest, then about the 4px it used to shrink to */
+@keyframes lamp-breathe {
+  50% {
+    opacity: 0.6;
+    transform: scale(0.6);
+  }
 }
 .lamp-off {
   display: inline-block;
@@ -359,23 +376,26 @@ select option {
   border-radius: var(--r-sharp);
 }
 
+/* A loading bar with a light passing along it, left to right. The light is
+   a layer that slides (it used to be a background whose position was
+   animated, repainted every frame while the scheduler loaded). */
 .skeleton {
-  background: linear-gradient(
-    90deg,
-    rgba(242, 239, 233, 0.04) 25%,
-    rgba(242, 239, 233, 0.08) 37%,
-    rgba(242, 239, 233, 0.04) 63%
-  );
-  background-size: 400% 100%;
+  position: relative;
+  overflow: hidden;
+  background: rgba(242, 239, 233, 0.04);
+}
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(242, 239, 233, 0.04), transparent);
+  transform: translateX(-100%);
   animation: skeleton-sweep 1.4s ease-in-out infinite;
 }
 
 @keyframes skeleton-sweep {
-  0% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0 50%;
+  to {
+    transform: translateX(100%);
   }
 }
 
@@ -439,6 +459,31 @@ select option {
 body.is-cutting .cut-frame {
   opacity: 1;
   pointer-events: auto;
+}
+
+/* A cut that has to wait for the network says so: if the black has held
+   for 400ms (a cut proper is gone in about 150), the lamp and CUEING come
+   up in the middle of it. They go with the frame, at once. */
+.cut-cue {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+}
+body.is-cutting .cut-cue {
+  opacity: 1;
+  transition: opacity 200ms linear 400ms;
+}
+/* its lamp breathes only while there is a cut to wait for */
+.cut-cue .lamp::after {
+  animation: none;
+}
+body.is-cutting .cut-cue .lamp::after {
+  animation: lamp-breathe 2.4s ease-in-out infinite;
 }
 
 /* ============================================================== the cursor
@@ -641,39 +686,6 @@ a:focus-visible > .wm {
   transform: scale(1.22);
 }
 
-/* ================================================================== reveals */
-
-@keyframes rise-in {
-  from {
-    opacity: 0;
-    transform: translateY(24px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-@keyframes marquee {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-100%);
-  }
-}
-
-/* The lamp breathes while something is live. */
-@keyframes lamp-breathe {
-  0%,
-  100% {
-    box-shadow: 0 0 10px 2px var(--tally-glow);
-  }
-  50% {
-    box-shadow: 0 0 4px 1px var(--tally-glow);
-  }
-}
-
 /* ========================================================== hero beam & dust */
 
 .hero-beam {
@@ -703,6 +715,78 @@ a:focus-visible > .wm {
 .hero-band {
   -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 7%, #000 64%, transparent 100%);
   mask-image: linear-gradient(to bottom, transparent 0%, #000 7%, #000 64%, transparent 100%);
+}
+
+/* The strip drifts a row (half its double width) every 160 seconds, on the
+   compositor; HeroMotion only changes its playback rate as the page
+   scrolls, and holds it while it is off screen. */
+.hero-drift {
+  animation: hero-drift 160s linear infinite;
+}
+@keyframes hero-drift {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Scrolled away over the first screen, the strip sinks 100px, softens and
+   dims, tied to the scroll by the browser itself where it can (HeroMotion
+   does it from script elsewhere). The softening is its own animation: a
+   blur cannot run on the compositor, and in one animation with the sink it
+   kept the sink off it too. Not under reduced motion. */
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-band {
+      animation:
+        hero-sink linear both,
+        hero-soften linear both;
+      animation-timeline: scroll(root block), scroll(root block);
+      animation-range: 0 100vh, 0 100vh;
+    }
+  }
+}
+@keyframes hero-sink {
+  to {
+    transform: translateY(100px);
+    opacity: 0.4;
+  }
+}
+@keyframes hero-soften {
+  to {
+    filter: blur(8px);
+  }
+}
+
+/* The home page's film strip shuttles sideways as the page scrolls past
+   its pinned section (Sequence.tsx), driven by the scroll itself where the
+   browser can: the strip and the ruler's playhead stay with the scroll even
+   while the page's script is busy. Elsewhere Sequence moves them. */
+@supports (animation-timeline: view()) {
+  @media (min-width: 768px) {
+    .shuttle {
+      view-timeline: --shuttle block;
+    }
+    .shuttle-track {
+      animation: shuttle linear both;
+      animation-timeline: --shuttle;
+      animation-range: contain 0% contain 100%;
+    }
+    .shuttle-playhead {
+      animation: shuttle-playhead linear both;
+      animation-timeline: --shuttle;
+      animation-range: contain 0% contain 100%;
+    }
+  }
+}
+@keyframes shuttle {
+  to {
+    transform: translateX(var(--shuttle, 0px));
+  }
+}
+@keyframes shuttle-playhead {
+  to {
+    transform: translateX(100%);
+  }
 }
 
 .film-frame {
@@ -934,9 +1018,10 @@ html[data-slate="skip"] [data-slate-root] {
   .enter-rise,
   .marquee-track,
   .grain,
-  .skeleton,
-  .lamp,
+  .skeleton::after,
+  .lamp::after,
   .hero-beam,
+  .hero-drift,
   .odo-now .odo-reel,
   .wm-l,
   .wm-a,
