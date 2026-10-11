@@ -85,7 +85,7 @@ function Frame({
     >
       <CutLink
         href={"/film/" + film.slug}
-        className="group absolute inset-0 block"
+        className="focus-inset group absolute inset-0 block"
         aria-label={"Open film " + pad2(film.index) + ": " + film.title + ", " + film.client}
         data-cursor="Open"
         onFocus={onFocus}

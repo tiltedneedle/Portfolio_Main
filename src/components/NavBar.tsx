@@ -135,11 +135,17 @@ export function NavBar() {
   return (
     <>
       <header
+        data-site-bar
         className={cn(
           "fixed inset-x-0 top-0 z-50 transition-colors duration-500",
-          scrolled && !open
-            ? "bg-[rgba(11,11,12,0.78)] backdrop-blur-xl border-b border-[color:var(--rule)]"
-            : "bg-transparent border-b border-transparent"
+          // Open, the bar takes the menu's own ground: the menu scrolls on
+          // short screens, and its links pass under the bar instead of
+          // through the wordmark and Close.
+          open
+            ? "bg-[color:var(--stage)] border-b border-transparent"
+            : scrolled
+              ? "bg-[rgba(11,11,12,0.78)] backdrop-blur-xl border-b border-[color:var(--rule)]"
+              : "bg-transparent border-b border-transparent"
         )}
       >
         <nav className="flex h-14 items-center justify-between px-6 md:h-16 md:px-14" aria-label="Primary">
@@ -203,9 +209,13 @@ export function NavBar() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: reduced ? 0 : 0.25 }}
-            className="fixed inset-0 z-40 bg-[color:var(--stage)] md:hidden"
+            // Scrolls when the screen is shorter than the menu: a phone held
+            // sideways, or a small one with the browser's bars showing. At a
+            // fixed full height the lower links, Book a demo among them, sat
+            // below the screen with no way to reach them.
+            className="fixed inset-0 z-40 overflow-y-auto overscroll-contain bg-[color:var(--stage)] md:hidden"
           >
-            <nav className="flex h-full flex-col justify-between px-6 pb-10 pt-24" aria-label="Menu">
+            <nav className="flex min-h-full flex-col justify-between px-6 pb-10 pt-24" aria-label="Menu">
               <ul className="flex flex-col gap-5">
                 {rooms.map((r, i) => (
                   <m.li

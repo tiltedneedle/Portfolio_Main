@@ -470,6 +470,30 @@ export function PortfolioBoard() {
     [phase, selected, getSize, pos, scale, zoomTo]
   );
 
+  // Tab walks the tiles mounted near the view, and those reach 250px past
+  // its edges: a third of the stops landed wholly off screen, focus with
+  // nothing to show for it. The board pans to bring the focused tile in,
+  // as arrow keys would. <main> clips rather than hides for the same
+  // reason as the home strip: a hidden box scrolls itself to a focused
+  // child, which drew the board away from where its pan state put it.
+  const revealFrame = useCallback(
+    (frame: Frame) => {
+      if (phase !== "done") return;
+      const { w, h } = getSize();
+      // clear of what floats over the board's edges: the clip count, the
+      // hint bar and the zoom column
+      const margin = 72;
+      const x = frame.x * scale + pos.x;
+      const y = frame.y * scale + pos.y;
+      const fw = frame.w * scale;
+      const fh = frame.h * scale;
+      const dx = x < margin ? margin - x : x + fw > w - margin ? w - margin - (x + fw) : 0;
+      const dy = y < margin ? margin - y : y + fh > h - margin ? h - margin - (y + fh) : 0;
+      if (dx || dy) setPos(clampPos(pos.x + dx, pos.y + dy, scale, w, h));
+    },
+    [phase, getSize, pos, scale]
+  );
+
   const intro = phase !== "done";
 
   // Only mount frames near the viewport.
@@ -526,7 +550,7 @@ export function PortfolioBoard() {
 
       <main
         ref={containerRef}
-        className="fixed inset-0 top-14 md:top-16 overflow-hidden select-none touch-none bg-[color:var(--stage)]"
+        className="fixed inset-0 top-14 md:top-16 overflow-clip select-none touch-none bg-[color:var(--stage)]"
         style={{ cursor: intro ? "default" : dragging ? "grabbing" : "grab" }}
         onWheel={onWheel}
         onPointerDown={onPointerDown}
@@ -540,14 +564,38 @@ export function PortfolioBoard() {
         {/* Keyboard surface for the board. role="application" is deliberately
             scoped here rather than on <main>: on the landmark it erased the
             main landmark and put the whole page into forms mode, so screen
-            readers lost browse-mode navigation over the heading and controls. */}
+            readers lost browse-mode navigation over the heading and controls.
+            Its ring is drawn inside (focus-inset): the focus-visible:outline
+            utilities it carried never applied, because the unlayered
+            :focus-visible rule in globals.css beats every utility, and
+            that rule's ring sat outside the board where <main> clips it. */}
         <div
-          className="absolute inset-0 z-30 pointer-events-none focus-visible:outline-2 focus-visible:outline-[color:var(--rule-strong)] focus-visible:outline-offset-[-6px] rounded-sm"
+          className="focus-inset absolute inset-0 z-30 pointer-events-none rounded-sm"
           tabIndex={0}
           role="application"
           aria-label="Portfolio board. Use the arrow keys to pan, plus and minus to zoom, and 0 to fit the whole board."
           onKeyDown={onBoardKeyDown}
         />
+        {/* The zoom controls sit at the board's foot but come before the
+            tiles in the page's order: focusing a tile pans the board and
+            mounts the tiles around it, so Tab can walk hundreds of them, and
+            controls placed after the tiles were hundreds of presses away. */}
+        {!intro && (
+          <div className="absolute bottom-24 right-4 md:right-6 flex flex-col gap-1.5 z-20">
+            {controls.map((control) => (
+              <button
+                type="button"
+                key={control.label}
+                onClick={control.action}
+                className="w-10 h-10 rounded-full bg-[rgba(20,20,22,0.8)] backdrop-blur-xl border border-[color:var(--rule)] flex items-center justify-center text-[color:var(--ink)] hover:bg-[color:var(--stage-3)] active:scale-95 transition-all"
+                title={control.label}
+                aria-label={control.label}
+              >
+                {control.icon}
+              </button>
+            ))}
+          </div>
+        )}
         <div
           className="absolute inset-0 opacity-[0.12] pointer-events-none"
           style={{
@@ -605,6 +653,12 @@ export function PortfolioBoard() {
                     e.stopPropagation();
                     setSelected(frame);
                   }}
+                  // Keyboard focus only: a press focuses the tile too, and
+                  // panning under the pointer would lose the click or fight
+                  // a drag.
+                  onFocus={(e) => {
+                    if (e.currentTarget.matches(":focus-visible")) revealFrame(frame);
+                  }}
                   aria-label={`Play ${frame.title}`}
                   data-cursor="Play"
                   className="block w-full h-full text-left rounded-[2px] focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--ink)]"
@@ -623,21 +677,6 @@ export function PortfolioBoard() {
 
         {!intro && (
           <>
-            <div className="absolute bottom-24 right-4 md:right-6 flex flex-col gap-1.5 z-20">
-              {controls.map((control) => (
-                <button
-                  type="button"
-                  key={control.label}
-                  onClick={control.action}
-                  className="w-10 h-10 rounded-full bg-[rgba(20,20,22,0.8)] backdrop-blur-xl border border-[color:var(--rule)] flex items-center justify-center text-[color:var(--ink)] hover:bg-[color:var(--stage-3)] active:scale-95 transition-all"
-                  title={control.label}
-                  aria-label={control.label}
-                >
-                  {control.icon}
-                </button>
-              ))}
-            </div>
-
             <div className="mono absolute bottom-6 left-4 md:left-14 hidden md:flex items-center gap-2 z-20 bg-[rgba(11,11,12,0.7)] backdrop-blur-xl px-3 py-2 border border-[color:var(--rule)]">
               <Move className="w-3.5 h-3.5" />
               Drag to pan &middot; scroll to zoom &middot; click to play

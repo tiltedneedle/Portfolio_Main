@@ -125,7 +125,7 @@ export function FilmPage({ film, next }: { film: Film; next: Film }) {
                 <button
                   type="button"
                   onClick={() => setEmbedOn(true)}
-                  className="group/play absolute inset-0 z-10 flex h-full w-full items-center justify-center"
+                  className="focus-inset group/play absolute inset-0 z-10 flex h-full w-full items-center justify-center"
                   aria-label={"Play " + film.title + ", the published cut"}
                   data-cursor="Play"
                 >

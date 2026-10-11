@@ -128,10 +128,38 @@ select option {
   background: rgba(242, 239, 233, 0.32);
 }
 
+/* Unlayered, so the ring shows even where a control's utilities say
+   outline-none. */
 :focus-visible {
   outline: 2px solid var(--ink);
   outline-offset: 3px;
+}
+
+/* The house corner on a ring, as a default only. Unlayered it beat every
+   rounded-* utility and squared the library's round zoom buttons whenever
+   they took focus; in the base layer the control's own shape wins. */
+@layer base {
+  :focus-visible {
+    border-radius: var(--r-sharp);
+  }
+}
+
+/* A control that fills a box which clips (a film card in the strip, the
+   film well's Play, the library board): the ring outside it was cut off
+   whole, and those three showed no focus at all. Drawn inside instead, as
+   the last thing painted over the still, with a dark edge so it reads on a
+   bright frame. A border, not a shadow, so it survives forced colours. */
+.focus-inset:focus-visible {
+  outline: none;
+}
+.focus-inset:focus-visible::after {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border: 2px solid var(--ink);
   border-radius: var(--r-sharp);
+  box-shadow: 0 0 0 4px rgba(11, 11, 12, 0.7);
+  pointer-events: none;
 }
 
 /* ============================================================== typography */
@@ -813,7 +841,10 @@ html[data-slate="skip"] [data-slate-root] {
     display: none !important;
   }
 
-  [style*="opacity:0"] {
+  /* opacity 0 exactly: the value ends the declaration or the attribute, so
+     an inline opacity:0.5 is never caught */
+  [style*="opacity:0;"],
+  [style$="opacity:0"] {
     opacity: 1 !important;
     transform: none !important;
   }
@@ -822,6 +853,62 @@ html[data-slate="skip"] [data-slate-root] {
      them open rather than leave their text unreachable. */
   section[style*="height:0px"] {
     height: auto !important;
+  }
+}
+
+/* =================================================================== print */
+
+/* Paper is not the room. Browsers print without backgrounds, so the warm
+   white ink lands on white paper: Chrome darkens the lightest text itself
+   but leaves the greys and the highlighted terms pale. The fixed bar
+   printed across the top of every page, over the text. And every reveal
+   still waiting for the reader to scroll (opacity 0, as above) printed
+   blank: Ctrl+P on a freshly opened privacy policy gave a third of it. */
+@media print {
+  :root {
+    --stage: #fff;
+    --stage-2: #fff;
+    --stage-3: #f2f2f2;
+    --ink: #111;
+    --ink-soft: #2b2b2b;
+    --ink-mid: #595959;
+    --ink-faint: #767676;
+    --rule: rgba(0, 0, 0, 0.14);
+    --rule-strong: rgba(0, 0, 0, 0.3);
+  }
+
+  html {
+    color-scheme: light;
+  }
+
+  /* what floats over the page or moves behind it stays on the screen; a
+     marquee on paper is a line of words cut off at both edges */
+  [data-site-bar],
+  [data-topmark],
+  [data-slate-root],
+  .grain,
+  .cut-frame,
+  .cursor,
+  .marquee,
+  video[aria-hidden="true"] {
+    display: none !important;
+  }
+
+  /* the mark is drawn white for the dark room */
+  img[src*="white-logo"] {
+    filter: invert(1);
+  }
+
+  [style*="opacity:0;"],
+  [style$="opacity:0"] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  h1,
+  h2,
+  h3 {
+    break-after: avoid;
   }
 }
 

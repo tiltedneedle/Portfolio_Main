@@ -122,6 +122,49 @@ Measured before/after on a phone (unthrottled, cold cache): home 18.4 MB to
   - Considered and left: a Content-Security-Policy (next.config.ts keeps the
     author's reasoning; script-src would still need 'unsafe-inline' for
     Next's inline scripts on static pages, so it would add little).
+- Round five (2026-10-11, same request):
+  - Phone menu on short screens: a fixed full-height panel that could not
+    scroll, so below 515px of height (any phone held sideways, a small one
+    with the browser's bars showing) its lower links were unreachable, Book
+    a demo and Careers among them. It scrolls now, and the bar takes the
+    menu's ground while open so links pass under it.
+  - Print had no styles. Ctrl+P on a freshly opened privacy policy printed a
+    third of it (every reveal still waiting for a scroll sat at opacity 0;
+    terms, services and careers likewise), the fixed bar printed over the
+    top of every page, and greys and highlighted terms came out pale.
+    `@media print` in globals.css: paper tokens, reveals at rest, the bar,
+    grain, cursor, slate and marquees left off, the white mark inverted.
+    Checked by rendering PDFs and reading their fills (text runs printed
+    unscrolled = scrolled on every page). Left: Chrome paints any element
+    with a background solid white when printing without backgrounds, so the
+    film well's scrim prints as a white frame over the still (with the
+    title on it), and the home and careers heroes print one tall page each.
+  - Keyboard focus you could not see: the global ring sits 3px outside a
+    control, so on controls that fill a clipping box it was cut off whole:
+    the home film cards, the film well's Play (all seven films) and the
+    library board. `.focus-inset` draws those rings inside, over a dark edge.
+    The board's own focus utilities never applied: the unlayered
+    `:focus-visible` rule beats every Tailwind utility. Its 2px corner is in
+    `@layer base` now, so round controls keep their shape (the library's
+    zoom buttons turned square on focus).
+  - Library board under the keyboard: Tab walks the tiles mounted up to
+    250px past the view, and a third of the stops were wholly off screen;
+    <main> was overflow-hidden, so the browser also scrolled it to a focused
+    tile and drew the board away from its pan state. <main> clips now, the
+    board pans to a tile that takes keyboard focus (not a pressed one), and
+    the zoom controls come before the tiles in the order.
+  - Checked clean: WCAG 1.4.12 text spacing on every page (laptop, phone);
+    phones held sideways and 1920/2560 screens (no overlap or overflow;
+    the home hero's 640px floor puts "scroll." below the fold sideways,
+    which is a scroll, not a clip); keyboard focus visible at every stop on
+    every page; text contrast in hover states (290 controls, nothing drops
+    below AA); source maps not served; no unload handlers or no-store, so
+    nothing blocks the back/forward cache; fonts four subset files, 119 KB.
+    The home page's eight logo preloads are React 19's own hints for
+    non-lazy images; Chrome queues them Low, so they were left.
+  - Not changed, copy: US and UK spellings mix (optimize, analyze,
+    industry-recognized beside organise, recognised, unauthorised,
+    licences) on an en-GB site.
 
 ## The concept (approved 2026-09-03, "do whatever seems right")
 
