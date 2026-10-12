@@ -25,6 +25,8 @@ import { m, useMotionValueEvent, useReducedMotion, useScroll, useSpring, useTran
 // at 2,400px a second: a jump to an anchor reads as a huge velocity, and
 // unbounded it whipped the strip across the screen.
 const MAX_RATE = 25;
+// Ten loops of the drift (160s each), banked on its clock: see below.
+const BANKED_MS = 10 * 160 * 1000;
 
 let screenH = 0;
 function screenHeight() {
@@ -52,14 +54,24 @@ export function HeroMotion({ children }: { children: ReactNode }) {
     setCssSink(typeof CSS !== "undefined" && CSS.supports("animation-timeline: scroll()"));
   }, []);
 
-  // Off screen, the drift holds where it is. Set on the element directly:
-  // as React state it would render paused on the server, and the strip
-  // would stand still until the page had hydrated.
+  // The drift's CSS animation starts at 0 with the first paint, and the
+  // scroll can run it backwards. Run back past its own start, an animation
+  // is finished and gone: one quick scroll back to the top stopped the reel
+  // for good. So once the page is live its clock is moved ten loops on,
+  // which looks the same (every loop ends where it began) and is more than
+  // any scrolling can spend: backwards it uses a hundredth of a second per
+  // pixel scrolled up with the hero in view, and it is held off screen.
+  // Held off screen and let go through the animation itself, so one API
+  // drives it from here on.
   useEffect(() => {
     const el = drift.current;
-    if (!el) return;
+    const a = el?.getAnimations()[0];
+    if (!el || !a) return;
+    const now = typeof a.currentTime === "number" ? a.currentTime : 0;
+    a.currentTime = now + BANKED_MS;
     const io = new IntersectionObserver(([e]) => {
-      el.style.animationPlayState = e.isIntersecting ? "running" : "paused";
+      if (e.isIntersecting) a.play();
+      else a.pause();
     });
     io.observe(el);
     return () => io.disconnect();

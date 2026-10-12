@@ -718,8 +718,9 @@ a:focus-visible > .wm {
 }
 
 /* The strip drifts a row (half its double width) every 160 seconds, on the
-   compositor; HeroMotion only changes its playback rate as the page
-   scrolls, and holds it while it is off screen. */
+   compositor; HeroMotion changes its playback rate as the page scrolls,
+   holds it while it is off screen, and banks it ten loops on so scrolling
+   up can never run it back past its start. */
 .hero-drift {
   animation: hero-drift 160s linear infinite;
 }

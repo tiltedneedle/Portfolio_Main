@@ -211,6 +211,14 @@ Measured before/after on a phone (unthrottled, cold cache): home 18.4 MB to
     dont want the switch, remove the switch idea"). Do not propose it again.
     Motion still stops under reduced motion, and the crawls pause on hover
     and focus, as before.
+  - The hero reel stopped for good after a scroll down and back up (the
+    user's report): scrolling up runs the drift backwards, and the CSS
+    animation, its clock begun at 0, ran back past its start, finished and
+    was removed. A negative animation-delay does NOT help (the clock still
+    starts at 0). HeroMotion banks ten loops on the clock once the page is
+    live (currentTime += 1,600,000ms, invisible) and holds it off screen
+    with pause()/play(). Five fast round trips spent about 30 of the 1,600
+    seconds; still composited (24px in a 1.5s main-thread stall).
   - High contrast (forced colours): the marks drawn as fills vanished (the
     lamp, the ruler's playhead, the films' progress bars), and on a light
     theme the wordmark's white figure vanished into the white. The marks
