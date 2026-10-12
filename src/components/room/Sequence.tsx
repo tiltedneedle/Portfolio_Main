@@ -5,7 +5,6 @@ import Image from "next/image";
 import { m, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { CutLink } from "@/components/room/CutLink";
 import { attachThrottledVideo } from "@/lib/video-slots";
-import { useStill } from "@/lib/use-still";
 import { films, pad2, timecode, type Film } from "@/lib/films";
 import picksData from "@/lib/published-picks.json";
 
@@ -47,11 +46,9 @@ function Frame({
   const [inView, setInView] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [dead, setDead] = useState(false);
-  // Reduced motion, or motion paused by the visitor (lib/still.ts): the
-  // films stand on their stills and slates instead of playing as they pass,
-  // as the pages' background loops do.
+  // Reduced motion: the films stand on their stills and slates instead of
+  // playing as they pass, as the pages' background loops already do.
   const reduced = useReducedMotion();
-  const still = useStill();
   const shown = useRef(0);
 
   useEffect(() => {
@@ -64,7 +61,7 @@ function Frame({
     return () => io.disconnect();
   }, [mobile]);
 
-  const shouldPlay = inView && (mobile || live) && !dead && !reduced && !still;
+  const shouldPlay = inView && (mobile || live) && !dead && !reduced;
 
   useEffect(() => {
     const v = videoRef.current;

@@ -906,14 +906,6 @@ a:focus-visible > .wm {
   animation-play-state: paused;
 }
 
-/* Motion paused by the visitor (MotionToggle, lib/still.ts): every endless
-   loop holds where it is. Important, to beat the inline play state the
-   hero's drift gets while on screen. One-shot entrances run regardless. */
-html[data-motion="still"] :is(.marquee-track, .grain, .hero-drift, .hero-beam, .wm-l, .wm-a, .wm-b, .wm-mark),
-html[data-motion="still"] .lamp::after {
-  animation-play-state: paused !important;
-}
-
 /* The slate (clapperboard) is server-rendered, and its own code removes it
    for returning visitors, but only once the JavaScript has run: on a slow
    phone every returning visitor sat on it for seconds. An inline script in

@@ -206,16 +206,11 @@ Measured before/after on a phone (unthrottled, cold cache): home 18.4 MB to
     waits for the main thread, and idle main-thread A/B swings +-50ms/s on
     identical pages, so only interleaved runs and stall tests count.
 - Round seven (2026-10-12, "continue to find more and fix them"):
-  - A pause for the site's motion (WCAG 2.2.2, level A): the crawls, the
-    hero's drift, grain, dust and beam, the wordmark, the lamp's glow, the
-    timecode and the films' autoplay ran for good with no way to stop them
-    but hover (no use to a keyboard or a touch screen) or the OS setting.
-    MotionToggle ("Pause motion") sits in the footer on every page and on
-    the client-logo crawl; lib/still.ts keeps the choice in localStorage and
-    an inline script puts data-motion="still" on <html> before the first
-    paint. CSS holds the endless loops only (one-shot entrances run, or
-    they would hold text unseen); script-driven motion asks isStill(). The
-    switch hides under reduced motion, where nothing loops.
+  - A "Pause motion" switch (footer, client-logo crawl) shipped in e017d15
+    for WCAG 2.2.2 and was REMOVED the same day at the user's request ("i
+    dont want the switch, remove the switch idea"). Do not propose it again.
+    Motion still stops under reduced motion, and the crawls pause on hover
+    and focus, as before.
   - High contrast (forced colours): the marks drawn as fills vanished (the
     lamp, the ruler's playhead, the films' progress bars), and on a light
     theme the wordmark's white figure vanished into the white. The marks

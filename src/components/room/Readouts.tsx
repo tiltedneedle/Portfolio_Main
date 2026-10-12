@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import { timecode } from "@/lib/films";
-import { isStill, onStillChange } from "@/lib/still";
 
 /**
  * Small live instruments used around the room: a running timecode and the
@@ -12,47 +11,27 @@ import { isStill, onStillChange } from "@/lib/still";
 
 // Runs only while it is on screen: it used to run for as long as the page
 // was open, scrolled away or not. It reads 25 frames a second, so the text
-// is written when it changes, not on every one of the screen's 60. Paused
-// by the visitor (lib/still.ts) it holds its frame, and picks up from that
-// frame when played again rather than jumping on by the pause.
+// is written when it changes, not on every one of the screen's 60.
 export function RunningTimecode({ className = "" }: { className?: string }) {
   const ref = useRef<HTMLSpanElement>(null);
   useEffect(() => {
     const el = ref.current;
     if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const start = performance.now();
-    let held = 0; // ms spent paused
-    let heldSince = isStill() ? start : 0;
-    let visible = false;
     let raf = 0;
     let shown = "";
     const tick = () => {
-      const now = timecode((performance.now() - start - held) / 1000);
+      const now = timecode((performance.now() - start) / 1000);
       if (now !== shown) el.textContent = shown = now;
       raf = requestAnimationFrame(tick);
     };
-    const run = () => {
-      cancelAnimationFrame(raf);
-      raf = 0;
-      if (visible && !heldSince) raf = requestAnimationFrame(tick);
-    };
     const observer = new IntersectionObserver(([entry]) => {
-      visible = !!entry?.isIntersecting;
-      run();
+      cancelAnimationFrame(raf);
+      if (entry?.isIntersecting) raf = requestAnimationFrame(tick);
     });
     observer.observe(el);
-    const offStill = onStillChange(() => {
-      if (isStill()) {
-        if (!heldSince) heldSince = performance.now();
-      } else if (heldSince) {
-        held += performance.now() - heldSince;
-        heldSince = 0;
-      }
-      run();
-    });
     return () => {
       observer.disconnect();
-      offStill();
       cancelAnimationFrame(raf);
     };
   }, []);

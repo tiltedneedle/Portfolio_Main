@@ -1,5 +1,4 @@
 import Image, { type StaticImageData } from "next/image";
-import { MotionToggle } from "@/components/MotionToggle";
 import tjb from "../../../public/logos/white/tjb.png";
 import astonMartin from "../../../public/logos/white/aston-martin.png";
 import koenigsegg from "../../../public/logos/white/koenigsegg.png";
@@ -64,17 +63,14 @@ function Row({ ariaHidden }: { ariaHidden?: boolean }) {
  * The brand strip: A clean, seamless full-bleed ribbon of partner brand marks.
  */
 // A server component: the strip scrolls by CSS (globals.css, .marquee),
-// which also pauses it on hover and stops it under reduced motion. Hover is
-// no use to a keyboard or a touch screen, so the strip carries the site's
-// motion switch too (MotionToggle, the one client island here), over the
-// right-hand fade.
+// which also pauses it on hover and stops it under reduced motion, so there
+// is nothing here to hydrate.
 export function CreditsRoll() {
   const duration = { "--marquee-duration": "32s" } as React.CSSProperties;
   return (
     <section className="marquee relative overflow-hidden border-y border-[color:var(--rule)] bg-black py-2 md:py-3">
       <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 left-0 z-10 w-20 bg-gradient-to-r from-black to-transparent md:w-36" />
       <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 right-0 z-10 w-20 bg-gradient-to-l from-black to-transparent md:w-36" />
-      <MotionToggle short className="absolute right-3 top-1/2 z-20 -translate-y-1/2 md:right-6" />
       <div className="flex overflow-hidden">
         <div className="marquee-track flex shrink-0" style={duration}>
           <Row />
