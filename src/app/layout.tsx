@@ -5,6 +5,7 @@ import { TopMark } from "@/components/room/TopMark";
 import { Cursor } from "@/components/room/Cursor";
 import { CutOverlay } from "@/components/room/CutOverlay";
 import { MotionProvider } from "@/components/MotionProvider";
+import { JsonLd } from "@/components/JsonLd";
 import { organizationSchema, websiteSchema } from "@/lib/structured-data";
 import { SITE_URL } from "@/lib/site";
 import "./globals.css";
@@ -55,17 +56,20 @@ const mono = localFont({
   adjustFontFallback: "Arial",
 });
 
+// The brand's own lines: search work leaves them as written (the user's
+// instruction, 2026-10-12).
+const TITLE = "Tilted Needle | Cut for the scroll";
 const DESCRIPTION =
   "A short-form production studio in London and Dubai. Eight films, 5B+ views, $250M+ in revenue for the people in them.";
 
 export const metadata: Metadata = {
   // The same address robots.txt, the sitemap and the structured data use.
   // Hardcoding tiltedneedle.com sent every canonical link and share card to
-  // the old Squarespace site while the domain still points there, so link
+  // the old Squarespace site while the domain still pointed there, so link
   // previews had no image. On Vercel this follows the project's production
-  // domain by itself: once tiltedneedle.com is added to the project, it moves.
+  // domain by itself, which is now www.tiltedneedle.com.
   metadataBase: new URL(SITE_URL),
-  title: "Tilted Needle | Cut for the scroll",
+  title: TITLE,
   description: DESCRIPTION,
   authors: [{ name: "Tilted Needle" }],
   keywords: [
@@ -78,9 +82,12 @@ export const metadata: Metadata = {
     "brand growth",
     "video production",
   ],
-  robots: "index, follow",
+  // Indexing is the default, so no "index, follow": every page inherits this,
+  // and on the 404 it sat beside Next's own noindex as a contradiction. What
+  // is left lets results show the films' large stills and full snippets.
+  robots: { "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
   openGraph: {
-    title: "Tilted Needle | Cut for the scroll",
+    title: TITLE,
     description: DESCRIPTION,
     url: SITE_URL,
     siteName: "Tilted Needle",
@@ -90,7 +97,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Tilted Needle | Cut for the scroll",
+    title: TITLE,
     description: DESCRIPTION,
   },
   // This list replaces the icon file conventions rather than adding to them,
@@ -123,13 +130,7 @@ export default function RootLayout({
         <TopMark />
         <Cursor />
         <CutOverlay />
-        <script
-          type="application/ld+json"
-          // Static, developer-authored JSON: no user input reaches this.
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify([organizationSchema, websiteSchema]),
-          }}
-        />
+        <JsonLd data={[organizationSchema, websiteSchema]} />
       </body>
     </html>
   );

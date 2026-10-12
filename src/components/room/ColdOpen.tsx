@@ -64,8 +64,11 @@ export function ColdOpen() {
       <div className="absolute inset-x-0 bottom-0 px-6 pb-10 md:px-14 md:pb-14">
         <div className="flex flex-col gap-10 md:flex-row md:items-end md:justify-between">
           <div>
+            {/* The space between the two lines is for anything that reads the
+                text without laying it out (search snippets, previews), which
+                would otherwise run them together as "Cut for thescroll." */}
             <h1 className="display text-[clamp(64px,12.5vw,208px)]">
-              <Masked>Cut for the</Masked>
+              <Masked>Cut for the</Masked>{" "}
               <Masked delay={0.12}>
                 <span className="em-serif">scroll.</span>
               </Masked>

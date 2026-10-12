@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { SITE_URL, VERCEL_ALIAS } from "./src/lib/site";
 
 // Applied to every response. No CSP here: the Calendly embed on /book-demo and
 // the remote video/image hosts would need a broad policy to work, and a broad
@@ -42,11 +43,31 @@ const OLD_SITE: Array<[string, string]> = [
   ["/videographer-2", "/careers#roles"],
 ];
 
+// The vercel.app address served the whole site before the domain moved, so
+// links to it are out there (Google had indexed none of it, 2026-10-12). Each
+// of its pages already names its www twin as canonical; this makes it one
+// site outright, path and query kept, and sends people with an old link to
+// the real address. Only once the production address is somewhere else, or
+// the alias would redirect to itself.
+const ONE_HOST =
+  new URL(SITE_URL).host === VERCEL_ALIAS
+    ? []
+    : [
+        {
+          source: "/:path*",
+          has: [{ type: "host" as const, value: VERCEL_ALIAS }],
+          destination: SITE_URL + "/:path*",
+          permanent: true,
+        },
+      ];
+
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
   async redirects() {
-    return OLD_SITE.map(([source, destination]) => ({ source, destination, permanent: true }));
+    // The host first, so an old path on the old host is one hop to www and
+    // then the old-site rule there, not a relative hop on the old host first.
+    return [...ONE_HOST, ...OLD_SITE.map(([source, destination]) => ({ source, destination, permanent: true }))];
   },
   images: {
     // Each pattern is held to the shapes the site actually uses, with the

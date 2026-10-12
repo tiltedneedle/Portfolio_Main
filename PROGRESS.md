@@ -7,9 +7,13 @@ pick up at **In flight**. Do not re-ask the user what to do.
 Repo (since 2026-10-09, when the user separated it from the client portal):
 `C:\Users\HP\Downloads\JOB2\tilted-needle-marketing`, remote
 `git@github-tn:tiltedneedle/Portfolio_Main.git`, branch `main`, its own
-Vercel project; a push to `main` deploys production
-(https://portfolio-main-vert-gamma.vercel.app; tiltedneedle.com still points
-at the old Squarespace site). It used to be the `marketing-site` branch of
+Vercel project; a push to `main` deploys production at
+https://www.tiltedneedle.com (the domain moved to Vercel on 2026-10-12: the
+bare domain 308s to www, and the old
+https://portfolio-main-vert-gamma.vercel.app 308s there too, next.config.ts).
+DNS is at Squarespace Domains (Google Domains nameservers); a local resolver
+may still hand out Squarespace's old address for a while, so check with
+`nslookup www.tiltedneedle.com 8.8.8.8`. It used to be the `marketing-site` branch of
 `tiltedneedle/Portfolio`, which is now the client portal only. Build with
 `npm run build`; serve with `npx next start -p 3400` (kill any old listener
 on 3400 first, or the start fails with EADDRINUSE and you verify a stale
@@ -237,6 +241,51 @@ Measured before/after on a phone (unthrottled, cold cache): home 18.4 MB to
     no memory growth over six rounds of in-site navigation (nodes and
     listeners flat, the heap's growth tailing off as the router's cache
     fills).
+
+## Search (2026-10-12)
+
+Asked, once the domain was live, to "optimize the google index appearance
+and seo" and to say what the user has to do. Audited the live domain, every
+page's head, the old Squarespace site, and Google itself:
+
+- What Google had: four pages, the old homepage ("Tilted Needle | Enhance
+  Your Brand Now") and /our-work, plus apply.tiltedneedle.com, a separate
+  WordPress site on Cloudflare whose title reads "Tilted Needle – My
+  WordPress Blog" (its default tagline; only the user can change it). The
+  brand search ranks the site first, Companies House second, then an AI
+  Overview built from LinkedIn, Glassdoor and Instagram; the result showed
+  "tiltedneedle.com" where the site name should be.
+- Already sound: all 14 old Squarespace URLs (its sitemap) 308 to a real
+  page in one hop; unknown paths are real 404s; every page has a unique
+  title and description, a self-canonical on www, share cards and one h1;
+  favicon has 16/32/48/256; the four social profiles in sameAs all exist.
+- **The user's rule: search work does not change the brand's lines.** Titles,
+  descriptions, taglines and page names stay word for word ("do not change
+  the main brand lines etc."). Rewrites of the home, services, portfolio and
+  careers titles/descriptions were drafted, then dropped before pushing.
+  Suggest copy changes; never ship them unasked.
+- Changed (all invisible): Service and BreadcrumbList data on the four
+  service pages, built from their own titles and descriptions; Organization
+  gains its slogan (the h1, verbatim) and the service names it offers.
+  `robots` no longer says "index, follow" (it contradicted Next's noindex on
+  the 404) and allows large image previews. robots.txt lost its Yandex-only
+  `Host` line. The vercel.app address 308s to www. The home h1 read "Cut for
+  thescroll." to anything that reads text without layout (a space between
+  its two lines; layout identical, measured). `components/JsonLd.tsx`
+  escapes `<`, as the Next docs advise.
+- Left as written, so Google shortens them: five descriptions run past the
+  ~155 characters a result shows (content creation 215, app & web 193,
+  careers 178, influencer 176, paid 165).
+- Not done, on purpose: VideoObject on the film pages. Google's video docs:
+  "Don't rely on user actions ... to load the video", and the films load
+  YouTube on Play (round one took ~1 MB of player off every film page).
+  Worth revisiting only with self-hosted films (`<video>` in the HTML).
+  JobPosting needs a page per role (Google's rule for list pages).
+- With the user: Search Console (the domain already has a
+  google-site-verification TXT record), sitemap submission, Bing import,
+  a Google Business Profile, the apply subdomain, the company's legal
+  details (name, number, registered office: UK trading-disclosure rules,
+  and Organization.legalName would tie the site to Companies House).
 
 ## The concept (approved 2026-09-03, "do whatever seems right")
 

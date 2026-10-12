@@ -13,7 +13,9 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/api/"],
       },
     ],
+    // No `host` line: only Yandex ever read it, and Google ignores it. The
+    // canonical links and the redirects to www (Vercel's for the bare domain,
+    // next.config.ts for the vercel.app one) say which host is the real one.
     sitemap: `${BASE_URL}/sitemap.xml`,
-    host: BASE_URL,
   };
 }
