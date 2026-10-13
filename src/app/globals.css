@@ -304,8 +304,15 @@ select option {
   background: var(--ink);
   color: var(--stage);
 }
-.pill-solid:hover {
-  background: #ffffff;
+/* Hover styles only where there is a pointer that hovers (Tailwind's own
+   hover: utilities already work this way). A tap on a touch screen leaves
+   the tapped element in :hover until the next tap somewhere else, so a pill
+   stayed lit after a tap, and on Android the client-logo strip, which
+   pauses on hover, stopped dead at a tap and stayed stopped. */
+@media (hover: hover) {
+  .pill-solid:hover {
+    background: #ffffff;
+  }
 }
 
 .pill-outline {
@@ -313,10 +320,12 @@ select option {
   color: var(--ink);
   border: 1px solid var(--rule-strong);
 }
-.pill-outline:hover {
-  background: var(--ink);
-  color: var(--stage);
-  border-color: var(--ink);
+@media (hover: hover) {
+  .pill-outline:hover {
+    background: var(--ink);
+    color: var(--stage);
+    border-color: var(--ink);
+  }
 }
 
 /* A rule that draws itself in on hover, used on editorial links. */
@@ -335,8 +344,10 @@ select option {
   transform-origin: left;
   transition: transform var(--dur-base) var(--ease-out-expo);
 }
-.underline-draw:hover::after {
-  transform: scaleX(1);
+@media (hover: hover) {
+  .underline-draw:hover::after {
+    transform: scaleX(1);
+  }
 }
 
 /* A mono link. */
@@ -349,8 +360,10 @@ select option {
   color: var(--ink-mid);
   transition: color var(--dur-fast) var(--ease-out-expo);
 }
-.slate-link:hover {
-  color: var(--ink);
+@media (hover: hover) {
+  .slate-link:hover {
+    color: var(--ink);
+  }
 }
 
 /* ============================================================== media wells */
@@ -363,8 +376,10 @@ select option {
   box-shadow: var(--lift);
   transition: box-shadow var(--dur-slow) var(--ease-out-expo);
 }
-.plate:hover {
-  box-shadow: var(--lift-hover);
+@media (hover: hover) {
+  .plate:hover {
+    box-shadow: var(--lift-hover);
+  }
 }
 
 /* A 9:16 film well. */
@@ -572,9 +587,13 @@ html.has-cursor iframe {
   transform-origin: left center;
   transition: transform var(--dur-base) var(--ease-out-expo);
 }
-a:hover > .wm,
 a:focus-visible > .wm {
   transform: scale(1.18);
+}
+@media (hover: hover) {
+  a:hover > .wm {
+    transform: scale(1.18);
+  }
 }
 .wm-text {
   display: inline-flex;
@@ -759,6 +778,20 @@ a:focus-visible > .wm {
   }
 }
 
+/* The film strip's section is one screen plus the strip's travel, and the
+   travel is arithmetic in the strip's own units: --films cards 72svh tall
+   at 9:16 (40.5svh wide), a 32vw opening card and a 30vw end card, 8vw of
+   padding each side, 24px between neighbours, less the screen's width.
+   Set here it holds from the first paint; Sequence measures the same
+   figure (to the pixel, 768 to 3440px wide) once its script has run, and
+   until then the section was one screen tall and everything below it
+   moved down by thousands of pixels when it grew. */
+@media (min-width: 768px) {
+  .sequence {
+    height: max(100svh, calc(100svh + var(--films, 8) * 40.5svh + (var(--films, 8) + 1) * 24px - 22vw));
+  }
+}
+
 /* The home page's film strip shuttles sideways as the page scrolls past
    its pinned section (Sequence.tsx), driven by the scroll itself where the
    browser can: the strip and the ruler's playhead stay with the scroll even
@@ -904,9 +937,13 @@ a:focus-visible > .wm {
   animation: marquee var(--marquee-duration, 32s) linear infinite;
 }
 
-.marquee:hover .marquee-track,
 .marquee:focus-within .marquee-track {
   animation-play-state: paused;
+}
+@media (hover: hover) {
+  .marquee:hover .marquee-track {
+    animation-play-state: paused;
+  }
 }
 
 /* ================================================================ slate */
@@ -1003,6 +1040,39 @@ a:focus-visible > .wm {
 @media (min-width: 768px) {
   .slate-stick-top {
     --open: -8deg;
+  }
+}
+
+/* The title fills the board's width, and on a short screen gives way to the
+   screen's height too, so the whole board, clapper to Skip, stays on
+   screen. At 16vw alone it stood taller than a phone held sideways (135px a
+   line at 844x390) and pushed the clapper off the top and Skip off the
+   bottom. The first line is for browsers without svh. Every portrait phone
+   and every desktop size is as before. */
+.slate-title {
+  font-size: clamp(72px, 16vw, 220px);
+  font-size: min(clamp(72px, 16vw, 220px), max(40px, calc((100svh - 290px) / 1.72)));
+}
+/* The open clapper needs room above the board: on a desktop its 760px stick
+   rises 106px at 8 degrees, more than a laptop leaves above a centred
+   board, so on shorter screens it opens less. */
+@media (min-width: 768px) and (max-height: 860px) {
+  .slate-stick-top {
+    --open: -5deg;
+  }
+}
+/* A short, wide screen (a phone held sideways, a small laptop): the board
+   sits a little lower, the title gives way a little more, the clapper
+   opens least. Portrait phones, short as some are, have room to spare. */
+@media (max-height: 780px) and (min-aspect-ratio: 1/1) {
+  .slate-frame {
+    padding-top: 32px;
+  }
+  .slate-title {
+    font-size: min(clamp(72px, 16vw, 220px), max(40px, calc((100svh - 330px) / 1.72)));
+  }
+  .slate-stick-top {
+    --open: -3deg;
   }
 }
 .slate-stick-base {

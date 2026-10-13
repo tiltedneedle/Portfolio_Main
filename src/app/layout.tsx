@@ -123,7 +123,18 @@ export default function RootLayout({
     // data-slate on <html> before React hydrates it (see app/(site)/page.tsx).
     // en-GB, as the share cards and structured data already say: a screen
     // reader picks its voice and spellings from this.
-    <html lang="en-GB" className={`${sans.variable} ${display.variable} ${serif.variable} ${mono.variable}`} suppressHydrationWarning>
+    // data-scroll-behavior: globals.css makes scrolling smooth (for the
+    // in-page links), and since Next 16 the router leaves that on through
+    // route changes unless told otherwise, so Back put a visitor at the top
+    // and then scrolled them down to where they had been, a second and a half
+    // of travel through the whole page. With it, the router's own scrolling
+    // is instant again; in-page links stay smooth.
+    <html
+      lang="en-GB"
+      data-scroll-behavior="smooth"
+      className={`${sans.variable} ${display.variable} ${serif.variable} ${mono.variable}`}
+      suppressHydrationWarning
+    >
       <body className="antialiased">
         <FilmGrain />
         <MotionProvider>{children}</MotionProvider>

@@ -331,6 +331,58 @@ phone whose scripts never load), both in the scratchpad suite now.
   unmount. No tilt while the board is still (0.2 degrees roughened the type
   and the rules). Copy unchanged, word for word.
 
+## Round nine (2026-10-13, "continue to find more and fix them")
+
+Started by putting the last round's work through WebKit (Safari's engine:
+loops, slate run, timing, Skip: all as in Chromium) and a phone's touch
+screen, then followed what turned up. Each with a new check in the suite.
+
+- Android froze the logo strip: a tap leaves the element in :hover until
+  the next tap elsewhere, and the strip pauses on hover (iOS does not
+  apply :hover there). Every custom hover style (pills, underline-draw,
+  slate-link, plate, the wordmark, the marquee pause) now sits in
+  `@media (hover: hover)`, as Tailwind's own hover: utilities do.
+  `touch-hover.mjs`.
+- The slate's production line ("Prod. Tilted Needle") broke onto two lines
+  on every phone 320-412px: two equal columns, the right one needing a
+  quarter of its half. `grid-cols-[1fr_auto]`, `gap-x-4 md:gap-x-6`.
+  `slate-wrap.mjs`.
+- On a phone held sideways the slate stood taller than the screen
+  (title 16vw = 135px a line at 844x390): the clapper above the top, Skip
+  below the bottom; on laptops (1366x768, 1536x730 = 1920 at 125%) the
+  open stick's tip rose off the top. `.slate-title` also gives way to the
+  height; screens up to 860px tall open the clapper 5 degrees, short wide
+  ones (max-height 780, landscape) 3 degrees with 32px above the board.
+  Portrait phones and tall desktops unchanged. `slate-landscape.mjs`, 20
+  real viewport sizes incl. browser chrome.
+- The slate played mid-visit: a first-time visitor who landed on an inner
+  page and went home (the nav's Work and Contact are plain links that load
+  the page afresh; the logo is a cut) got the whole slate over the section
+  they asked for. Now only as the site's opening: the home page's inline
+  script skips it when the referrer is this site (or storage is blocked),
+  and marks a real opening (window.__tnSlate) for Slate, which client-side
+  arrivals never get. `slate-midsession.mjs`.
+- /#contact on a desktop landed 2,879px short: the film section was one
+  screen tall until its script measured the strip and grew it by the whole
+  travel (2,000-3,900px), after the browser had already scrolled. Its
+  height is now CSS from the first paint (`.sequence`, from --films:
+  8 x 40.5svh + 9 x 24px - 22vw + 100svh), equal to the measurement to
+  the pixel at 768-3440px; it grows 0px after load. `nav-hash.mjs`,
+  `seq-range.mjs`.
+- Back to the home page in Chrome/Edge/Android put the visitor at the top
+  and then scrolled them down to where they had been, ~1.5s through the
+  whole page: the browser's own scroll restoration honours globals.css's
+  `scroll-behavior: smooth`, and since Next 16 the router no longer
+  switches it off. CutOverlay sets it to auto for 1.2s after a popstate
+  that changes page (not after an in-page #link, which fires popstate
+  too and stays smooth); `data-scroll-behavior="smooth"` on <html> for
+  the router's own scrolls (Next 16 upgrade notes). Safari was never
+  affected. `back-restore.mjs` (read 400ms after Back), `inpage-smooth.mjs`.
+- Checked clean: form fields 17px (no iOS zoom) with autocomplete; first
+  visit on a throttled phone no slower after the slate change (9
+  interleaved runs: LCP 3.14s vs 3.32s, TBT 1.19s vs 1.33s; the extra
+  copies cost 0.7 KB gzipped).
+
 ## The concept (approved 2026-09-03, "do whatever seems right")
 
 "The Editing Room, cut vertical." Dark single-world system, four open faces

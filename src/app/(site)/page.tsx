@@ -12,10 +12,16 @@ export const metadata: Metadata = {
 };
 
 // Parsed and run before the slate's markup, so the browser's first paint
-// already knows whether to show it: returning visitors and reduced motion
-// skip it (globals.css, data-slate-root). Static and developer-written.
+// already knows whether to show it (globals.css, data-slate-root). It is
+// skipped for returning visitors, for reduced motion, where nothing can be
+// remembered (it would play on every visit), and where the visit began on
+// another page of this site: the slate opens the site, it does not cut into
+// a visit. The nav's section links (Work, Contact) load this page afresh,
+// hence the referrer; the site's other links arrive without a page load, so
+// this never runs and the missing mark (window.__tnSlate) tells Slate the
+// same. Static and developer-written.
 const SKIP_SLATE =
-  'try{if(localStorage.getItem("tn-slate-seen")||matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.setAttribute("data-slate","skip")}catch(e){}';
+  'try{var a=!document.referrer||new URL(document.referrer).origin!==location.origin;if(!a||localStorage.getItem("tn-slate-seen")||matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.setAttribute("data-slate","skip");else window.__tnSlate=1}catch(e){document.documentElement.setAttribute("data-slate","skip")}';
 
 // The reel, in running order: slate (once), cold open, the sequence of eight
 // films, the studio as a title card, the clients as credits, the results as

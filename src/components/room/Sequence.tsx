@@ -247,12 +247,18 @@ export function Sequence() {
     });
   };
 
+  // The height is also set in CSS from the first paint (globals.css,
+  // .sequence), from the number of films; the measured one below matches it
+  // to the pixel. Measured alone, the section grew by its whole travel
+  // (2,000 to 3,900px on a desktop) once the page had painted, so a link to
+  // /#contact landed where the contact section had been, thousands of
+  // pixels short of it.
   return (
     <section
       id="work"
       ref={section}
-      className="shuttle relative bg-[color:var(--stage)]"
-      style={{ height: range > 0 ? "calc(100svh + " + range + "px)" : undefined }}
+      className="sequence shuttle relative bg-[color:var(--stage)]"
+      style={{ "--films": n, height: range > 0 ? "calc(100svh + " + range + "px)" : undefined } as React.CSSProperties}
     >
       {/* overflow-clip, not hidden: a hidden box still scrolls when a child is
           focused, which would offset the strip under the transform. Clip cannot. */}

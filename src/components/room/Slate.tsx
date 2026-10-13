@@ -21,7 +21,8 @@ import { pad2 } from "@/lib/films";
  *
  * Rendered by the server so there is never a flash of the page beneath it;
  * the home page's inline script and the layout effect below keep it from
- * anyone who has seen it and anyone who prefers reduced motion.
+ * anyone who has seen it, anyone who prefers reduced motion, and anyone
+ * whose visit began on another page of the site.
  */
 const KEY = "tn-slate-seen";
 // Where the pull out of frame begins in the CSS run (globals.css, keep in step).
@@ -41,9 +42,14 @@ export function Slate() {
       seen = false;
     }
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    // Only as the site's opening (the home page's inline script marks a
+    // visit that began here). A first-time visitor who landed on another
+    // page and came here by the site's own links (Contact, Work, the mark)
+    // used to get the whole slate over the section they had asked for.
+    const opening = (window as Window & { __tnSlate?: number }).__tnSlate === 1;
     // Deliberately synchronous: this must land before first paint.
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    if (seen || reduced) setDone(true);
+    if (seen || reduced || !opening) setDone(true);
   }, []);
 
   // Jump the run to the pull-out, so a skip still leaves the way the slate
@@ -66,6 +72,8 @@ export function Slate() {
       } catch {
         // private mode: the slate simply plays again next time
       }
+      // played: not again this visit, even where nothing can be remembered
+      (window as Window & { __tnSlate?: number }).__tnSlate = 0;
       setDone(true);
     };
     const cut = el.getAnimations().find((a) => (a as CSSAnimation).animationName === "slate-cut");
@@ -98,7 +106,7 @@ export function Slate() {
   // phone is seconds after that paint.
   return (
     <div ref={root} data-slate-root="" className="slate fixed inset-0 z-[9996] bg-black text-[color:var(--ink)]" onClick={skip}>
-      <div className="flex h-full w-full items-center justify-center px-6">
+      <div className="slate-frame flex h-full w-full items-center justify-center px-6">
         <div className="slate-board w-full max-w-[760px]">
           {/* the clapper: the top stick is hinged at the left and claps
               shut onto the base; its stripes run the other way, so shut
@@ -109,7 +117,10 @@ export function Slate() {
             <span className="slate-hinge" />
           </div>
 
-          <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-3 border-y border-[color:var(--rule-strong)] py-4 mono-lg text-[color:var(--ink-soft)]">
+          {/* The right-hand column is as wide as "Reel 2026" and no wider:
+              in two equal halves the production line broke onto a second
+              line on every phone from 320 to 412px. */}
+          <div className="mt-6 grid grid-cols-[1fr_auto] gap-x-4 gap-y-3 border-y border-[color:var(--rule-strong)] py-4 mono-lg text-[color:var(--ink-soft)] md:gap-x-6">
             <div>
               <span className="text-[color:var(--ink-mid)]">Prod.</span> Tilted Needle
             </div>
@@ -124,7 +135,7 @@ export function Slate() {
             </div>
           </div>
 
-          <p className="display mt-8 text-[clamp(72px,16vw,220px)] leading-[0.86]">
+          <p className="slate-title display mt-8 leading-[0.86]">
             Tilted
             <br />
             Needle
