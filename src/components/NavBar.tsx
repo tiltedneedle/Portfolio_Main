@@ -7,6 +7,8 @@ import { CutLink } from "@/components/room/CutLink";
 import { Wordmark } from "@/components/room/Wordmark";
 import { cn, scrollBehavior } from "@/lib/utils";
 import { EASE_OUT_EXPO, SETTLED, lifted } from "@/lib/design-tokens";
+import { siteHref } from "@/lib/apply-host";
+import { useOnApplyHost } from "@/lib/use-on-apply-host";
 
 /**
  * The nav is a slate: four numbered rooms in mono, the wordmark, and on a
@@ -46,6 +48,7 @@ function RoomLink({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const onApply = useOnApplyHost();
 
   if (href.startsWith("/#")) {
     const targetId = href.slice(2); // e.g. "contact" or "work"
@@ -53,7 +56,9 @@ function RoomLink({
     const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
       onClick?.();
 
-      if (pathname === "/") {
+      // Not on the apply subdomain: its question is served at "/", and
+      // has no such section; the link's href is www's there.
+      if (pathname === "/" && !onApply) {
         e.preventDefault();
         // Give time for any menu state / body overflow locks to release
         requestAnimationFrame(() => {
@@ -67,7 +72,7 @@ function RoomLink({
     };
 
     return (
-      <a href={href} className={className} onClick={handleClick} onPointerEnter={onPointerEnter}>
+      <a href={siteHref(href, onApply)} className={className} onClick={handleClick} onPointerEnter={onPointerEnter}>
         {children}
       </a>
     );

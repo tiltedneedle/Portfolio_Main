@@ -1,5 +1,6 @@
 import type { NextConfig } from "next";
 import { SITE_URL, VERCEL_ALIAS } from "./src/lib/site";
+import { APPLY_HOST, APPLY_URL } from "./src/lib/apply-host";
 
 // Applied to every response. No CSP here: the Calendly embed on /book-demo and
 // the remote video/image hosts would need a broad policy to work, and a broad
@@ -62,33 +63,49 @@ const ONE_HOST =
       ];
 
 // apply.tiltedneedle.com was a separate WordPress site (the budget question,
-// an enquiry form, a referral form); it is now the /apply funnel here. Once
-// the subdomain points at this project, each of its three addresses lands
-// on its page; anything else on it, the front door. Permanent, as with the
-// old site's addresses.
-const APPLY_HOST = "apply.tiltedneedle.com";
-const OLD_APPLY: Array<[string, string]> = [
-  ["/", "/apply"],
-  ["/apply", "/apply/enquiry"],
-  ["/referral", "/apply/referral"],
+// an enquiry form, a referral form); it is now the funnel here, served ON
+// that subdomain: the question at its root, the forms at /enquiry and
+// /referral. The pages are /apply, /apply/enquiry and /apply/referral,
+// reached by rewrites so the address bar stays on the subdomain; on www the
+// same paths send people to it, so the funnel has one address (the one in
+// the studio's bios, and the one Google sees). The old WordPress address of
+// the enquiry form (/apply) lands on it; any other path on the subdomain,
+// the question. Permanent, as with the old site's addresses.
+//
+// Redirects are checked before rewrites (the rewrites docs' order), so the
+// subdomain's catch-all must leave the three funnel paths alone, or it
+// would send /enquiry to the question before the rewrite could serve it.
+// It leaves /_next and the site's files alone too: a page on the
+// subdomain loads its scripts, fonts and images from the same host.
+const ON_APPLY = { has: [{ type: "host" as const, value: APPLY_HOST }] };
+const APPLY_REWRITES = [
+  { source: "/", destination: "/apply", ...ON_APPLY },
+  { source: "/enquiry", destination: "/apply/enquiry", ...ON_APPLY },
+  { source: "/referral", destination: "/apply/referral", ...ON_APPLY },
 ];
-const APPLY = [
-  ...OLD_APPLY.map(([source, destination]) => ({
-    source,
-    has: [{ type: "host" as const, value: APPLY_HOST }],
-    destination: SITE_URL + destination,
+const APPLY_REDIRECTS = [
+  { source: "/apply", destination: APPLY_URL + "/enquiry", permanent: true, ...ON_APPLY },
+  {
+    source: "/:path((?!enquiry$|referral$|_next/|api/|[^/]+\\.[a-z0-9]+$).+)",
+    destination: APPLY_URL,
     permanent: true,
-  })),
-  { source: "/:path+", has: [{ type: "host" as const, value: APPLY_HOST }], destination: SITE_URL + "/apply", permanent: true },
+    ...ON_APPLY,
+  },
+  { source: "/apply", destination: APPLY_URL, permanent: true },
+  { source: "/apply/enquiry", destination: APPLY_URL + "/enquiry", permanent: true },
+  { source: "/apply/referral", destination: APPLY_URL + "/referral", permanent: true },
 ];
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
+  async rewrites() {
+    return { beforeFiles: APPLY_REWRITES, afterFiles: [], fallback: [] };
+  },
   async redirects() {
     // The hosts first, so an old path on an old host is one hop to www and
     // then the old-site rule there, not a relative hop on the old host first.
-    return [...ONE_HOST, ...APPLY, ...OLD_SITE.map(([source, destination]) => ({ source, destination, permanent: true }))];
+    return [...ONE_HOST, ...APPLY_REDIRECTS, ...OLD_SITE.map(([source, destination]) => ({ source, destination, permanent: true }))];
   },
   images: {
     // Each pattern is held to the shapes the site actually uses, with the

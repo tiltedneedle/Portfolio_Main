@@ -2,9 +2,11 @@ import type { Metadata } from "next";
 import { ApplyForm } from "@/components/ApplyForm";
 import { pageMeta } from "@/lib/page-meta";
 import { REFERRAL } from "@/lib/apply-data";
+import { applyUrl } from "@/lib/apply-host";
 
 export const metadata: Metadata = {
   ...pageMeta({ title: "Get a referral | Tilted Needle", path: "/apply/referral", description: REFERRAL.lead }),
+  alternates: { canonical: applyUrl("referral") },
   robots: { index: false, follow: true },
 };
 

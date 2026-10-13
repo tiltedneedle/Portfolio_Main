@@ -5,8 +5,17 @@ import { usePathname, useRouter } from "next/navigation";
 import type { ComponentProps, MouseEvent } from "react";
 import { useReducedMotion } from "framer-motion";
 import { beginCut } from "@/lib/cut";
+import { siteHref } from "@/lib/apply-host";
+import { useOnApplyHost } from "@/lib/use-on-apply-host";
 
-type Props = ComponentProps<typeof Link>;
+type Props = ComponentProps<typeof Link> & {
+  /**
+   * A link between the apply funnel's own pages: on the subdomain its path
+   * is a page there and the cut stays. Without this, a path on the subdomain
+   * is sent to www as an ordinary link (lib/apply-host).
+   */
+  own?: boolean;
+};
 
 /**
  * A next/link that cuts. Plain clicks drop the black frame and push the
@@ -16,11 +25,13 @@ type Props = ComponentProps<typeof Link>;
  * A link to the page already showing does not cut either: the pathname would
  * never change, so nothing would lift the frame until the safety timer.
  */
-export function CutLink({ href, onClick, onPointerEnter, ...rest }: Props) {
+export function CutLink({ href, onClick, onPointerEnter, own, ...rest }: Props) {
   const router = useRouter();
   const pathname = usePathname();
   const reduced = useReducedMotion();
-  const target = typeof href === "string" ? href : (href.pathname ?? "");
+  const onApply = useOnApplyHost();
+  const given = typeof href === "string" ? href : (href.pathname ?? "");
+  const target = own ? given : siteHref(given, onApply);
   const cuts = target.startsWith("/") && !target.startsWith("/#") && !rest.target;
 
   // The black frame is held until the next route commits, so the route must
@@ -47,5 +58,5 @@ export function CutLink({ href, onClick, onPointerEnter, ...rest }: Props) {
     requestAnimationFrame(() => router.push(target));
   };
 
-  return <Link href={href} onClick={handle} onPointerEnter={warm} {...rest} />;
+  return <Link href={target === given ? href : target} onClick={handle} onPointerEnter={warm} {...rest} />;
 }

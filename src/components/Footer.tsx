@@ -6,6 +6,8 @@ import Image from "next/image";
 import { CutLink } from "@/components/room/CutLink";
 import { WordStrip } from "@/components/editorial/WordStrip";
 import { scrollBehavior } from "@/lib/utils";
+import { siteHref } from "@/lib/apply-host";
+import { useOnApplyHost } from "@/lib/use-on-apply-host";
 
 // Frozen at build time; the effect corrects it if the visitor's year differs.
 const BUILD_YEAR = new Date().getFullYear();
@@ -32,6 +34,7 @@ const link = "underline-draw w-fit text-[15px] text-[color:var(--ink-soft)] tran
 /** The tail leader. Credits in mono, the crawl above it, nothing floating. */
 export function Footer() {
   const pathname = usePathname();
+  const onApply = useOnApplyHost();
   const [year, setYear] = useState(BUILD_YEAR);
   useEffect(() => {
     const current = new Date().getFullYear();
@@ -39,7 +42,9 @@ export function Footer() {
   }, []);
 
   const handleHashClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    if (href.startsWith("/#") && pathname === "/") {
+    // Not on the apply subdomain: its question is served at "/", and has
+    // no such section; the link's href is www's there.
+    if (href.startsWith("/#") && pathname === "/" && !onApply) {
       e.preventDefault();
       const targetId = href.slice(2);
       const el = document.getElementById(targetId);
@@ -74,7 +79,7 @@ export function Footer() {
                 n.href.startsWith("/#") ? (
                   <a
                     key={n.href}
-                    href={n.href}
+                    href={siteHref(n.href, onApply)}
                     onClick={(e) => handleHashClick(e, n.href)}
                     className={link}
                   >

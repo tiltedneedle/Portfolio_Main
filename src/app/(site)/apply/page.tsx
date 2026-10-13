@@ -1,13 +1,15 @@
 import type { Metadata } from "next";
-import { CutLink } from "@/components/room/CutLink";
+import { ApplyLink } from "@/components/ApplyLink";
 import { pageMeta } from "@/lib/page-meta";
 import { CITIES, NO, PRICE_LINE, YES } from "@/lib/apply-data";
+import { applyUrl } from "@/lib/apply-host";
 
 /**
  * The apply funnel's first page: the one question the old apply site
  * asked, and its two answers, each a cut to a form. The words are the old
- * site's (lib/apply-data). Out of search: it is a door for people the
- * studio sends here, not a page about the studio.
+ * site's (lib/apply-data). Served at apply.tiltedneedle.com (its own
+ * address, the canonical); out of search: a door for people the studio
+ * sends here, not a page about the studio.
  */
 export const metadata: Metadata = {
   ...pageMeta({
@@ -15,6 +17,7 @@ export const metadata: Metadata = {
     path: "/apply",
     description: "We create viral social media content for your personal brand or business. Tell us about yours.",
   }),
+  alternates: { canonical: applyUrl() },
   robots: { index: false, follow: true },
 };
 
@@ -38,12 +41,12 @@ export default function Apply() {
             <span className="em-serif">Is this within your budget?</span>
           </h1>
           <div className="enter-rise mt-10 flex flex-wrap items-center gap-4" style={{ animationDelay: "0.24s" }}>
-            <CutLink href="/apply/enquiry" className="pill pill-solid px-8 py-3.5 text-[15px]" data-cursor="Cut">
+            <ApplyLink step="enquiry" className="pill pill-solid px-8 py-3.5 text-[15px]">
               {YES}
-            </CutLink>
-            <CutLink href="/apply/referral" className="pill pill-outline px-8 py-3.5 text-[15px]" data-cursor="Cut">
+            </ApplyLink>
+            <ApplyLink step="referral" className="pill pill-outline px-8 py-3.5 text-[15px]">
               {NO}
-            </CutLink>
+            </ApplyLink>
           </div>
         </div>
         <p className="enter-fade mx-auto mt-16 w-full max-w-[1600px] px-6 mono text-[color:var(--ink-mid)] md:px-14" style={{ animationDelay: "0.5s" }}>

@@ -412,14 +412,32 @@ The user wanted the same funnel in the site's own design.
   requires a phone with digits for those two (replies go on WhatsApp),
   and a message only for `contact`. The mailto fallback carries the same
   fields.
-- `apply.tiltedneedle.com` -> this project, in next.config.ts (`APPLY`):
-  `/` -> /apply, `/apply` -> /apply/enquiry, `/referral` ->
-  /apply/referral, anything else -> /apply; all 308 to www in one hop.
-  Live only once the user adds the subdomain to the Vercel project and
-  points its DNS at Vercel (see Blockers).
-- `apply.mjs` in the scratchpad suite (last: it posts four times, and the
-  route allows five a minute per address, which is also why a rerun
-  within the minute, or check-fixes after it, 429s).
+- Then the user: "i dont want to redirect it to /apply, make it go to
+  apply.tiltedneedle.com instead". So the funnel LIVES on the subdomain
+  (next.config.ts, `APPLY_REWRITES` / `APPLY_REDIRECTS`): rewrites serve
+  `/` -> /apply, `/enquiry` -> /apply/enquiry, `/referral` ->
+  /apply/referral there, address bar unchanged; www's three /apply paths
+  308 to the subdomain (one address for the funnel); the subdomain's old
+  WordPress path `/apply` 308s to /enquiry and any other path to the
+  question, with /_next, /api and files excluded from that catch-all,
+  because Next checks redirects BEFORE rewrites and a plain `/:path+`
+  caught /enquiry first. Each page's canonical is its subdomain address.
+  On the subdomain a site path is not a page there, so the funnel's
+  layout mounts `ApplyMark` (data-apply on <html> when the host matches),
+  `useOnApplyHost()` reads it after mount (false on the server, so the
+  markup matches), `CutLink` and the nav's/footer's hash links write site
+  links as absolute www addresses while it is set, and `ApplyLink` /
+  CutLink `own` keep the funnel's links on the subdomain. `lib/apply-host`
+  imports `./site` relatively: next.config.ts loads it before the app's
+  path aliases exist. Live once the user adds the subdomain to the Vercel
+  project and points its DNS at Vercel (see Blockers).
+- `apply.mjs` in the scratchpad suite, last (it posts four times; the
+  route allows five a minute per address, so a rerun within the minute,
+  or check-fixes after it, 429s; SKIP_MAIL=1 for a rerun). It runs the
+  browser part AS the subdomain via Chromium's `--host-resolver-rules=MAP
+  apply.tiltedneedle.com 127.0.0.1` against the local port; WebKit has no
+  such switch and runs the site paths. Prefetches of the www links are
+  refused in that rig (no server there): the rig, not the site.
 
 ## The concept (approved 2026-09-03, "do whatever seems right")
 
@@ -528,8 +546,8 @@ accent, mint editorial system retired.
   site** until the user (1) adds `apply.tiltedneedle.com` to the marketing
   site's Vercel project (Settings > Domains) and (2) changes the `apply`
   DNS record at Squarespace Domains from its wpdns.site CNAME to the value
-  Vercel shows. The redirects in next.config.ts then take over; the
-  WordPress hosting can be cancelled after.
+  Vercel shows. The rewrites in next.config.ts then serve the funnel
+  there; the WordPress hosting can be cancelled after.
 - **All 144 video URLs are dead.** `d6lso8oygmnu9.cloudfront.net` has no DNS
   record at any resolver, including AWS's authoritative server; the old
   Amplify host is gone too; nothing in the Wayback Machine. The films, the

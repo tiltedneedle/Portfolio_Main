@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { AnimatePresence, m, useReducedMotion } from "framer-motion";
 import { CutLink } from "@/components/room/CutLink";
+import { ApplyLink } from "@/components/ApplyLink";
 import { Honeypot } from "@/components/Honeypot";
 import { HONEYPOT } from "@/lib/honeypot";
 import { submitForm } from "@/lib/submit-form";
@@ -89,6 +90,7 @@ export function ApplyForm({ kind }: { kind: "enquiry" | "referral" }) {
               ? "Your email app has opened with the message ready. Send it and a member of the team will be in touch within one working day."
               : "A member of the team will be in touch within one working day."}
           </p>
+          {/* CutLink sends "/" to www from the subdomain (lib/apply-host) */}
           <CutLink href="/" className="slate-link mt-10 inline-block text-[13px] text-[color:var(--ink)]" data-cursor="Cut">
             &larr; Back to the site
           </CutLink>
@@ -177,9 +179,9 @@ export function ApplyForm({ kind }: { kind: "enquiry" | "referral" }) {
               {submitting ? "Sending" : copy.button}
             </button>
             <span className={submitting ? "lamp" : "hidden"} aria-hidden="true" />
-            <CutLink href="/apply" className="slate-link text-[13px]" data-cursor="Cut">
+            <ApplyLink step="" className="slate-link text-[13px]">
               &larr; Back
-            </CutLink>
+            </ApplyLink>
             <p aria-live="polite" className="text-[13px] text-[color:var(--ink-mid)]">
               {error}
             </p>
