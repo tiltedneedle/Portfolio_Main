@@ -7,10 +7,14 @@ const CONTACT_FROM = process.env.CONTACT_FROM;
 const SUBJECTS: Record<string, string> = {
   contact: "New enquiry — Tilted Needle",
   application: "New application — Tilted Needle",
+  // The apply funnel (/apply): the enquiry from someone whose budget fits,
+  // and the referral request from someone whose budget does not.
+  enquiry: "New enquiry (apply) — Tilted Needle",
+  referral: "Referral request — Tilted Needle",
 };
 
 // Longest value we'll accept per field, and the overall body cap.
-const MAX_FIELD = { name: 200, email: 320, company: 200, role: 200, experience: 200, link: 2000, message: 5000 };
+const MAX_FIELD = { name: 200, email: 320, company: 200, role: 200, experience: 200, link: 2000, message: 5000, phone: 40, code: 8, handle: 100 };
 const MAX_BODY_BYTES = 16 * 1024;
 
 // Per-IP sliding window. In-memory, so it's per server instance — a real
@@ -57,6 +61,8 @@ function clientIp(request: Request) {
 }
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+// Digits with the spaces, dashes and brackets people type, at least six of them.
+const PHONE_RE = /^\+?[\d\s().-]{6,40}$/;
 
 type Payload = {
   type?: string;
@@ -67,6 +73,11 @@ type Payload = {
   role?: string;
   experience?: string;
   link?: string;
+  /** The apply funnel's phone: the dialling code and the number. */
+  code?: string;
+  phone?: string;
+  /** The apply enquiry's Instagram handle. */
+  handle?: string;
   /** The hidden field (lib/honeypot). Only bots fill it in. */
   trap?: string;
 };
@@ -83,6 +94,12 @@ function renderBody(payload: Payload) {
     add("Role", payload.role);
     add("Experience", payload.experience);
     add("Portfolio / CV", payload.link);
+  } else if (payload.type === "enquiry" || payload.type === "referral") {
+    add("Name", payload.name);
+    add("Email", payload.email);
+    add("Phone", [payload.code, payload.phone].filter((s) => s && s.trim()).join(" "));
+    add("Instagram", payload.handle);
+    add("Company or brand", payload.company);
   } else {
     add("Name", payload.name);
     add("Email", payload.email);
@@ -150,8 +167,9 @@ export async function POST(request: Request) {
   const subject = SUBJECTS[type];
 
   // Applications carry their detail in role/experience/link, and the careers
-  // form presents Message as optional — so only the contact form requires it.
-  const needsMessage = type !== "application";
+  // form presents Message as optional; the apply funnel's two forms ask for
+  // a phone number instead. So only the contact form requires a message.
+  const needsMessage = type === "contact";
   if (
     !payload.name?.trim() ||
     !payload.email?.trim() ||
@@ -173,6 +191,11 @@ export async function POST(request: Request) {
       { ok: false, error: "Please enter a valid email address." },
       { status: 400 }
     );
+  }
+
+  // The apply funnel replies on WhatsApp, so it needs a number it can call.
+  if ((type === "enquiry" || type === "referral") && !PHONE_RE.test(payload.phone?.trim() ?? "")) {
+    return NextResponse.json({ ok: false, error: "Please enter a phone number we can reach you on." }, { status: 400 });
   }
 
   // No transport configured: tell the client to fall back to a mailto: link so

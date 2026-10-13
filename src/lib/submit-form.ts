@@ -1,5 +1,5 @@
 export type FormPayload = {
-  type: "contact" | "application";
+  type: "contact" | "application" | "enquiry" | "referral";
   name: string;
   email: string;
   message: string;
@@ -7,6 +7,11 @@ export type FormPayload = {
   role?: string;
   experience?: string;
   link?: string;
+  /** The apply funnel's phone: the dialling code and the number. */
+  code?: string;
+  phone?: string;
+  /** The apply enquiry's Instagram handle. */
+  handle?: string;
   /** The hidden field's value (lib/honeypot). Empty for every real visitor. */
   trap?: string;
 };
@@ -33,6 +38,12 @@ function buildMailto(payload: FormPayload, to: string, subject: string) {
     add("Role", payload.role);
     add("Experience", payload.experience);
     add("Portfolio / CV", payload.link);
+  } else if (payload.type === "enquiry" || payload.type === "referral") {
+    add("Name", payload.name);
+    add("Email", payload.email);
+    add("Phone", [payload.code, payload.phone].filter((s) => s && s.trim()).join(" "));
+    add("Instagram", payload.handle);
+    add("Company or brand", payload.company);
   } else {
     add("Name", payload.name);
     add("Email", payload.email);

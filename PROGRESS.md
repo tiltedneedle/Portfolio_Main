@@ -383,6 +383,44 @@ screen, then followed what turned up. Each with a new check in the suite.
   interleaved runs: LCP 3.14s vs 3.32s, TBT 1.19s vs 1.33s; the extra
   copies cost 0.7 KB gzipped).
 
+## The apply funnel (2026-10-13, "i want that aswell but designed according to our own website")
+
+apply.tiltedneedle.com was a separate WordPress site on Cloudflare (DNS:
+CNAME to a wpdns.site host), three pages: a budget question ("Our
+services start from £15,000 per month. Is this within your budget?",
+Yes / No), /apply ("Let's work together.", name, last name, email,
+dialling code + phone, Instagram handle, company or brand, goals, "Send
+enquiry", "We reply on WhatsApp...") and /referral ("We are probably not
+the right fit at the moment.", name, last name, email, code + phone, "Get
+a referral"). Google listed it as "Tilted Needle – My WordPress Blog".
+The user wanted the same funnel in the site's own design.
+
+- `/apply`, `/apply/enquiry`, `/apply/referral`: the old pages' words,
+  word for word (`lib/apply-data.ts`), as site pages: mono eyebrow,
+  display headline, the site's underline fields, pills, a cut between
+  steps, Back as a cut to the question. The question page keeps both
+  answers on the first screen of a 900px laptop (the headline is the
+  question at clamp(40px,5.6vw,96px); the claim is the lead above it).
+  One component, `ApplyForm`, serves both forms (`kind`). Phone is a
+  code select (the old 52 codes, UK first; the closed box shows flag +
+  code via `option label`, as "United Kingdom" clipped at 176px) and a
+  tel input, side by side at every width. All three are noindex: a door
+  the studio sends people to, not a page about the studio. Not in the
+  sitemap, nav or footer.
+- The mail route takes `type: enquiry | referral` (subjects "New enquiry
+  (apply)" and "Referral request"), fields `code`, `phone`, `handle`,
+  requires a phone with digits for those two (replies go on WhatsApp),
+  and a message only for `contact`. The mailto fallback carries the same
+  fields.
+- `apply.tiltedneedle.com` -> this project, in next.config.ts (`APPLY`):
+  `/` -> /apply, `/apply` -> /apply/enquiry, `/referral` ->
+  /apply/referral, anything else -> /apply; all 308 to www in one hop.
+  Live only once the user adds the subdomain to the Vercel project and
+  points its DNS at Vercel (see Blockers).
+- `apply.mjs` in the scratchpad suite (last: it posts four times, and the
+  route allows five a minute per address, which is also why a rerun
+  within the minute, or check-fixes after it, 429s).
+
 ## The concept (approved 2026-09-03, "do whatever seems right")
 
 "The Editing Room, cut vertical." Dark single-world system, four open faces
@@ -486,6 +524,12 @@ accent, mint editorial system retired.
 
 ## Blockers (need the user)
 
+- (2026-10-13) **apply.tiltedneedle.com still serves the old WordPress
+  site** until the user (1) adds `apply.tiltedneedle.com` to the marketing
+  site's Vercel project (Settings > Domains) and (2) changes the `apply`
+  DNS record at Squarespace Domains from its wpdns.site CNAME to the value
+  Vercel shows. The redirects in next.config.ts then take over; the
+  WordPress hosting can be cancelled after.
 - **All 144 video URLs are dead.** `d6lso8oygmnu9.cloudfront.net` has no DNS
   record at any resolver, including AWS's authoritative server; the old
   Amplify host is gone too; nothing in the Wayback Machine. The films, the

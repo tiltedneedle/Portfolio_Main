@@ -61,13 +61,34 @@ const ONE_HOST =
         },
       ];
 
+// apply.tiltedneedle.com was a separate WordPress site (the budget question,
+// an enquiry form, a referral form); it is now the /apply funnel here. Once
+// the subdomain points at this project, each of its three addresses lands
+// on its page; anything else on it, the front door. Permanent, as with the
+// old site's addresses.
+const APPLY_HOST = "apply.tiltedneedle.com";
+const OLD_APPLY: Array<[string, string]> = [
+  ["/", "/apply"],
+  ["/apply", "/apply/enquiry"],
+  ["/referral", "/apply/referral"],
+];
+const APPLY = [
+  ...OLD_APPLY.map(([source, destination]) => ({
+    source,
+    has: [{ type: "host" as const, value: APPLY_HOST }],
+    destination: SITE_URL + destination,
+    permanent: true,
+  })),
+  { source: "/:path+", has: [{ type: "host" as const, value: APPLY_HOST }], destination: SITE_URL + "/apply", permanent: true },
+];
+
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
   async redirects() {
-    // The host first, so an old path on the old host is one hop to www and
+    // The hosts first, so an old path on an old host is one hop to www and
     // then the old-site rule there, not a relative hop on the old host first.
-    return [...ONE_HOST, ...OLD_SITE.map(([source, destination]) => ({ source, destination, permanent: true }))];
+    return [...ONE_HOST, ...APPLY, ...OLD_SITE.map(([source, destination]) => ({ source, destination, permanent: true }))];
   },
   images: {
     // Each pattern is held to the shapes the site actually uses, with the
