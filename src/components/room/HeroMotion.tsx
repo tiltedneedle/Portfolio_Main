@@ -96,7 +96,10 @@ export function HeroMotion({ children }: { children: ReactNode }) {
   return (
     <m.div className="hero-band" style={reduced || cssSink ? undefined : { y, filter, opacity }}>
       <m.div className="opacity-40" style={reduced ? undefined : { skewX }}>
-        <div ref={drift} className="hero-drift flex w-max">
+        {/* -ml-4: the strip starts 16px past the left edge, more than the
+            hardest scroll skew (5 degrees, 11px at a frame's half height)
+            moves its corner, so the skew never opens a sliver there. */}
+        <div ref={drift} className="hero-drift -ml-4 flex w-max">
           {children}
         </div>
       </m.div>

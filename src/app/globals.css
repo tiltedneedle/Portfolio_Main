@@ -717,16 +717,17 @@ a:focus-visible > .wm {
   mask-image: linear-gradient(to bottom, transparent 0%, #000 7%, #000 64%, transparent 100%);
 }
 
-/* The strip drifts a row (half its double width) every 160 seconds, on the
-   compositor; HeroMotion changes its playback rate as the page scrolls,
-   holds it while it is off screen, and banks it ten loops on so scrolling
-   up can never run it back past its start. */
+/* The strip drifts one row (a third of its width: HeroBackdrop lays the
+   row out three times) every 160 seconds, on the compositor; HeroMotion
+   changes its playback rate as the page scrolls, holds it while it is off
+   screen, and banks it ten loops on so scrolling up can never run it back
+   past its start. */
 .hero-drift {
   animation: hero-drift 160s linear infinite;
 }
 @keyframes hero-drift {
   to {
-    transform: translateX(-50%);
+    transform: translateX(calc(-100% / 3));
   }
 }
 
@@ -890,8 +891,9 @@ a:focus-visible > .wm {
 /* Endless marquees (the client logos, the footer's word strip). In CSS they
    run on the compositor; as Framer Motion `x` animations they ran script on
    the main thread every frame, forever. They pause while hovered or while
-   anything inside has focus; reduced motion stops them (below). Two copies
-   of the track sit side by side, each sliding its own width. */
+   anything inside has focus; reduced motion stops them (below). Copies of
+   the track sit side by side, each sliding its own width, and there are
+   enough of them (CreditsRoll, WordStrip) to stay wider than the screen. */
 @keyframes marquee {
   to {
     transform: translateX(-100%);
@@ -905,6 +907,171 @@ a:focus-visible > .wm {
 .marquee:hover .marquee-track,
 .marquee:focus-within .marquee-track {
   animation-play-state: paused;
+}
+
+/* ================================================================ slate */
+
+/* The slate's run, timed from the first paint so it never waits for the
+   page's JavaScript (Slate.tsx only cuts it short). 2.3 seconds, as a slate
+   is worked on set:
+     0       the board is up, the clapper open, the timecode rolling
+     0.95s   the clapper snaps shut, gathering speed as it falls
+     1.05s   the clap: the stick bounces a degree and a half and settles,
+             and the board, held by hand, takes the knock
+     1.85s   the board is pulled down and out of frame
+     2.12s   black, held for a beat: the site's cut
+     2.3s    gone, and the cold open is simply there
+   Keyframe percentages are of the 2.3 seconds. Slate.tsx skips by moving
+   the run's animations to 1.85s.
+   The cut is two animations: the opacity runs on the compositor, so the
+   slate is gone on time even while a slow phone's main thread is busy
+   hydrating (which is exactly when it ends there); the visibility lets
+   clicks through, and its end is the component's cue to remove it. */
+.slate {
+  animation:
+    slate-fade 2.3s step-end both,
+    slate-cut 2.3s linear both;
+}
+@keyframes slate-fade {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes slate-cut {
+  from {
+    visibility: visible;
+  }
+  to {
+    visibility: hidden;
+  }
+}
+
+.slate-board {
+  animation: slate-board 2.3s both;
+}
+@keyframes slate-board {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    animation-timing-function: ease-in-out;
+  }
+  /* held by hand, it lifts a touch into the clap (no tilt while it is
+     still: a fraction of a degree slants the rules and roughens the type) */
+  41.304%,
+  45.652% {
+    transform: translateY(-2px) rotate(0deg);
+    animation-timing-function: ease-out;
+  }
+  /* the knock */
+  48.696% {
+    transform: translateY(3px) rotate(0deg);
+    animation-timing-function: ease-in-out;
+  }
+  54.348%,
+  80.435% {
+    transform: translateY(0) rotate(0deg);
+    animation-timing-function: cubic-bezier(0.55, 0, 0.85, 0.35);
+  }
+  /* pulled down and out of frame, gathering speed */
+  92.174%,
+  100% {
+    transform: translateY(105vh) rotate(-5deg);
+  }
+}
+
+/* The clapper: two striped sticks, the top one hinged at its left end. */
+.slate-clapper {
+  position: relative;
+  height: 34px;
+}
+.slate-stick {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 16px;
+}
+.slate-stick-top {
+  /* How far it is held open. The stick is the board's width, so the same
+     angle lifts its end far higher on a desktop (760px) than on a phone
+     (340px): 14 degrees there would take it off the top of the screen. */
+  --open: -14deg;
+  top: 0;
+  background: repeating-linear-gradient(45deg, var(--ink) 0 22px, transparent 22px 44px);
+  /* the hinge pin */
+  transform-origin: 8px 17px;
+  animation: slate-clap 2.3s both;
+}
+@media (min-width: 768px) {
+  .slate-stick-top {
+    --open: -8deg;
+  }
+}
+.slate-stick-base {
+  bottom: 0;
+  background: repeating-linear-gradient(-45deg, var(--ink) 0 22px, transparent 22px 44px);
+}
+.slate-hinge {
+  position: absolute;
+  left: 3px;
+  top: 12px;
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: #000;
+}
+@keyframes slate-clap {
+  /* held open, then the snap: slow off the top, fastest as it lands */
+  0%,
+  41.304% {
+    transform: rotate(var(--open));
+    animation-timing-function: cubic-bezier(0.7, 0, 1, 0.55);
+  }
+  /* the clap, and the bounce */
+  45.652% {
+    transform: rotate(0deg);
+    animation-timing-function: cubic-bezier(0.25, 0.6, 0.45, 1);
+  }
+  48.696% {
+    transform: rotate(-1.5deg);
+    animation-timing-function: cubic-bezier(0.55, 0, 0.85, 0.4);
+  }
+  51.739%,
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+/* The slate's timecode: each field a column of numbers one line high,
+   stepped a line at a time, frames at 25 a second. */
+.tc-run {
+  display: inline-flex;
+  align-items: flex-start;
+}
+.tc-run > span {
+  display: inline-block;
+  height: 1em;
+  line-height: 1em;
+}
+.tc-col {
+  overflow: hidden;
+}
+.tc-reel {
+  display: block;
+  white-space: pre;
+  line-height: 1em;
+}
+/* Three seconds of rolling covers the whole run; endless, the hidden slate
+   would go on stepping it for as long as no script came to remove it. */
+.tc-frame {
+  animation: tc-roll 1s steps(25) 3;
+}
+.tc-sec {
+  animation: tc-roll 10s steps(10);
+}
+@keyframes tc-roll {
+  to {
+    transform: translateY(-100%);
+  }
 }
 
 /* The slate (clapperboard) is server-rendered, and its own code removes it

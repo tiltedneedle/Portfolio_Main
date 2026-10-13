@@ -287,6 +287,50 @@ page's head, the old Squarespace site, and Google itself:
   details (name, number, registered office: UK trading-disclosure rules,
   and Organization.legalName would tie the site to Companies House).
 
+## Loops and the slate (2026-10-13)
+
+The user: on some screen sizes the reels (hero, "cut post", logos) run out
+and show empty space at one side; and the first-visit loading screen should
+move like a real clapper and go away without Skip. Measured first, with
+`loops.mjs` (every loop stepped through its cycle at 16 widths, 320 to
+3840px) and `slate-timing.mjs` (from first paint, desktop, throttled phone,
+phone whose scripts never load), both in the scratchpad suite now.
+
+- Hero reel: broken at every width. Two rows, centred, so only half a row
+  lay right of centre: for the last part of every loop the strip's end
+  crossed the screen and left its right side empty (half the screen: 195px
+  of a phone for 8% of the loop, 720px of a laptop for 24%, 960px at 1920
+  for 32%); the join between the rows had no gap. Now three rows from the
+  left edge (16px past it, for the scroll skew), each ending on the
+  strip's 16px gap, sliding one row (calc(-100% / 3)) per 160s: covered at
+  every phase up to ~6,000px, same speed, still on the compositor.
+- Logos: ran out from 1,536px (two 1,524px copies): 396px of black for a
+  quarter of the loop at 1920, two thirds at 2560, always at 3440+. Four
+  copies now.
+- Word strip ("hook. shoot. cut. post. repeat."): the trailing space of
+  each copy is dropped at the end of a no-wrap line, so the join read
+  "repeat.hook." at every width; it also ran out from 1,830px. Each run
+  now ends on a no-break space; four copies.
+- `loops-wrap.mjs`: the frame a loop starts again on matches its first,
+  item for item, to 0px, at every width (the old hero did not: its empty
+  side filled with film at each restart).
+- The slate: was a static stripe and a timer started after hydration, so
+  a throttled phone held it 4.5s, and one whose scripts failed to load
+  held it for good (Skip is a script too). Now the whole run is CSS from
+  the first paint, 2.3s: the top stick of a real two-stick clapper (stripes
+  opposed, so shut they meet in chevrons, hinge pin at the left) is held
+  open (14 degrees on a phone, 8 on a desktop, where the 760px stick would
+  leave the screen), snaps shut accelerating at 0.95s, bounces 1.5 degrees,
+  the board takes a 3px knock, is pulled down out of frame at 1.85s, black
+  beat, cut at 2.3s. The timecode rolls in CSS from the first paint
+  (columns of numbers stepped a line at a time, finite). Measured: 2.3s on
+  desktop, under 3.1s on the throttled phone (measuring on its busy main
+  thread), 2.35s with no scripts at all; Skip jumps the run to the pull-out
+  (0.46s). Clap, board and the cut's opacity run on the compositor (trace);
+  the visibility half lets clicks through and cues the component to
+  unmount. No tilt while the board is still (0.2 degrees roughened the type
+  and the rules). Copy unchanged, word for word.
+
 ## The concept (approved 2026-09-03, "do whatever seems right")
 
 "The Editing Room, cut vertical." Dark single-world system, four open faces

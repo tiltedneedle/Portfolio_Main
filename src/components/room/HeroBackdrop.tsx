@@ -31,13 +31,23 @@ const DIVERSE_HERO_STILLS = [
   { id: "hero-21", client: "Tilted Needle", thumb: "https://i.ytimg.com/vi/WPe64iptrYs/oardefault.jpg" },
 ];
 
+// The row is laid out three times. The drift slides exactly one row per
+// loop, and the other two keep film on both sides of the screen at every
+// point of it, on screens up to about 6,000px wide. It used to be two rows
+// centred on the screen, so only half a row ever lay to the right: for the
+// last part of every loop the end of the strip crossed the screen and left
+// its right side empty (half the width of a laptop for a quarter of the
+// loop). Each row ends on the strip's own 16px gap, so the join between two
+// rows is one more gap rather than two frames touching.
+const COPIES = 3;
+
 /**
  * The Hero Film Backdrop: A single, seamless strip of diverse published cuts
  * from across our client roster that smoothly drifts behind the title.
  */
 export function HeroBackdrop() {
   const row = (key: string, hidden: boolean) => (
-    <div key={key} className="flex shrink-0 items-center gap-4 py-2" aria-hidden={hidden || undefined}>
+    <div key={key} className="flex shrink-0 items-center gap-4 py-2 pr-4" aria-hidden={hidden || undefined}>
       {DIVERSE_HERO_STILLS.map((s, i) => (
         <span key={s.id + '-' + i} className="film-frame">
           <span className="block h-[180px] w-[101px] md:h-[230px] md:w-[129px] overflow-hidden rounded-[2px] bg-[color:var(--stage-2)] border border-[color:var(--rule)]">
@@ -47,7 +57,7 @@ export function HeroBackdrop() {
                 for a frame 129px wide. Eager because the strip drifts and a
                 lazy frame clipped by the hero would pop in as it arrives;
                 low priority so they queue behind what the page needs. The
-                second row repeats the first, so it costs no extra request. */}
+                other rows repeat the first, so they cost no extra request. */}
             <Image
               src={s.thumb}
               alt=""
@@ -64,11 +74,8 @@ export function HeroBackdrop() {
   );
 
   return (
-    <div aria-hidden="true" className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden">
-      <HeroMotion>
-        {row("a", false)}
-        {row("b", true)}
-      </HeroMotion>
+    <div aria-hidden="true" className="pointer-events-none absolute inset-0 flex items-center overflow-hidden">
+      <HeroMotion>{Array.from({ length: COPIES }, (_, i) => row(String(i), i > 0))}</HeroMotion>
       <div className="hero-vignette absolute inset-0 pointer-events-none" />
     </div>
   );

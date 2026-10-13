@@ -62,6 +62,14 @@ function Row({ ariaHidden }: { ariaHidden?: boolean }) {
 /**
  * The brand strip: A clean, seamless full-bleed ribbon of partner brand marks.
  */
+// Copies of the row side by side, each sliding its own width. At every point
+// of the loop the copies to the right of the first must still reach past the
+// screen's edge, so together they need to be wider than the screen: two
+// (1,524px each on a desktop) ran out on anything wider than one row, and
+// from about 1,540px the end of the strip crossed the screen, leaving empty
+// black for up to two thirds of the loop. Four cover screens to ~4,500px.
+const COPIES = 4;
+
 // A server component: the strip scrolls by CSS (globals.css, .marquee),
 // which also pauses it on hover and stops it under reduced motion, so there
 // is nothing here to hydrate.
@@ -72,12 +80,11 @@ export function CreditsRoll() {
       <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 left-0 z-10 w-20 bg-gradient-to-r from-black to-transparent md:w-36" />
       <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 right-0 z-10 w-20 bg-gradient-to-l from-black to-transparent md:w-36" />
       <div className="flex overflow-hidden">
-        <div className="marquee-track flex shrink-0" style={duration}>
-          <Row />
-        </div>
-        <div className="marquee-track flex shrink-0" style={duration}>
-          <Row ariaHidden />
-        </div>
+        {Array.from({ length: COPIES }, (_, i) => (
+          <div key={i} className="marquee-track flex shrink-0" style={duration}>
+            <Row ariaHidden={i > 0} />
+          </div>
+        ))}
       </div>
     </section>
   );
