@@ -20,6 +20,41 @@ on 3400 first, or the start fails with EADDRINUSE and you verify a stale
 build). Visual checks go through Playwright, screenshots into the session
 scratchpad, never into the repo.
 
+## Search plumbing (2026-10-14)
+
+Measured on 2026-10-13: Google indexed four URLs of the domain (the home
+page and three stale ones), Bing none, and the site appeared for none of
+eighteen commercial queries. The plan for that (studio and offer pages,
+films as written case studies, Business Profiles, directories) waits on the
+user's facts and approvals; this round is the part that needs neither.
+
+- **IndexNow**: `public/<key>.txt` is the key (public by design), and
+  `npm run indexnow` posts the pages whose sitemap `lastmod` is within three
+  days to api.indexnow.org, which fans out to Bing, Yandex, Naver and Seznam
+  (`--all` for every page, or paths as arguments). `.github/workflows/
+  indexnow.yml` runs it after every production deployment Vercel reports to
+  GitHub (`deployment_status`, environment starting "Production"), and by hand
+  from the Actions tab. Google is not an IndexNow engine; it needs Search
+  Console, which only the user can open.
+- **Sitemap dates**: `scripts/stamp.mjs` writes `src/lib/lastmod.json`, the
+  day each page's copy last changed in git (only the files that hold a
+  page's words: the data files, CareersPage and BookDemoPage; layout
+  components are left out so motion rounds do not move dates). It runs as
+  `prebuild` wherever git history exists (not on Vercel's shallow clone),
+  counts an uncommitted edit as today, and leaves the file alone when nothing
+  changed. Commit `lastmod.json` with the copy change it reflects.
+- **/llms.txt**: a route handler printing the site's own lines from the
+  same data the pages use (organisation description and slogan, the four
+  services, the eight films with their numbers, the pages, the profiles).
+  Unproven with the engines; costs nothing.
+- **Film pages** carry a BreadcrumbList (Work, then the film), as the
+  service pages already did.
+- **`npm run seo`** is `scripts/seo-check.mjs`, the search round's audit
+  promoted into the repo with the new checks (dates, llms.txt, the key
+  file, film breadcrumbs, no apply URLs in the sitemap). It runs against a
+  local build on 3400 by default; a live run needs `--live` and should be
+  rare (about fifty requests; Vercel challenges a chatty address).
+
 ## Review fixes (2026-10-09)
 
 Asked to review the separated site, then "fix and continue to find more".

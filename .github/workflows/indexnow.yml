@@ -1,0 +1,42 @@
+name: IndexNow
+
+# Vercel reports every deployment to GitHub. When the production one
+# succeeds, tell the IndexNow engines (Bing, Yandex, Naver, Seznam) which
+# pages changed, read from the live sitemap's lastmod dates. Google is not
+# part of IndexNow; it reads the sitemap through Search Console.
+#
+# Run it by hand from the Actions tab to submit every page (first time, or
+# after a change the stamp missed).
+on:
+  deployment_status:
+  workflow_dispatch:
+    inputs:
+      all:
+        description: "Submit every URL in the sitemap, not only recently changed ones"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  submit:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.deployment_status.state == 'success' &&
+       startsWith(github.event.deployment.environment, 'Production'))
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.deployment.sha || github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      # The alias can lag the deployment's "success" by a few seconds; the
+      # sitemap must be the new build's.
+      - name: Wait for the alias to serve the new build
+        if: github.event_name == 'deployment_status'
+        run: sleep 45
+      - name: Submit changed pages
+        run: node scripts/indexnow.mjs ${{ inputs.all == true && '--all' || '' }}
