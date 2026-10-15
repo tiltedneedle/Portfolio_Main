@@ -45,6 +45,7 @@ const PAGES = {
   "/portfolio": ["src/lib/published.json"],
   "/careers": ["src/components/CareersPage.tsx"],
   "/book-demo": ["src/components/BookDemoPage.tsx"],
+  "/apply/*": ["src/lib/apply-data.ts"],
 };
 
 const today = new Date().toISOString().slice(0, 10);

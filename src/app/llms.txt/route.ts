@@ -2,6 +2,8 @@ import { servicesList } from "@/lib/services-data";
 import { films } from "@/lib/films";
 import { organizationSchema } from "@/lib/structured-data";
 import { SITE_URL } from "@/lib/site";
+import { applyUrl } from "@/lib/apply-host";
+import { ENQUIRY, PRICE_LINE, REFERRAL } from "@/lib/apply-data";
 
 /**
  * /llms.txt: the site in plain text for language-model crawlers, in the
@@ -49,6 +51,12 @@ export function GET() {
     `- [Book a demo](${page("/book-demo")})`,
     `- [Privacy policy](${page("/privacy")})`,
     `- [Terms](${page("/terms")})`,
+    "",
+    "## Work with us",
+    "",
+    `- [Work with us](${applyUrl()}): ${PRICE_LINE}`,
+    `- [Enquiry](${applyUrl("enquiry")}): ${ENQUIRY.lead}`,
+    `- [Get a referral](${applyUrl("referral")}): ${REFERRAL.lead}`,
     "",
     "## Profiles",
     "",

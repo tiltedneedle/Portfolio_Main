@@ -54,6 +54,15 @@ user's facts and approvals; this round is the part that needs neither.
   file, film breadcrumbs, no apply URLs in the sitemap). It runs against a
   local build on 3400 by default; a live run needs `--live` and should be
   rare (about fifty requests; Vercel challenges a chatty address).
+- **The apply funnel is in search** (2026-10-15; the user: plumbing for
+  "apply, portal and normal website"). Its three pages lost their noindex
+  (the old apply site was indexed, price line and all), joined the sitemap
+  on their own host (a Domain property in Search Console covers every
+  subdomain, so one sitemap may list them), are stamped from
+  lib/apply-data.ts, are named in llms.txt, and the IndexNow script now
+  submits per host (the key file is served on both: the subdomain's
+  catch-all redirect excludes dotted paths). `npm run seo` checks the three
+  on the apply host by Host header.
 
 ## Review fixes (2026-10-09)
 

@@ -8,8 +8,8 @@ import { applyUrl } from "@/lib/apply-host";
  * The apply funnel's first page: the one question the old apply site
  * asked, and its two answers, each a cut to a form. The words are the old
  * site's (lib/apply-data). Served at apply.tiltedneedle.com (its own
- * address, the canonical); out of search: a door for people the studio
- * sends here, not a page about the studio.
+ * address, the canonical). In search since 2026-10-15, as the old apply
+ * site was: the question is the studio's public price line.
  */
 export const metadata: Metadata = {
   ...pageMeta({
@@ -18,7 +18,6 @@ export const metadata: Metadata = {
     description: "We create viral social media content for your personal brand or business. Tell us about yours.",
   }),
   alternates: { canonical: applyUrl() },
-  robots: { index: false, follow: true },
 };
 
 export default function Apply() {

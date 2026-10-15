@@ -48,16 +48,29 @@ if (urls.length === 0) {
   }
 }
 
-const res = await fetch("https://api.indexnow.org/indexnow", {
-  method: "POST",
-  headers: { "content-type": "application/json; charset=utf-8" },
-  body: JSON.stringify({ host, key, keyLocation: `${SITE_URL}/${keyFile}`, urlList: urls }),
-});
-// 200: accepted. 202: accepted, key file to be checked later. Anything else
-// is a problem with the key, the host or the URLs.
-console.log(`IndexNow: HTTP ${res.status} for ${urls.length} URL${urls.length === 1 ? "" : "s"} on ${host}`);
-for (const u of urls) console.log("  " + u);
-if (res.status !== 200 && res.status !== 202) {
-  console.log(await res.text());
-  process.exit(1);
+// One submission per host: the sitemap also lists the apply funnel on its
+// subdomain, and a submission's URLs must all belong to its host. The same
+// key file answers on every host of this deployment.
+const byHost = new Map();
+for (const u of urls) {
+  const h = new URL(u).host;
+  if (!byHost.has(h)) byHost.set(h, []);
+  byHost.get(h).push(u);
 }
+let bad = false;
+for (const [h, list] of byHost) {
+  const res = await fetch("https://api.indexnow.org/indexnow", {
+    method: "POST",
+    headers: { "content-type": "application/json; charset=utf-8" },
+    body: JSON.stringify({ host: h, key, keyLocation: `https://${h}/${keyFile}`, urlList: list }),
+  });
+  // 200: accepted. 202: accepted, key file to be checked later. Anything
+  // else is a problem with the key, the host or the URLs.
+  console.log(`IndexNow: HTTP ${res.status} for ${list.length} URL${list.length === 1 ? "" : "s"} on ${h}`);
+  for (const u of list) console.log("  " + u);
+  if (res.status !== 200 && res.status !== 202) {
+    console.log(await res.text());
+    bad = true;
+  }
+}
+if (bad) process.exit(1);

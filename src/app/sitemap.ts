@@ -3,6 +3,7 @@ import { servicesList } from "@/lib/services-data";
 import { films } from "@/lib/films";
 import { SITE_URL } from "@/lib/site";
 import { privacyLastUpdated, termsLastUpdated } from "@/lib/legal-data";
+import { APPLY_URL } from "@/lib/apply-host";
 import lastmod from "@/lib/lastmod.json";
 
 const BASE_URL = SITE_URL;
@@ -60,6 +61,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
       ...dated("/film/*"),
       changeFrequency: "monthly" as const,
       priority: 0.8,
+    })),
+    // The apply funnel, on its own host (lib/apply-host). A Domain property
+    // in Search Console covers every subdomain, so one sitemap may list it.
+    ...["", "/enquiry", "/referral"].map((step) => ({
+      url: APPLY_URL + step,
+      ...dated("/apply/*"),
+      changeFrequency: "yearly" as const,
+      priority: 0.5,
     })),
   ];
 }

@@ -7,7 +7,6 @@ import { applyUrl } from "@/lib/apply-host";
 export const metadata: Metadata = {
   ...pageMeta({ title: "Work with us | Tilted Needle", path: "/apply/enquiry", description: ENQUIRY.lead }),
   alternates: { canonical: applyUrl("enquiry") },
-  robots: { index: false, follow: true },
 };
 
 /** The enquiry, for someone whose budget fits. */

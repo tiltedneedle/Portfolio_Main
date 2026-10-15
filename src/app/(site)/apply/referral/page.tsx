@@ -7,7 +7,6 @@ import { applyUrl } from "@/lib/apply-host";
 export const metadata: Metadata = {
   ...pageMeta({ title: "Get a referral | Tilted Needle", path: "/apply/referral", description: REFERRAL.lead }),
   alternates: { canonical: applyUrl("referral") },
-  robots: { index: false, follow: true },
 };
 
 /** The referral request, for someone whose budget does not fit. */

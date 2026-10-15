@@ -4,7 +4,8 @@
 // out, one h1 that reads as words, structured data that parses with every
 // cross-reference resolved, breadcrumbs on the service and film pages. Then
 // the 404, robots.txt, llms.txt, the IndexNow key, the sitemap's dates, the
-// old vercel.app host and the old Squarespace addresses.
+// apply funnel on its own host, the old vercel.app host and the old
+// Squarespace addresses.
 //
 //   npm run build && npx next start -p 3400     (another shell)
 //   npm run seo                                  (checks http://localhost:3400)
@@ -79,9 +80,11 @@ const entries = [...sitemap.body.matchAll(/<url>([\s\S]*?)<\/url>/g)].map((m) =>
 }));
 const urls = entries.map((e) => e.loc);
 const origin = new URL(urls[0]).origin;
-say(urls.length >= 19, "sitemap lists the pages", urls.length + " on " + origin);
+say(urls.length >= 22, "sitemap lists the pages", urls.length + " on " + origin);
 say(!origin.includes("vercel.app") && !/\/\/tiltedneedle\.com/.test(origin), "sitemap is on the primary host (www)", origin);
-say(!urls.some((u) => /\/apply(\/|$)/.test(u)), "sitemap leaves the apply funnel out");
+const APPLY = "https://apply.tiltedneedle.com";
+const applyUrls = urls.filter((u) => u.startsWith(APPLY));
+say(applyUrls.length === 3, "sitemap lists the apply funnel on its own host", applyUrls.join(" "));
 const today = new Date().toISOString().slice(0, 10);
 const badDates = entries.filter((e) => e.lastmod && !(/^\d{4}-\d{2}-\d{2}$/.test(e.lastmod) && e.lastmod <= today));
 const dated = entries.filter((e) => e.lastmod).length;
@@ -103,7 +106,7 @@ const types = (data) => {
 };
 
 const titles = new Map();
-for (const url of urls) {
+for (const url of urls.filter((u) => u.startsWith(origin))) {
   const p = url.slice(origin.length) || "/";
   const r = await get(p);
   const title = text((r.body.match(/<title>([^<]*)<\/title>/) || [])[1] || "");
@@ -187,6 +190,21 @@ for (const p of OLD) {
   if (r.status !== 308 || !landed || landed.status !== 200) bad.push(`${p} ${r.status} -> ${r.location} ${landed?.status}`);
 }
 say(bad.length === 0, "old Squarespace addresses: one 308 to a live page", bad.join(" | ") || OLD.length + " checked");
+
+// The apply funnel, as served on its own host: the question at "/", the two
+// forms, each its own canonical page in search.
+for (const step of ["", "/enquiry", "/referral"]) {
+  const r = await get(step || "/", { host: "apply.tiltedneedle.com" });
+  const canon = (r.body.match(/<link rel="canonical" href="([^"]*)"/) || [])[1];
+  const robots = metas(r.body, "robots");
+  const title = text((r.body.match(/<title>([^<]*)<\/title>/) || [])[1] || "");
+  const problems = [];
+  if (r.status !== 200) problems.push("status " + r.status);
+  if (canon !== APPLY + step) problems.push("canonical " + canon);
+  if (robots.some((c) => /noindex|none/.test(c))) problems.push("robots " + robots.join(" / "));
+  if (!title) problems.push("no title");
+  say(problems.length === 0, "apply host " + (step || "/"), problems.join("; ") || title);
+}
 
 console.log(`${requests} requests. ${failed ? failed + " FAILED" : "all passed"}`);
 process.exit(failed ? 1 : 0);
