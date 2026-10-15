@@ -5,7 +5,7 @@ import { ENQUIRY } from "@/lib/apply-data";
 import { applyUrl } from "@/lib/apply-host";
 
 export const metadata: Metadata = {
-  ...pageMeta({ title: "Work with us | Tilted Needle", path: "/apply/enquiry", description: ENQUIRY.lead }),
+  ...pageMeta({ title: "Tell us about yourself | Tilted Needle", path: "/apply/enquiry", description: ENQUIRY.lead }),
   alternates: { canonical: applyUrl("enquiry") },
 };
 
