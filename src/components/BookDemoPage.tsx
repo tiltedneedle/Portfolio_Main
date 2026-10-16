@@ -65,17 +65,20 @@ export function BookDemoPage() {
 
           {/* Each label sits under its figure at every width, as on the home
               page's title card. Side by side, "Revenue generated" ran off
-              the edge of a 320px phone. */}
-          <div className="enter-rise mt-12 grid max-w-[900px] grid-cols-1 border-t border-[color:var(--rule)] sm:grid-cols-3" style={{ animationDelay: "0.24s" }}>
+              the edge of a 320px phone. The columns are as wide as their
+              figures, not thirds of a 900px row: five billion at 64px is
+              350px wide, and in a 300px column it ran into the revenue
+              beside it on every desktop. */}
+          <div className="enter-rise mt-12 grid grid-cols-1 border-t border-[color:var(--rule)] sm:grid-cols-[auto_auto_auto] sm:gap-x-10 md:gap-x-14" style={{ animationDelay: "0.24s" }}>
             <div className="border-b border-[color:var(--rule)] py-6 last:border-b-0 sm:border-b-0">
-              <span className="display tabular flex items-start text-[clamp(36px,4.5vw,64px)] leading-none">
+              <span className="display tabular flex items-start text-[clamp(32px,4.5vw,64px)] leading-none">
                 <Odometer value={5000000000} />
                 <span className="odo-sep text-[color:var(--ink-mid)]">+</span>
               </span>
               <span className="mono mt-3 block">Organic views</span>
             </div>
             <div className="border-b border-[color:var(--rule)] py-6 last:border-b-0 sm:border-b-0">
-              <span className="display tabular flex items-start text-[clamp(36px,4.5vw,64px)] leading-none">
+              <span className="display tabular flex items-start text-[clamp(32px,4.5vw,64px)] leading-none">
                 <span className="odo-sep text-[color:var(--ink-mid)]">$</span>
                 <Odometer value={250000000} />
                 <span className="odo-sep text-[color:var(--ink-mid)]">+</span>
@@ -83,7 +86,7 @@ export function BookDemoPage() {
               <span className="mono mt-3 block">Revenue generated</span>
             </div>
             <div className="border-b border-[color:var(--rule)] py-6 last:border-b-0 sm:border-b-0">
-              <span className="display tabular flex items-start text-[clamp(36px,4.5vw,64px)] leading-none">
+              <span className="display tabular flex items-start text-[clamp(32px,4.5vw,64px)] leading-none">
                 <Odometer value={11} />
                 <span className="odo-sep text-[color:var(--ink-mid)]">+</span>
               </span>
