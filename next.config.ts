@@ -115,8 +115,6 @@ const nextConfig: NextConfig = {
     // for the rest of the cycle), so an open pattern let anyone spend it on
     // any photo on these hosts, or on one photo with endless query strings.
     remotePatterns: [
-      // the service pages' four photos
-      { protocol: "https", hostname: "images.unsplash.com", pathname: "/photo-*", search: "?w=800&h=600&fit=crop" },
       // stills for the published work: YouTube's, and the studio's own cache
       { protocol: "https", hostname: "i.ytimg.com", pathname: "/vi/*/oardefault.jpg", search: "" },
       { protocol: "https", hostname: "i.ytimg.com", pathname: "/vi/*/mqdefault.jpg", search: "" },

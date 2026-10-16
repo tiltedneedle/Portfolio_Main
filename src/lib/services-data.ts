@@ -29,6 +29,13 @@ export type Service = {
   faq: ServiceFaq[];
   iconName: ServiceIconName;
   gradient: string;
+  /**
+   * The page's still, from public/services: four photographs from Unsplash
+   * (its licence allows the use), fetched at 1600x1200 on 2026-10-16 and
+   * kept here, so no page waits on a third host at request time. They were
+   * hotlinked before, and the image optimiser answered 500 whenever that
+   * host did not resolve.
+   */
   imageUrl: string;
 };
 
@@ -196,7 +203,7 @@ export const servicesList: Service[] = [
     ],
     iconName: "Video",
     gradient: "from-[#ff9f0a] to-[#ff375f]",
-    imageUrl: "https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=800&h=600&fit=crop",
+    imageUrl: "/services/content-creation.jpg",
   },
   {
     id: "influencer-marketing",
@@ -287,7 +294,7 @@ export const servicesList: Service[] = [
     ],
     iconName: "Users",
     gradient: "from-[#ff375f] to-[#af52de]",
-    imageUrl: "https://images.unsplash.com/photo-1616469829581-73993eb86b02?w=800&h=600&fit=crop",
+    imageUrl: "/services/influencer-marketing.jpg",
   },
   {
     id: "paid-advertising-performance",
@@ -382,7 +389,7 @@ export const servicesList: Service[] = [
     ],
     iconName: "Target",
     gradient: "from-[#64d2ff] to-[#2997ff]",
-    imageUrl: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=600&fit=crop",
+    imageUrl: "/services/paid-advertising-performance.jpg",
   },
   {
     id: "app-web-development",
@@ -477,6 +484,6 @@ export const servicesList: Service[] = [
     ],
     iconName: "Code2",
     gradient: "from-[#5e5ce6] to-[#af52de]",
-    imageUrl: "https://images.unsplash.com/photo-1551650975-87deedd944c3?w=800&h=600&fit=crop",
+    imageUrl: "/services/app-web-development.jpg",
   },
 ];
